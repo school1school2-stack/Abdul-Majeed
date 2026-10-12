@@ -13,7 +13,7 @@
     <!-- الاعتماد الكلي على سحابة aaaa-a2380 فقط -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, onSnapshot, updateDoc, query, where, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDhd5CSkNMoppGby6uKxHsQCB",
@@ -37,6 +37,10 @@
         window.FB_deleteDoc = deleteDoc;
         window.FB_onSnapshot = onSnapshot;
         window.FB_updateDoc = updateDoc;
+        window.FB_query = query;
+        window.FB_where = where;
+        window.FB_addDoc = addDoc;
+        window.FB_serverTimestamp = serverTimestamp;
     </script>
 
     <style>
@@ -46,6 +50,7 @@
             --primary: #1e3a8a; --card-bg: #ffffff; --border: #e2e8f0;
             --row-alt: #fffdec; --correct-bg: #dcfce7; --correct-text: #166534;
             --wrong-bg: #fee2e2; --wrong-text: #991b1b;
+            --royal-blue: #1e3a8a; --q-red: #ef4444; --success-green: #10b981; --k-purple: #7c3aed;
         }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; direction: rtl; color: var(--text-main); }
         
@@ -68,7 +73,7 @@
         .card-option { background: #f8fafc; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; border: 2px solid var(--border); transition: 0.3s; }
         .card-option:hover { border-color: var(--primary); background: #e0f2fe; transform: translateY(-3px); }
 
-        /* تصميمات لوحة التحليل الذكي الأصلية */
+        /* تصميمات لوحة التحليل الذكي */
         .model-nav { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 25px; padding: 15px 20px; background: var(--card-bg, #fff); border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); flex-wrap: wrap; border-top: 3px solid var(--accent); }
         .model-select-wrapper { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 300px; }
         .model-select-wrapper label { font-weight: bold; color: var(--accent); white-space: nowrap; font-size: 1.15rem; }
@@ -85,9 +90,77 @@
         .rank-card.bottom { border-right: 6px solid #ef4444; background: #fef2f2; }
         .prog-circle { width: 45px; height: 6px; background: #eee; border-radius: 10px; overflow: hidden; margin-top: 4px; }
         .prog-fill { height: 100%; }
+
+        /* ستايلات منصة الاختبارات المتقدمة المدمجة */
+        .top-action-bar { width: 100%; background: #1e293b; border-radius: 15px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 25px; box-sizing: border-box; gap: 12px; flex-wrap: wrap; }
+        .bar-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .styled-dropdown-wrapper { position: relative; display: inline-block; }
+        .dropdown-toggle-btn { background: #3b82f6; color: white; border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; font-size: 0.9rem; white-space: nowrap; transition: 0.3s; }
+        .dropdown-menu-content { display: none; position: absolute; right: 0; top: calc(100% + 8px); background: #1e293b; min-width: 220px; box-shadow: 0 10px 25px rgba(0,0,0,0.25); border-radius: 12px; z-index: 1000; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+        .dropdown-menu-content button { width: 100%; background: transparent; border: none; color: white; padding: 11px 16px; text-align: right; font-family: inherit; font-size: 0.9rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.2s; white-space: nowrap; }
+        .dropdown-menu-content button:hover { background: rgba(255, 255, 255, 0.1); }
+        .styled-dropdown-wrapper.active .dropdown-menu-content { display: block; }
+        
+        .array-import-box, .search-result-box { width: 100%; background: var(--card-bg); border-radius: 15px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 2px dashed #0284c7; margin-bottom: 25px; box-sizing: border-box; }
+        .array-textarea { width: 100% !important; height: 150px !important; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-family: monospace; font-size: 0.85rem; direction: ltr; text-align: left; outline: none; box-sizing: border-box; resize: none !important; margin-bottom: 10px; }
+        
+        .question-card { background: white; border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 2px solid var(--border); position: relative; text-align: right; box-sizing: border-box; }
+        .question-card::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: var(--k-purple); border-radius: 0 10px 10px 0; }
+        .card-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; justify-content: space-between; }
+        .q-number-badge { background: var(--k-purple); color: white; padding: 4px 15px; border-radius: 50px; font-weight: bold; font-size: 0.9rem; }
+        .type-select { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 10px; border-radius: 10px; font-weight: bold; cursor: pointer; color: var(--royal-blue); outline: none; }
+        
+        .q-text-input { width: 100%; min-height: 60px; padding: 12px; border: 2px solid #cbd5e1; border-radius: 12px; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px; outline: none; text-align: right; box-sizing: border-box; font-family: inherit; background: rgba(0,0,0,0.02); resize: none; }
+        .estieab-box { background: #fff9c4 !important; border: 2px solid #fbc02d; border-radius: 12px; padding: 15px; margin-bottom: 15px; color: #000; font-weight: bold; min-height: 80px; outline: none; white-space: pre-wrap; }
+        
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .opt-pair-row { display: flex; align-items: center; background: white; border: 1.5px solid #d1d5db; border-radius: 10px; padding: 12px; box-sizing: border-box; gap: 8px; }
+        .opt-label { font-weight: bold; color: var(--royal-blue); white-space: nowrap; }
+        .opt-word { width: 100%; border: none; outline: none; font-weight: bold; background: transparent; text-align: right; font-family: inherit; }
+        
+        .matching-container, .enumeration-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .matching-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; border-radius: 12px; }
+        .matching-row, .enum-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px; }
+
+        .correct-ans-box { margin-top: 15px; padding: 10px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; border: 1px solid #bbf7d0; display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+        .correct-input { flex: 1; background: transparent; border: none; outline: none; color: #166534; font-weight: bold; text-align: right; font-family: inherit; }
+        .q-score-input { width: 65px; padding: 5px; border: 1px solid #10b981; border-radius: 6px; text-align: center; font-weight: bold; color: #166534; }
+
+        #report-modal, #cloud-modal, #history-modal, #time-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 700px; max-height: 85%; background: #ffffff; color: #1e293b; z-index: 2000; border-radius: 20px; padding: 20px; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,0.4); box-sizing: border-box; }
+        .cloud-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid #e2e8f0; gap: 10px; flex-wrap: wrap; }
     </style>
 </head>
 <body>
+
+    <div id="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1999;" onclick="closeModals()"></div>
+
+    <!-- نوافذ منصة الاختبارات الفرعية -->
+    <div id="cloud-modal">
+        <h2 style="text-align: center; color: var(--royal-blue); margin-top:0;"><i class="fas fa-cloud"></i> النماذج المحفوظة في سحابتك ☁️</h2>
+        <div id="cloud-models-list" style="margin-top: 20px; border: 1px solid #e2e8f0; border-radius: 12px;"></div>
+        <button class="btn" style="background:#64748b; width:100%; margin-top:20px;" onclick="closeModals()">إغلاق</button>
+    </div>
+
+    <div id="time-modal">
+        <h2 style="text-align: center; color: var(--royal-blue);"><i class="fas fa-clock"></i> تحديد موعد الاختبار ⏰</h2>
+        <div style="margin: 20px 0; display: flex; flex-direction: column; gap: 15px;">
+            <div>
+                <label style="display: block; font-weight: bold; margin-bottom: 5px;">تاريخ ووقت البدء:</label>
+                <input type="datetime-local" id="examStartTime" class="input-field">
+            </div>
+            <div>
+                <label style="display: block; font-weight: bold; margin-bottom: 5px;">تاريخ ووقت الإغلاق:</label>
+                <input type="datetime-local" id="examEndTime" class="input-field">
+            </div>
+        </div>
+        <button class="btn" style="background: var(--success); width: 100%;" onclick="saveExamTimeSettings()">حفظ الموعد 💾</button>
+    </div>
+
+    <div id="history-modal">
+        <h2 style="text-align: center; color: var(--royal-blue);"><i class="fas fa-history"></i> سجل النتائج 📊</h2>
+        <div id="history-list" style="margin-top: 20px;"></div>
+        <button class="btn" style="background:#64748b; width:100%; margin-top:20px;" onclick="closeModals()">إغلاق</button>
+    </div>
 
     <!-- 1. شاشة تسجيل الدخول -->
     <div class="auth-card" id="loginScreen">
@@ -153,7 +226,7 @@
             <div class="card-option" onclick="openTeacherTab('exams')">
                 <i class="fas fa-file-alt" style="font-size:2.5rem; color:var(--primary); margin-bottom:15px;"></i>
                 <h3>منصة عمل الاختبارات</h3>
-                <p>إنشاء وتشكيل وتوليد الاختبارات المتقدمة</p>
+                <p>إنشاء وتشكيل وتوليد الاختبارات المتقدمة المربوطة بسحابتي</p>
             </div>
             <div class="card-option" onclick="openTeacherTab('classes')">
                 <i class="fas fa-users-class" style="font-size:2.5rem; color:var(--primary); margin-bottom:15px;"></i>
@@ -175,6 +248,11 @@
     let activeTeacherName = "";
     let activeTeacherSubject = "";
     let tChartA = null, tChartB = null;
+
+    // متغيرة منصة الاختبارات المتقدمة
+    let currentOpenModelName = null;
+    let currentExamStartTime = "";
+    let currentExamEndTime = "";
 
     window.onload = function() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -331,7 +409,7 @@
         const content = document.getElementById('subSectionContent');
 
         if(tab === 'reports') {
-            // الأيقونة الأولى: لوحة التحليل الذكي والمتابعة المطابقة تماماً لكودك الأصلي[span_1](start_span)[span_1](end_span) ومبرمجة باسمه ومادته
+            // الأيقونة الأولى: لوحة التحليل الذكي والمتابعة
             content.innerHTML = `
                 <div class="dashboard">
                     <div class="model-nav no-print">
@@ -397,11 +475,57 @@
             `;
             initTeacherDashboardData();
         } else if(tab === 'exams') {
+            // الأيقونة الثانية: منصة الاختبارات المتقدمة كاملة بحذافيرها
             content.innerHTML = `
-                <h2>📝 منصة عمل الاختبارات الخاصة بـ (${activeTeacherName})</h2>
-                <p>هنا يمكنك إنشاء النماذج والأسئلة الخاصة بطلاب مادتك.</p>
+                <div class="top-action-bar">
+                    <div class="bar-group">
+                        <span id="current-model-label" style="color: #38bdf8; font-weight: bold; font-size: 0.95rem;">📁 نموذج جديد</span>
+                        
+                        <div class="styled-dropdown-wrapper" id="mainActionsDropdown">
+                            <button type="button" class="dropdown-toggle-btn" onclick="toggleExamDropdown(event)">
+                                <i class="fas fa-bars"></i> خيارات النماذج <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="dropdown-menu-content">
+                                <button type="button" onclick="startNewModel()"><i class="fas fa-plus-circle" style="color:#10b981;"></i> قبل أبدأ (جديد)</button>
+                                <button type="button" onclick="saveToCloud()"><i class="fas fa-save" style="color:#a855f7;"></i> حفظ النموذج بالسحاب ☁️</button>
+                                <button type="button" onclick="openTimeModal()"><i class="fas fa-clock" style="color:#f59e0b;"></i> توقيت الاختبار ⏰</button>
+                                <button type="button" onclick="copyCurrentModelLink()"><i class="fas fa-link" style="color:#06b6d4;"></i> رابط الطلاب</button>
+                                <button type="button" onclick="renameCurrentModel()"><i class="fas fa-signature" style="color:#fbbf24;"></i> إعادة تسمية</button>
+                                <button type="button" onclick="deleteCurrentModel()"><i class="fas fa-trash" style="color:#ef4444;"></i> حذف النموذج</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bar-group">
+                        <button class="btn" style="background: #4f46e5;" onclick="loadFromCloud()"><i class="fas fa-folder-open"></i> فتح نموذج</button>
+                        <button class="btn" style="background: #3b82f6;" onclick="addQuestion()"><i class="fas fa-plus"></i> سؤال جديد</button>
+                        <button class="btn" style="background: #64748b;" title="مسح الكل" onclick="clearAllQuestions()"><i class="fas fa-eraser"></i></button>
+                    </div>
+                </div>
+
+                <div class="search-result-box">
+                    <label style="display: block; font-weight: bold; color: #0284c7; margin-bottom: 8px;"><i class="fas fa-search"></i> استعلام ومراجعة درجات الطلاب حسب النموذج (خاص بـ ${activeTeacherName}):</label>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <select id="teacherModelSelect" class="input-field" style="flex: 1; margin: 0;">
+                            <option value="">-- اختر النموذج المطلوب استعراضه --</option>
+                        </select>
+                        <button class="btn" style="background: #0284c7; padding: 10px 20px;" onclick="teacherSearchByModel()"><i class="fas fa-search"></i> استعراض النتائج</button>
+                    </div>
+                </div>
+
+                <div class="array-import-box">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label style="font-weight: bold; color: #0284c7;"><i class="fas fa-file-code"></i> مصفوفة الأسئلة البرمجية (تتحدث وتُحفظ تلقائياً):</label>
+                        <button class="btn" style="background:#10b981; padding:6px 12px; font-size:0.8rem;" onclick="copyArrayCode()"><i class="fas fa-copy"></i> نسخ المصفوفة</button>
+                    </div>
+                    <textarea id="arrayInputText" class="array-textarea" placeholder="[ { t: '...', q: '...', ... } ]"></textarea>
+                    <button class="btn" style="background:#0284c7; width:100%; justify-content:center;" onclick="importArrayQuestions()"><i class="fas fa-magic"></i> توليد وتوزيع الأسئلة تلقائياً</button>
+                </div>
+
+                <div id="quiz-builder-content"></div>
             `;
+            initExamPlatform();
         } else if(tab === 'classes') {
+            // الأيقونة الثالثة: إدارة الفصول والطلاب
             content.innerHTML = `
                 <h2>📚 إدارة فصول وطلاب (${activeTeacherName})</h2>
                 <div style="background:#f8fafc; padding:15px; border-radius:10px; margin-bottom:15px;">
@@ -419,7 +543,7 @@
         document.getElementById('teacherScreen').style.display = 'block';
     }
 
-    // تفعيل وتحديث لوحة التحليل الذكي الخاصة بالمعلم بسحابته وتصفية نتائجه
+    // دوال الأيقونة الأولى: التحليل الذكي
     let tUnsubscribe = null;
     let tSelectedModel = 'all';
     let tGlobalData = [];
@@ -427,7 +551,6 @@
     function initTeacherDashboardData() {
         if(tUnsubscribe) tUnsubscribe();
 
-        // تحديث الساعة الفعلية
         setInterval(() => {
             const now = new Date();
             const clockEl = document.getElementById('teacher-clock');
@@ -443,7 +566,6 @@
 
             snapshot.forEach(docSnap => {
                 const d = docSnap.data();
-                // تصفية النتائج الخاصة بهذا المعلم فقط بناءً على إيميله
                 if(d.teacherEmail === activeTeacherEmail || !d.teacherEmail) {
                     tGlobalData.push({ id: docSnap.id, ...d });
                     foundModels.add(d.model_id || "النموذج الرئيسي");
@@ -470,7 +592,6 @@
     function renderTeacherTable() {
         let scores = [], rows = "";
         let levels = { exc: 0, vgood: 0, good: 0, acc: 0, weak: 0 };
-        let skillsSums = { est: 0, ikm: 0, swh: 0, arb: 0, sah: 0, math: 0 };
         let studentCount = 0;
         let studentsList = [];
 
@@ -555,7 +676,568 @@
         }
     }
 
-    // دوال الفصول
+    // =========================================
+    // دوال الأيقونة الثانية: منصة الاختبارات المتقدمة
+    // =========================================
+    function toggleExamDropdown(event) {
+        event.stopPropagation();
+        const wrapper = document.getElementById('mainActionsDropdown');
+        wrapper.classList.toggle('active');
+    }
+
+    window.addEventListener('click', function() {
+        const wrapper = document.getElementById('mainActionsDropdown');
+        if (wrapper) wrapper.classList.remove('active');
+    });
+
+    function initExamPlatform() {
+        populateTeacherModelDropdown();
+        addQuestion();
+    }
+
+    function addQuestion(data = null) {
+        const container = document.getElementById('quiz-builder-content');
+        if(!container) return;
+        const card = document.createElement('div');
+        card.className = `question-card`;
+
+        const qTextVal = data ? (data.text || "") : "";
+        const qTextAreaVal = data ? (data.text_area || "") : "";
+        const correctAnsVal = data ? (data.ans || "") : "";
+        const selectedType = data ? (data.qType || data.type || "اختر الإجابة الصحيحة") : "اختر الإجابة الصحيحة";
+        const qScoreVal = data && data.score !== undefined ? data.score : 1;
+
+        card.innerHTML = `
+            <div class="card-meta">
+                <span class="q-number-badge"></span>
+                <select class="type-select" onchange="changeQuestionType(this);">
+                    <option value="اختر الإجابة الصحيحة" ${selectedType === 'اختر الإجابة الصحيحة' ? 'selected' : ''}>اختر الإجابة الصحيحة (٤ خيارات)</option>
+                    <option value="صح وخطأ" ${selectedType === 'صح وخطأ' ? 'selected' : ''}>صح وخطأ</option>
+                    <option value="سؤال مزاوجة (توصيل)" ${selectedType === 'سؤال مزاوجة (توصيل)' || selectedType === 'k_matching' ? 'selected' : ''}>سؤال مزاوجة (توصيل)</option>
+                    <option value="عددّد (نقاط متعددة)" ${selectedType === 'عددّد (نقاط متعددة)' ? 'selected' : ''}>عددّد (نقاط متعددة)</option>
+                    <option value="استخرج من النص" ${selectedType === 'استخرج من النص' || selectedType === 'k_extract' ? 'selected' : ''}>استخرج من النص</option>
+                    <option value="أكمل/أعرب/مثل" ${['أكمل/أعرب/مثل','k_fill','k_irab','k_sentence'].includes(selectedType) ? 'selected' : ''}>أكمل/أعرب/مثل</option>
+                    <option value="عرّف" ${selectedType === 'عرّف' ? 'selected' : ''}>عرّف</option>
+                    <option value="اذكر" ${selectedType === 'اذكر' ? 'selected' : ''}>اذكر</option>
+                    <option value="صحح الخطأ" ${selectedType === 'صحح الخطأ' ? 'selected' : ''}>صحح الخطأ</option>
+                </select>
+                <i class="fas fa-times-circle" style="color:#cbd5e1; cursor:pointer; font-size:1.3rem;" onclick="this.closest('.question-card').remove();updateQuestionNumbers();saveExamQuestions();"></i>
+            </div>
+            <div class="q-area">
+                ${selectedType === 'استخرج من النص' ? `<div class="estieab-box" contenteditable="true" oninput="saveExamQuestions()">${qTextAreaVal || "أدخل النص المراد الاستخراج منه هنا..."}</div>` : ''}
+                <textarea class="q-text-input q-main" placeholder="اكتب السؤال هنا..." oninput="saveExamQuestions();">${qTextVal}</textarea>
+            </div>
+            <div class="ans-grid-area">${renderOptionsByType(selectedType, data)}</div>
+            <div class="correct-ans-box" style="display:flex;">
+                <input type="text" placeholder="${selectedType.includes('مزاوجة') ? 'مفتاح الإجابة الصحيحة (مثال: 2 1 3)' : 'الإجابة الصحيحة'}" class="correct-input ans-val" value="${correctAnsVal}" oninput="saveExamQuestions()">
+                <div style="display:${selectedType.includes('مزاوجة') ? 'none' : 'flex'}; align-items:center; gap:5px; white-space:nowrap;">
+                    <span style="font-size:0.85rem; font-weight:bold; color:#166534;">درجة السؤال:</span>
+                    <input type="number" min="0.5" step="0.5" class="q-score-input" value="${qScoreVal}" oninput="saveExamQuestions()" title="درجة السؤال الكلية">
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+        updateQuestionNumbers();
+        saveExamQuestions();
+    }
+
+    function changeQuestionType(selectEl) {
+        const card = selectEl.closest('.question-card');
+        const type = selectEl.value;
+        const qArea = card.querySelector('.q-area');
+        
+        if (type === 'استخرج من النص') {
+            if (!card.querySelector('.estieab-box')) {
+                const estBox = document.createElement('div');
+                estBox.className = 'estieab-box';
+                estBox.contentEditable = 'true';
+                estBox.innerText = 'أدخل النص المراد الاستخراج منه هنا...';
+                estBox.oninput = saveExamQuestions;
+                qArea.insertBefore(estBox, qArea.firstChild);
+            }
+        } else {
+            const estBox = card.querySelector('.estieab-box');
+            if (estBox) estBox.remove();
+        }
+
+        const ansArea = card.querySelector('.ans-grid-area');
+        ansArea.innerHTML = renderOptionsByType(type, null);
+
+        const correctInputBox = card.querySelector('.correct-input');
+        if (correctInputBox) {
+            correctInputBox.placeholder = (type.includes('مزاوجة')) ? 'مفتاح الإجابة الصحيحة (مثال: 2 1 3)' : 'الإجابة الصحيحة';
+        }
+
+        const scoreContainer = card.querySelector('.q-score-input')?.closest('div');
+        if (scoreContainer) {
+            scoreContainer.style.display = (type.includes('مزاوجة')) ? 'none' : 'flex';
+        }
+
+        saveExamQuestions();
+    }
+
+    function renderOptionsByType(type, data) {
+        if (type === 'صح وخطأ') {
+            return `<div class="options-grid">
+                <div class="opt-pair-row"><input type="text" class="opt-word opt" readonly value="صح" style="text-align:center;"></div>
+                <div class="opt-pair-row"><input type="text" class="opt-word opt" readonly value="خطأ" style="text-align:center;"></div>
+            </div>`;
+        } else if (type === 'سؤال مزاوجة (توصيل)' || type === 'k_matching') {
+            let leftOpts = data?.opts || data?.matchA || ['', ''];
+            let rightOpts = data?.rightOpts || data?.matchB || ['', ''];
+            let subScores = data?.subScores || data?.matchScores || leftOpts.map(() => 1);
+
+            let leftHtml = `<div class="matching-box"><h4 style="margin:0 0 10px; color:var(--royal-blue); font-size:1rem;">الفقرات (العمود الأول):</h4>`;
+            leftOpts.forEach((item, idx) => {
+                let subScoreVal = subScores[idx] !== undefined ? subScores[idx] : 1;
+                leftHtml += `<div class="matching-row">
+                    <input type="text" class="opt opt-left input-field" value="${item}" placeholder="فقرة ${idx+1}" oninput="saveExamQuestions()" style="margin:0;">
+                    <input type="number" min="0.5" step="0.5" class="sub-score-input" value="${subScoreVal}" oninput="saveExamQuestions()" title="درجة هذه الفقرة">
+                </div>`;
+            });
+            leftHtml += `<div style="margin-top:10px; display:flex; gap:8px;">
+                <button type="button" class="btn" style="background:#3b82f6; padding:4px 8px; font-size:0.8rem;" onclick="adjustMatchingRows(this, 'left', 1)">➕ فقرة</button>
+                <button type="button" class="btn" style="background:#ef4444; padding:4px 8px; font-size:0.8rem;" onclick="adjustMatchingRows(this, 'left', -1)">➖ حذف</button>
+            </div></div>`;
+
+            let rightHtml = `<div class="matching-box"><h4 style="margin:0 0 10px; color:var(--royal-blue); font-size:1rem;">الإجابات (العمود الثاني):</h4>`;
+            rightOpts.forEach((item, idx) => {
+                rightHtml += `<div class="matching-row">
+                    <span style="font-weight:bold; color:#0284c7;">${idx+1}.</span>
+                    <input type="text" class="opt opt-right input-field" value="${item}" placeholder="إجابة ${idx+1}" oninput="saveExamQuestions()" style="margin:0;">
+                </div>`;
+            });
+            rightHtml += `<div style="margin-top:10px; display:flex; gap:8px;">
+                <button type="button" class="btn" style="background:#3b82f6; padding:4px 8px; font-size:0.8rem;" onclick="adjustMatchingRows(this, 'right', 1)">➕ إجابة</button>
+                <button type="button" class="btn" style="background:#ef4444; padding:4px 8px; font-size:0.8rem;" onclick="adjustMatchingRows(this, 'right', -1)">➖ حذف</button>
+            </div></div>`;
+
+            return `<div class="matching-container">${leftHtml}${rightHtml}</div>`;
+        } else if (type === 'عددّد (نقاط متعددة)') {
+            let enumItems = data?.opts ? data.opts : ['', ''];
+            let subScores = data?.subScores || enumItems.map(() => 1);
+
+            let html = `<div style="width:100%; background:#f8fafc; border:1px solid #cbd5e1; padding:15px; border-radius:12px;">
+                <h4 style="margin:0 0 10px; color:var(--royal-blue);">عناصر التعداد المطلوبة:</h4>`;
+            enumItems.forEach((item, idx) => {
+                let subScoreVal = subScores[idx] !== undefined ? subScores[idx] : 1;
+                html += `<div class="enum-row">
+                    <span style="font-weight:bold; color:#0284c7;">${idx+1}.</span>
+                    <input type="text" class="enum-label-input input-field" value="${item}" placeholder="مفتاح الإجابة لهذا العنصر" oninput="saveExamQuestions()" style="margin:0;">
+                    <input type="number" min="0.5" step="0.5" class="sub-score-input" value="${subScoreVal}" oninput="saveExamQuestions()" title="درجة هذا العنصر">
+                </div>`;
+            });
+            html += `<div style="margin-top:10px; display:flex; gap:8px;">
+                <button type="button" class="btn" style="background:#3b82f6; padding:4px 8px; font-size:0.8rem;" onclick="adjustEnumRows(this, 1)">➕ عنصر</button>
+                <button type="button" class="btn" style="background:#ef4444; padding:4px 8px; font-size:0.8rem;" onclick="adjustEnumRows(this, -1)">➖ حذف</button>
+            </div></div>`;
+            return html;
+        } else if (['عرّف', 'اذكر', 'صحح الخطأ', 'استخرج من النص', 'أكمل/أعرب/مثل'].includes(type)) {
+            return `<div>
+                <label style="display:block; font-weight:bold; color:#0284c7; margin-bottom:5px;">مربع إجابة الطالب (تفاعلي للطلاب):</label>
+                <textarea class="input-field" disabled placeholder="سيكتب الطالب إجابته التحريرية هنا..."></textarea>
+            </div>`;
+        } else {
+            let opts = data?.opts ? [...data.opts] : ['', '', '', ''];
+            const labels = ['أ) ', 'ب) ', 'ج) ', 'د) '];
+            let h = '<div class="options-grid">';
+            for(let i=0; i<4; i++) {
+                h+=`<div class="opt-pair-row"><span class="opt-label">${labels[i]}</span><input type="text" class="opt-word opt" placeholder="خيار ${i+1}" value="${opts[i]||''}" oninput="saveExamQuestions()"></div>`;
+            }
+            return h + '</div>';
+        }
+    }
+
+    function adjustMatchingRows(btn, side, change) {
+        const card = btn.closest('.question-card');
+        let leftOpts = [];
+        let rightOpts = [];
+        let subScores = [];
+        card.querySelectorAll('.opt-left').forEach(i => leftOpts.push(i.value));
+        card.querySelectorAll('.sub-score-input').forEach(i => subScores.push(parseFloat(i.value) || 1));
+        card.querySelectorAll('.opt-right').forEach(i => rightOpts.push(i.value));
+
+        if (side === 'left') {
+            if (change >= 1) { leftOpts.push(''); subScores.push(1); }
+            else if (change === -1 && leftOpts.length > 1) { leftOpts.pop(); subScores.pop(); }
+        } else {
+            if (change >= 1) rightOpts.push('');
+            else if (change === -1 && rightOpts.length > 1) rightOpts.pop();
+        }
+
+        const ansArea = card.querySelector('.ans-grid-area');
+        ansArea.innerHTML = renderOptionsByType('سؤال مزاوجة (توصيل)', { opts: leftOpts, rightOpts: rightOpts, subScores: subScores });
+        saveExamQuestions();
+    }
+
+    function adjustEnumRows(btn, change) {
+        const card = btn.closest('.question-card');
+        let enumItems = [];
+        let subScores = [];
+        card.querySelectorAll('.enum-label-input').forEach(i => enumItems.push(i.value));
+        card.querySelectorAll('.sub-score-input').forEach(i => subScores.push(parseFloat(i.value) || 1));
+
+        if (change === 1) { enumItems.push(''); subScores.push(1); }
+        else if (change === -1 && enumItems.length > 1) { enumItems.pop(); subScores.pop(); }
+
+        const ansArea = card.querySelector('.ans-grid-area');
+        ansArea.innerHTML = renderOptionsByType('عددّد (نقاط متعددة)', { opts: enumItems, subScores: subScores });
+        saveExamQuestions();
+    }
+
+    function updateQuestionNumbers() { 
+        document.querySelectorAll('.q-number-badge').forEach((b, i) => b.innerText = `السؤال ${i+1}`); 
+    }
+
+    function saveExamQuestions() {
+        const qs = [];
+        const arrayItems = [];
+
+        document.querySelectorAll('.question-card').forEach(c => {
+            const qType = c.querySelector('.type-select')?.value || 'اختر الإجابة الصحيحة';
+            let opts = [];
+            let rightOpts = [];
+            let subScores = [];
+            let calculatedTotalScore = parseFloat(c.querySelector('.q-score-input')?.value) || 1;
+            let qTextArea = c.querySelector('.estieab-box')?.innerText || "";
+
+            if (qType.includes('مزاوجة')) {
+                c.querySelectorAll('.opt-left').forEach(i => opts.push(i.value));
+                c.querySelectorAll('.sub-score-input').forEach(i => subScores.push(parseFloat(i.value) || 1));
+                c.querySelectorAll('.opt-right').forEach(i => rightOpts.push(i.value));
+                calculatedTotalScore = subScores.reduce((a, b) => a + b, 0);
+            } else if (qType.includes('عددّد')) {
+                c.querySelectorAll('.enum-label-input').forEach(i => opts.push(i.value));
+                c.querySelectorAll('.sub-score-input').forEach(i => subScores.push(parseFloat(i.value) || 1));
+                calculatedTotalScore = subScores.reduce((a, b) => a + b, 0);
+            } else {
+                opts = Array.from(c.querySelectorAll('.opt')).map(i => i.value);
+            }
+
+            let d = { 
+                ans: c.querySelector('.ans-val')?.value || '',
+                qType: qType,
+                type: qType,
+                text: c.querySelector('.q-main')?.value || "", 
+                text_area: qTextArea,
+                opts: opts,
+                rightOpts: rightOpts,
+                subScores: subScores,
+                score: calculatedTotalScore
+            }; 
+            qs.push(d); 
+
+            let itemObj = { t: qType, q: d.text, ans: d.ans, score: d.score };
+            if (qTextArea) itemObj.text_area = qTextArea;
+            if (opts.length > 0) itemObj.opts = opts;
+            if (rightOpts.length > 0) itemObj.rightOpts = rightOpts;
+            if (subScores.length > 0) itemObj.subScores = subScores;
+
+            arrayItems.push(itemObj);
+        });
+
+        const textareaEl = document.getElementById('arrayInputText');
+        if (textareaEl) {
+            textareaEl.value = "const rawQuizData = " + JSON.stringify(arrayItems, null, 2) + ";";
+        }
+    }
+
+    function startNewModel() {
+        if(confirm("شروع في نموذج جديد؟ سيتم إخلاء الأسئلة الحالية.")) {
+            document.getElementById('quiz-builder-content').innerHTML = '';
+            document.getElementById('arrayInputText').value = '';
+            currentOpenModelName = null;
+            currentExamStartTime = "";
+            currentExamEndTime = "";
+            document.getElementById('current-model-label').innerText = "📁 نموذج جديد";
+            addQuestion();
+        }
+    }
+
+    async function saveToCloud() {
+        let modelNameToSave = currentOpenModelName;
+        if (!modelNameToSave) {
+            modelNameToSave = prompt("أدخل اسم النموذج لحفظه في مجلدك السحابي:");
+            if (!modelNameToSave || !modelNameToSave.trim()) return;
+            currentOpenModelName = modelNameToSave.trim();
+        }
+
+        const dataToSave = [];
+        document.querySelectorAll('.question-card').forEach(c => {
+            const qType = c.querySelector('.type-select')?.value || 'اختر الإجابة الصحيحة';
+            let opts = [], rightOpts = [], subScores = [];
+            if (qType.includes('مزاوجة')) {
+                c.querySelectorAll('.opt-left').forEach(i => opts.push(i.value));
+                c.querySelectorAll('.sub-score-input').forEach(i => subScores.push(parseFloat(i.value) || 1));
+                c.querySelectorAll('.opt-right').forEach(i => rightOpts.push(i.value));
+            } else if (qType.includes('عددّد')) {
+                c.querySelectorAll('.enum-label-input').forEach(i => opts.push(i.value));
+                c.querySelectorAll('.sub-score-input').forEach(i => subScores.push(parseFloat(i.value) || 1));
+            } else {
+                opts = Array.from(c.querySelectorAll('.opt')).map(i => i.value);
+            }
+            dataToSave.push({
+                ans: c.querySelector('.ans-val')?.value || '',
+                qType: qType,
+                text: c.querySelector('.q-main')?.value || "", 
+                text_area: c.querySelector('.estieab-box')?.innerText || "",
+                opts: opts, rightOpts: rightOpts, subScores: subScores,
+                score: parseFloat(c.querySelector('.q-score-input')?.value) || 1
+            });
+        });
+
+        try {
+            const docId = activeTeacherEmail + "_" + currentOpenModelName;
+            const docRef = window.FB_doc(window.db, "teacher_exam_models", docId);
+            await window.FB_setDoc(docRef, {
+                teacherEmail: activeTeacherEmail,
+                teacherName: activeTeacherName,
+                teacherSubject: activeTeacherSubject,
+                modelName: currentOpenModelName,
+                questions: dataToSave,
+                startTime: currentExamStartTime,
+                endTime: currentExamEndTime,
+                updatedAt: window.FB_serverTimestamp()
+            });
+
+            document.getElementById('current-model-label').innerText = `📁 ${currentOpenModelName}`;
+            alert(`تم حفظ نموذج "${currentOpenModelName}" بنجاح في مجلدك الخاص بالسحابة! 💾`);
+            populateTeacherModelDropdown();
+        } catch(e) {
+            alert("خطأ أثناء حفظ النموذج بالسحابة.");
+        }
+    }
+
+    async function loadFromCloud() {
+        const listContainer = document.getElementById('cloud-models-list');
+        listContainer.innerHTML = "<p style='text-align:center; padding:15px;'>جاري جلب نماذجك المحفوظة... ⏳</p>";
+        document.getElementById('cloud-modal').style.display = 'block';
+        document.getElementById('modal-overlay').style.display = 'block';
+
+        try {
+            const colRef = window.FB_collection(window.db, "teacher_exam_models");
+            const q = window.FB_query(colRef, window.FB_where("teacherEmail", "==", activeTeacherEmail));
+            const snap = await window.FB_getDocs(q);
+            
+            listContainer.innerHTML = "";
+            if(snap.empty) {
+                listContainer.innerHTML = "<p style='text-align:center; padding:20px; color:#64748b;'>لا توجد نماذج محفوظة ببريدك في السحابة حالياً.</p>";
+                return;
+            }
+
+            snap.forEach(docSnap => {
+                const d = docSnap.data();
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'cloud-item';
+                itemDiv.innerHTML = `
+                    <div style="font-weight:bold; color:var(--royal-blue); text-align:right; flex:1;">${d.modelName}</div>
+                    <div style="display:flex; gap:6px;">
+                        <button class="btn" style="background:#a855f7; padding:6px 12px;" onclick="openSpecificModel('${d.modelName}')">📂 فتح</button>
+                        <button class="btn" style="background:#ef4444; padding:6px 12px;" onclick="deleteSpecificModel('${d.modelName}')">🗑️ حذف</button>
+                    </div>
+                `;
+                listContainer.appendChild(itemDiv);
+            });
+        } catch(e) {
+            listContainer.innerHTML = "<p style='text-align:center; color:red;'>حدث خطأ في تحميل النماذج.</p>";
+        }
+    }
+
+    async function openSpecificModel(mName) {
+        try {
+            const docId = activeTeacherEmail + "_" + mName;
+            const docRef = window.FB_doc(window.db, "teacher_exam_models", docId);
+            const snap = await window.FB_getDoc(docRef);
+
+            if(snap.exists()) {
+                const d = snap.data();
+                currentOpenModelName = d.modelName;
+                currentExamStartTime = d.startTime || "";
+                currentExamEndTime = d.endTime || "";
+                document.getElementById('current-model-label').innerText = `📁 ${currentOpenModelName}`;
+
+                document.getElementById('quiz-builder-content').innerHTML = "";
+                if(d.questions) {
+                    d.questions.forEach(q => addQuestion(q));
+                }
+                closeModals();
+            }
+        } catch(e) { alert("حدث خطأ في فتح النموذج."); }
+    }
+
+    async function deleteSpecificModel(mName) {
+        if(confirm(`حذف النموذج "${mName}" نهائياً؟`)) {
+            try {
+                const docId = activeTeacherEmail + "_" + mName;
+                const docRef = window.FB_doc(window.db, "teacher_exam_models", docId);
+                await window.FB_deleteDoc(docRef);
+                alert("تم الحذف بنجاح!");
+                if(currentOpenModelName === mName) startNewModel();
+                loadFromCloud();
+                populateTeacherModelDropdown();
+            } catch(e) { alert("خطأ في حذف النموذج."); }
+        }
+    }
+
+    function openTimeModal() {
+        if (!currentOpenModelName) return alert("الرجاء حفظ النموذج أولاً لتحديد موعده!");
+        document.getElementById('examStartTime').value = currentExamStartTime || '';
+        document.getElementById('examEndTime').value = currentExamEndTime || '';
+        document.getElementById('time-modal').style.display = 'block';
+        document.getElementById('modal-overlay').style.display = 'block';
+    }
+
+    async function saveExamTimeSettings() {
+        currentExamStartTime = document.getElementById('examStartTime').value;
+        currentExamEndTime = document.getElementById('examEndTime').value;
+        if (currentOpenModelName) {
+            await saveToCloud();
+        }
+        closeModals();
+    }
+
+    function copyCurrentModelLink() {
+        if (!currentOpenModelName) return alert("الرجاء حفظ النموذج أولاً لتوليد رابطه!");
+        const shareUrl = `${window.location.origin}${window.location.pathname}?teacher=${encodeURIComponent(activeTeacherEmail)}&exam=${encodeURIComponent(currentOpenModelName)}`;
+        navigator.clipboard.writeText(shareUrl).then(() => {
+            alert(`تم نسخ رابط الاختبار للنموذج "${currentOpenModelName}" الخاص بطلابك بنجاح! 🔗`);
+        });
+    }
+
+    async function renameCurrentModel() {
+        if (!currentOpenModelName) return alert("النموذج جديد ولم يتم حفظه بعد!");
+        const newName = prompt(`تعديل اسم النموذج "${currentOpenModelName}":`, currentOpenModelName);
+        if (!newName || !newName.trim() || newName === currentOpenModelName) return;
+
+        const oldName = currentOpenModelName;
+        currentOpenModelName = newName.trim();
+        await saveToCloud();
+        
+        // حذف القديم
+        const docId = activeTeacherEmail + "_" + oldName;
+        await window.FB_deleteDoc(window.FB_doc(window.db, "teacher_exam_models", docId));
+        populateTeacherModelDropdown();
+    }
+
+    async function deleteCurrentModel() {
+        if (!currentOpenModelName) return;
+        deleteSpecificModel(currentOpenModelName);
+    }
+
+    function clearAllQuestions() {
+        if(confirm("مسح جميع الأسئلة؟")) {
+            document.getElementById('quiz-builder-content').innerHTML = '';
+            document.getElementById('arrayInputText').value = '';
+            addQuestion();
+        }
+    }
+
+    function copyArrayCode() {
+        const txt = document.getElementById('arrayInputText').value;
+        if(!txt) return alert("المصفوفة فارغة حالياً.");
+        navigator.clipboard.writeText(txt).then(() => alert("تم نسخ كود المصفوفة بنجاح! 📋"));
+    }
+
+    function importArrayQuestions() {
+        let rawData = document.getElementById('arrayInputText').value.trim();
+        if (!rawData) return alert("الرجاء لصق مصفوفة الأسئلة أولاً!");
+        try {
+            let cleanText = rawData.replace(/\/\/.*/g, '').replace(/^\s*(const|let|var)\s+[\w]+\s*=\s*/, '').trim();
+            let arr;
+            let start = cleanText.indexOf('[');
+            let end = cleanText.lastIndexOf(']');
+            if(start !== -1 && end !== -1) {
+                arr = eval('(' + cleanText.substring(start, end + 1) + ')');
+            } else { throw new Error("Invalid format"); }
+
+            document.getElementById('quiz-builder-content').innerHTML = '';
+            arr.forEach(item => {
+                let mappedType = "اختر الإجابة الصحيحة";
+                let itemType = (item.t || item.type || "").trim();
+
+                if (itemType.includes("صحح")) mappedType = "صحح الخطأ";
+                else if (itemType.includes("صح وخطأ")) mappedType = "صح وخطأ";
+                else if (itemType.includes("مزاوجة") || itemType.includes("توصيل")) mappedType = "سؤال مزاوجة (توصيل)";
+                else if (itemType.includes("عدد")) mappedType = "عددّد (نقاط متعددة)";
+                else if (itemType.includes("استخرج")) mappedType = "استخرج من النص";
+                else if (itemType.includes("أكمل") || itemType.includes("أعرب") || itemType.includes("مثل")) mappedType = "أكمل/أعرب/مثل";
+                else if (itemType.includes("عرّف")) mappedType = "عرّف";
+                else if (itemType.includes("اذكر")) mappedType = "اذكر";
+
+                addQuestion({ 
+                    text: item.q || item.text || "", 
+                    text_area: item.text_area || "",
+                    opts: item.opts || item.matchA || [], 
+                    rightOpts: item.rightOpts || item.matchB || [],
+                    subScores: item.subScores || item.matchScores || [],
+                    ans: item.ans || "", 
+                    qType: mappedType,
+                    score: item.score || 1
+                });
+            });
+            alert(`تم استيراد ${arr.length} سؤالاً بنجاح!`);
+        } catch (e) {
+            alert("حدث خطأ في قراءة صيغة المصفوفة.");
+        }
+    }
+
+    async function populateTeacherModelDropdown() {
+        const selectEl = document.getElementById('teacherModelSelect');
+        if (!selectEl) return;
+
+        selectEl.innerHTML = '<option value="">-- جاري التحميل... --</option>';
+        try {
+            const colRef = window.FB_collection(window.db, "teacher_exam_models");
+            const q = window.FB_query(colRef, window.FB_where("teacherEmail", "==", activeTeacherEmail));
+            const snap = await window.FB_getDocs(q);
+
+            selectEl.innerHTML = '<option value="">-- اختر النموذج المطلوب استعراضه --</option>';
+            snap.forEach(docSnap => {
+                const name = docSnap.data().modelName;
+                selectEl.innerHTML += `<option value="${name}">${name}</option>`;
+            });
+        } catch(e) {}
+    }
+
+    async function teacherSearchByModel() {
+        const selectedModel = document.getElementById('teacherModelSelect')?.value;
+        if(!selectedModel) return alert("اختر النموذج أولاً.");
+
+        const listEl = document.getElementById('history-list');
+        listEl.innerHTML = "<p style='text-align:center;'>جاري استعراض الدرجات... ⏳</p>";
+        document.getElementById('history-modal').style.display = 'block';
+        document.getElementById('modal-overlay').style.display = 'block';
+
+        try {
+            const colRef = window.FB_collection(window.db, "alkfaeat_results");
+            const q = window.FB_query(colRef, window.FB_where("teacherEmail", "==", activeTeacherEmail), window.FB_where("model_id", "==", selectedModel));
+            const snap = await window.FB_getDocs(q);
+
+            if(snap.empty) {
+                listEl.innerHTML = `<p style='text-align:center; padding:15px;'>لا توجد نتائج مسجلة لنموذج (${selectedModel}).</p>`;
+                return;
+            }
+
+            listEl.innerHTML = "";
+            snap.forEach(docSnap => {
+                const d = docSnap.data();
+                listEl.innerHTML += `
+                    <div class="cloud-item">
+                        <div style="font-weight:bold; color:var(--royal-blue);">طالب: ${d.name} | الدرجة: ${d.score} من ${d.total}</div>
+                    </div>
+                `;
+            });
+        } catch(e) { listEl.innerHTML = "خطأ في استرجاع النتائج."; }
+    }
+
+    function closeModals() { 
+        document.getElementById('cloud-modal').style.display = 'none'; 
+        document.getElementById('history-modal').style.display = 'none';
+        document.getElementById('time-modal').style.display = 'none';
+        document.getElementById('modal-overlay').style.display = 'none'; 
+    }
+
+    // دوال الفصول والطلاب
     async function createTeacherClass() {
         const cName = document.getElementById('classNameInput').value.trim();
         if(!cName) return alert("أدخل اسم الفصل");
