@@ -523,7 +523,9 @@
 
                 <div id="quiz-builder-content"></div>
             `;
-            initExamPlatform();
+            setTimeout(() => {
+                initExamPlatform();
+            }, 50);
         } else if(tab === 'classes') {
             // الأيقونة الثالثة: إدارة الفصول والطلاب
             content.innerHTML = `
@@ -682,7 +684,7 @@
     function toggleExamDropdown(event) {
         event.stopPropagation();
         const wrapper = document.getElementById('mainActionsDropdown');
-        wrapper.classList.toggle('active');
+        if(wrapper) wrapper.classList.toggle('active');
     }
 
     window.addEventListener('click', function() {
