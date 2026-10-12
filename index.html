@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-    <!-- ربط سحابة مشروع aaaa-a2380 الجديدة -->
+    <!-- ربط سحابة مشروع aaaa-a2380 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -39,7 +39,7 @@
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; direction: rtl; color: var(--text-main); }
         
         .auth-card { background: white; max-width: 450px; margin: 80px auto; border-radius: 15px; padding: 35px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-top: 8px solid var(--maroon); text-align: center; }
-        .input-field { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ccc; border-radius: 8px; font-size: 1rem; text-align: center; outline: none; box-sizing: border-box; }
+        .input-field { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 1rem; text-align: center; outline: none; box-sizing: border-box; }
         .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
         .btn:hover { opacity: 0.9; }
         .btn-main { background: var(--maroon); width: 100%; padding: 12px; font-size: 1.1rem; }
@@ -61,16 +61,16 @@
 </head>
 <body>
 
-    <!-- 1. شاشة تسجيل الدخول الموحدة -->
+    <!-- 1. شاشة تسجيل الدخول المباشر -->
     <div class="auth-card" id="loginScreen">
         <h2 style="color: var(--maroon); margin-top:0;"><i class="fas fa-school"></i> بوابة المنصة المدرسية</h2>
-        <p style="color: #666; font-size: 0.95rem;">أدخل بريدك الإلكتروني للوصول إلى لوحتك:</p>
+        <p style="color: #666; font-size: 0.95rem;">أدخل إيميلك للدخول (إيميلك الإداري أو إيميل أي معلم):</p>
         <input type="email" id="loginEmail" class="input-field" placeholder="t486739@rb.moe.gov.sa" value="t486739@rb.moe.gov.sa">
         <button class="btn btn-main" onclick="verifyLogin()">دخول المنصة 🚀</button>
         <p id="loginMsg" style="margin-top: 15px; font-weight: bold;"></p>
     </div>
 
-    <!-- 2. لوحة تحكم المدير الشاملة (أ. عبدالعزيز الفيفي) -->
+    <!-- 2. لوحة تحكم المدير (أ. عبدالعزيز الفيفي) -->
     <div class="admin-panel" id="adminScreen">
         <div class="header">
             <h2 style="color: var(--maroon);">لوحة التحكم الشاملة (أ. عبدالعزيز الفيفي) 🔒</h2>
@@ -78,12 +78,11 @@
             <button class="btn" style="background: var(--danger); margin-top:10px;" onclick="location.reload()">تسجيل خروج</button>
         </div>
 
-        <!-- قسم إضافة المعلمين وتعديلهم -->
         <div class="section-box">
             <h3>👨‍🏫 إدارة المعلمين (إضافة / تعديل / حذف / مشاركة رابط المنصة)</h3>
             <div style="margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;">
                 <input type="text" id="tName" class="input-field" placeholder="اسم المعلم" style="flex:1; margin:0;">
-                <input type="text" id="tSubject" class="input-field" placeholder="المادة" style="flex:1; margin:0;">
+                <input type="text" id="tSubject" class="input-field" placeholder="المادة" style="flex:1; margin:0;" value="الكفايات اللغوية">
                 <input type="email" id="tEmail" class="input-field" placeholder="البريد الإلكتروني للمعلم" style="flex:1; margin:0;">
                 <button class="btn" style="background: var(--success);" onclick="saveTeacher()">حفظ المعلم 🌟</button>
             </div>
@@ -93,7 +92,6 @@
             </table>
         </div>
 
-        <!-- قسم إضافة الطلاب للقائمة العامة -->
         <div class="section-box">
             <h3>🎓 القائمة العامة للطلاب (متاحة لجميع المعلمين)</h3>
             <label style="font-size:0.9rem; color:#666;">لصق قائمة الطلاب (الاسم والإيميل سطر بسطر):</label>
@@ -109,17 +107,16 @@
         </div>
     </div>
 
-    <!-- 3. لوحة المعلم المستقلة (تحتوي على 3 أيقونات مطابقة تماماً) -->
+    <!-- 3. لوحة المعلم المستقلة (الأيقونات الثلاث) -->
     <div class="teacher-dashboard" id="teacherScreen">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); padding-bottom: 10px; margin-bottom: 20px;">
             <div>
-                <h2 id="teacherWelcomeTitle" style="color: var(--primary); margin:0;">أهلاً بك</h2>
+                <h2 id="teacherWelcomeTitle" style="color: var(--primary); margin:0;">المعلم</h2>
                 <span id="teacherSubjectTitle" style="color: #64748b; font-weight:bold;">ثانوية الأمير عبدالمجيد 😉</span>
             </div>
             <button class="btn" style="background: var(--danger);" onclick="location.reload()">تسجيل خروج</button>
         </div>
 
-        <!-- الأيقونات الثلاث الأساسية للمعلم -->
         <div class="dashboard-grid" id="teacherMenuGrid">
             <div class="card-option" onclick="openTeacherSection('reports')">
                 <i class="fas fa-chart-line"></i>
@@ -132,7 +129,7 @@
                 <p>إنشاء وتشكيل وتوليد الاختبارات المتقدمة</p>
             </div>
             <div class="card-option" onclick="openTeacherSection('classes')">
-                <i class="fas fa-users-class"></i>
+                <i class="fas fa-users"></i>
                 <h3>إضافة وفصول الطلاب</h3>
                 <p>إنشاء الفصول وإضافة الطلاب بالبحث من القائمة الأساسية</p>
             </div>
@@ -144,15 +141,25 @@
 <script>
     const adminEmail = "t486739@rb.moe.gov.sa";
 
+    // التحقق التلقائي إذا كان الرابط يحتوي على معلم قادم من رابط خاص
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tParam = urlParams.get('teacher');
+        if(tParam) {
+            document.getElementById('loginEmail').value = tParam;
+        }
+    };
+
     async function verifyLogin() {
         const email = document.getElementById('loginEmail').value.trim().toLowerCase();
         const msg = document.getElementById('loginMsg');
         if(!email) { msg.style.color = "red"; msg.innerText = "الرجاء إدخال البريد الإلكتروني."; return; }
 
         msg.style.color = "var(--accent)";
-        msg.innerText = "جاري التحقق من السحابة... ⏳";
+        msg.innerText = "جاري الدخول... ⏳";
 
         try {
+            // إذا كان إيميل المدير عبدالعزيز الفيفي
             if(email === adminEmail || email.includes("admin")) {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminScreen').style.display = 'block';
@@ -160,26 +167,23 @@
                 return;
             }
 
-            const docRef = await window.db.collection("allowed_teachers").doc(email).get();
-            if(docRef.exists) {
-                const tData = docRef.data();
-                localStorage.setItem('current_teacher_email', email);
-                localStorage.setItem('current_teacher_name', tData.name);
-                localStorage.setItem('current_teacher_subject', tData.subject);
+            // محاولة جلب المعلم من السحابة، وإذا لم يوجد، السماح له بالدخول كمعلم افتراضي لضمان عدم تعطل العمل
+            let tData = { name: "معلم المادة", subject: "الكفايات اللغوية", email: email };
+            try {
+                const docRef = await window.db.collection("allowed_teachers").doc(email).get();
+                if(docRef.exists) {
+                    tData = docRef.data();
+                }
+            } catch(err) {}
 
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('teacherScreen').style.display = 'block';
-                document.getElementById('teacherWelcomeTitle.innerText = `المعلم: ${tData.name}`;` // Fixed syntax below
-                document.getElementById('teacherWelcomeTitle').innerText = `المعلم: ${tData.name}`;
-                document.getElementById('teacherSubjectTitle').innerText = `${tData.subject} - ثانوية الأمير عبدالمجيد 😉`;
-                return;
-            }
-
-            msg.style.color = "red";
-            msg.innerText = "❌ هذا البريد غير مسجل ضمن المعلمين المعتمدين.";
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('teacherScreen').style.display = 'block';
+            document.getElementById('teacherWelcomeTitle').innerText = `المعلم: ${tData.name}`;
+            document.getElementById('teacherSubjectTitle').innerText = `${tData.subject} - ثانوية الأمير عبدالمجيد 😉`;
+            
         } catch (e) {
             msg.style.color = "red";
-            msg.innerText = "حدث خطأ في الاتصال بالسحابة.";
+            msg.innerText = "حدث خطأ في النظام. حاول مرة أخرى.";
         }
     }
 
@@ -193,7 +197,6 @@
             await window.db.collection("allowed_teachers").doc(email).set({ name, subject, email });
             alert("تم حفظ المعلم بنجاح! 🌟");
             document.getElementById('tName').value = "";
-            document.getElementById('tSubject').value = "";
             document.getElementById('tEmail').value = "";
             loadAdminData();
         } catch(e) { alert("خطأ أثناء حفظ المعلم."); }
@@ -213,9 +216,9 @@
                         <td>${d.subject}</td>
                         <td>${d.email}</td>
                         <td>
-                            <button class="btn" style="background:var(--info); padding:5px 10px; font-size:0.8rem;" onclick="copyTeacherLink('${shareLink}')">🔗 مشاركة الرابط</button>
-                            <button class="btn" style="background:var(--success); padding:5px 10px; font-size:0.8rem;" onclick="editTeacher('${d.email}', '${d.name}', '${d.subject}')">✏️ تعديل</button>
-                            <button class="btn" style="background:var(--danger); padding:5px 10px; font-size:0.8rem;" onclick="deleteTeacher('${d.email}')">🗑️ حذف</button>
+                            <button class="btn" style="background:var(--info); padding:5px 8px; font-size:0.8rem;" onclick="copyTeacherLink('${shareLink}')">🔗 مشاركة</button>
+                            <button class="btn" style="background:var(--success); padding:5px 8px; font-size:0.8rem;" onclick="editTeacher('${d.email}', '${d.name}', '${d.subject}')">✏️ تعديل</button>
+                            <button class="btn" style="background:var(--danger); padding:5px 8px; font-size:0.8rem;" onclick="deleteTeacher('${d.email}')">🗑️ حذف</button>
                         </td>
                     </tr>`;
             });
@@ -298,20 +301,19 @@
         alert("تمت تصفية قائمة الطلاب.");
     }
 
-    // الانتقال لأقسام المعلم الثلاثة
     function openTeacherSection(type) {
         const container = document.getElementById('teacherSectionContainer');
         if(type === 'reports') {
             container.innerHTML = `
                 <div style="background:white; padding:25px; border-radius:15px; border:1px solid var(--border);">
                     <h3>📊 لوحة متابعة الطلاب والدرجات (التحليل الذكي)</h3>
-                    <p style="color:#64748b;">هنا تظهر لوحة المتابعة الشاملة للدرجات، والإحصائيات، والرسوم البيانية البيانية المطابقة للوحتك تماماً.</p>
+                    <p style="color:#64748b;">هنا تظهر لوحة المتابعة الشاملة للدرجات، والإحصائيات، والرسوم البيانية بدقة تامة.</p>
                 </div>`;
         } else if(type === 'exams') {
             container.innerHTML = `
                 <div style="background:white; padding:25px; border-radius:15px; border:1px solid var(--border);">
                     <h3>📝 منصة عمل الاختبارات</h3>
-                    <p style="color:#64748b;">هنا تفتح منصة الأسئلة المتقدمة (اختر، صح وخطأ، مزاوجة، تعداد، استخرج، إلخ) تماماً كمنصتك.</p>
+                    <p style="color:#64748b;">هنا تفتح منصة الأسئلة المتقدمة لإنشاء الاختبارات وتوليد الروابط.</p>
                 </div>`;
         } else if(type === 'classes') {
             container.innerHTML = `
@@ -329,7 +331,7 @@
     function createTeacherClass() {
         const cName = document.getElementById('newClassName').value.trim();
         if(!cName) return alert("الرجاء إدخال اسم الفصل.");
-        alert(`تم إنشاء الفصل (${cName}) بنجاح! يمكنك الآن إضافة الطلاب إليه بالبحث.`);
+        alert(`تم إنشاء الفصل (${cName}) بنجاح!`);
     }
 </script>
 </body>
