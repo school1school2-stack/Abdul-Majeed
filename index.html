@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المنصة المدرسية الشاملة - نظام المعلمين المستقلين</title>
+    <title>منصة أ. عبدالعزيز الفيفي - النسخة المعتمدة الشاملة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -111,17 +111,17 @@
 </head>
 <body>
 
-    <!-- 1. بوابة تسجيل الدخول الموحدة -->
+    <!-- 1. بوابة تسجيل الدخول الموحدة (تم تفعيل الدخول المباشر) -->
     <div class="auth-portal-card" id="loginPortal">
         <h2 style="color: var(--royal-blue); margin-top:0;"><i class="fas fa-school"></i> بوابة تسجيل الدخول للمنصة</h2>
         <p style="color: #64748b; font-size: 0.95rem;">أدخل إيميلك للوصول إلى لوحتك المخصصة:</p>
-        <input type="email" id="portalEmailInput" class="portal-input" placeholder="example@moe.gov.sa">
+        <input type="email" id="portalEmailInput" class="portal-input" placeholder="admin@moe.gov.sa" value="admin@moe.gov.sa">
         <br>
         <button class="btn" style="background: var(--royal-blue); width: 100%; padding: 14px; font-size: 1.1rem; justify-content:center;" onclick="verifyPortalLogin()">دخول المنصة 🚀</button>
         <p id="portalErrorMsg" style="margin-top: 15px; font-weight: bold; font-size: 0.9rem;"></p>
     </div>
 
-    <!-- 2. لوحة تحكم الإدارة (الطلاب المشتركون + إضافة المعلمين) -->
+    <!-- 2. لوحة تحكم الإدارة الشاملة -->
     <div class="app-screen" id="adminScreen">
         <div class="admin-box">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #d4af37; margin-bottom: 20px; padding-bottom: 10px;">
@@ -135,6 +135,7 @@
                 <div style="display: flex; gap: 10px; margin-top: 10px;">
                     <button class="btn" style="background: #800000; color: #d4af37;" onclick="superSmartBulkAdd()">رفع واعتماد الطلاب 🚀</button>
                     <button class="btn" style="background: #17a2b8;" onclick="addNewTeacherPrompt()">➕ إضافة معلم جديد للنظام</button>
+                    <button class="btn" style="background: #0284c7;" onclick="switchToTeacherView()">👁 الانتقال للوحة المعلم مباشرة</button>
                 </div>
             </div>
 
@@ -146,12 +147,17 @@
         </div>
     </div>
 
-    <!-- 3. لوحة المعلم الأصلية المطابقة تماماً (لوحتك + منصة الأسئلة كاملة) -->
+    <!-- 3. لوحة المعلم الأصلية المطابقة تماماً -->
     <div class="app-screen" id="teacherScreen">
         <div class="user-header">
             <div class="header-right"><h2 class="user-name" id="headerTeacherName">أ. عبدالعزيز الفيفي</h2></div>
             <div class="header-center"><div class="logo-box"><i class="fas fa-award"></i></div></div>
             <div class="header-left"><p class="school-name" id="headerTeacherSubject">الكفايات اللغوية - ثانوية الأمير عبدالمجيد 😉</p></div>
+        </div>
+
+        <div style="text-align: left; margin-bottom: 15px;">
+            <button class="btn" style="background: #800000;" onclick="switchToAdminView()">👑 العودة للوحة الإدارة</button>
+            <button class="btn" style="background: #c62828;" onclick="location.reload()">تسجيل خروج</button>
         </div>
 
         <div class="dashboard-container">
@@ -191,41 +197,25 @@
     </div>
 
 <script>
-    async function verifyPortalLogin() {
+    function verifyPortalLogin() {
         const email = document.getElementById('portalEmailInput').value.trim().toLowerCase();
-        const msg = document.getElementById('portalErrorMsg');
-        if(!email) { msg.style.color = "var(--q-red)"; msg.innerText = "الرجاء إدخال البريد الإلكتروني."; return; }
+        
+        // الدخول المباشر فور الضغط
+        document.getElementById('loginPortal').style.display = 'none';
+        document.getElementById('adminScreen').style.display = 'block';
+        loadAdminStudentsList();
+    }
 
-        msg.style.color = "var(--royal-blue)";
-        msg.innerText = "جاري التحقق من السحابة... ⏳";
+    function switchToTeacherView() {
+        document.getElementById('adminScreen').style.display = 'none';
+        document.getElementById('teacherScreen').style.display = 'block';
+        initTeacherDashboard();
+    }
 
-        try {
-            if(email === "admin@moe.gov.sa" || email.includes("admin")) {
-                document.getElementById('loginPortal').style.display = 'none';
-                document.getElementById('adminScreen').style.display = 'block';
-                loadAdminStudentsList();
-                return;
-            }
-
-            const docRef = window.db.collection("allowed_teachers").doc(email);
-            const docSnap = await docRef.get();
-
-            if(docSnap.exists) {
-                const data = docSnap.data();
-                document.getElementById('loginPortal').style.display = 'none';
-                document.getElementById('teacherScreen').style.display = 'block';
-                document.getElementById('headerTeacherName').innerText = data.name;
-                document.getElementById('headerTeacherSubject').innerText = data.subject + " - ثانوية الأمير عبدالمجيد 😉";
-                initTeacherDashboard();
-                return;
-            }
-
-            msg.style.color = "var(--q-red)";
-            msg.innerText = "❌ هذا البريد غير مسجل ضمن المعلمين المعتمدين.";
-        } catch(e) {
-            msg.style.color = "var(--q-red)";
-            msg.innerText = "حدث خطأ أثناء الاتصال بالسحابة.";
-        }
+    function switchToAdminView() {
+        document.getElementById('teacherScreen').style.display = 'none';
+        document.getElementById('adminScreen').style.display = 'block';
+        loadAdminStudentsList();
     }
 
     async function addNewTeacherPrompt() {
@@ -238,7 +228,7 @@
 
         try {
             await window.db.collection("allowed_teachers").doc(email).set({ name, subject, email });
-            alert("تم إضافة المعلم بنجاح وأصبح بإمكانه فتح لوحته!");
+            alert("تم إضافة المعلم بنجاح!");
         } catch(e) { alert("حدث خطأ أثناء الحفظ."); }
     }
 
