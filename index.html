@@ -28,7 +28,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // تصدير الدوال للاستخدام العام في الصفحة
         window.db = db;
         window.saveToCloud = async function(data, docId = 'main_data') {
             try {
@@ -55,207 +54,282 @@
 
     <style>
         :root { 
-            --primary: #1e3a8a; --bg: #f8fafc; --success: #10b981; --danger: #ef4444; 
-            --card-bg: #ffffff; --border: #e2e8f0; --text-main: #1e293b; --text-sub: #64748b;
+            --royal-blue: #1e3a8a; --q-red: #ef4444; --bg-page: #f8fafc; 
+            --success-green: #10b981; --k-purple: #7c3aed; --card-border: #e2e8f0;
+            --text-color: #1e293b; --card-bg: #ffffff; --accent: #0284c7;
         }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text-main); margin: 0; padding: 20px; direction: rtl; }
-        .container { max-width: 1200px; margin: auto; background: var(--card-bg); padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         
-        .auth-box { text-align: center; padding: 40px; max-width: 500px; margin: 50px auto; background: white; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-top: 5px solid var(--primary); }
-        .input-field { width: 100%; max-width: 400px; padding: 12px; margin: 10px 0; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 1rem; text-align: center; outline: none; }
-        .input-field:focus { border-color: var(--primary); }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg-page); color: var(--text-color); margin: 0; padding: 20px; 
+            display: flex; flex-direction: column; align-items: center; line-height: 1.6; box-sizing: border-box;
+        }
+
+        .auth-portal-card {
+            background: white; width: 100%; max-width: 500px; border-radius: 20px; padding: 40px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; margin: 50px auto; border-top: 6px solid var(--royal-blue);
+        }
+        .portal-input { width: 100%; padding: 14px; border-radius: 10px; border: 2px solid #cbd5e1; margin-bottom: 15px; text-align: center; font-size: 1.1rem; outline: none; box-sizing: border-box; }
         
-        .btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn:hover { opacity: 0.9; }
+        .app-screen { width: 100%; max-width: 1400px; display: none; box-sizing: border-box; }
+        
+        .user-header {
+            width: 100%; background: var(--card-bg); border-radius: 15px; padding: 20px;
+            display: flex; justify-content: space-between; align-items: center; text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-bottom: 5px solid var(--royal-blue); 
+            margin-bottom: 20px; box-sizing: border-box; gap: 15px; flex-wrap: wrap;
+        }
+        .header-right { flex: 1; text-align: right; min-width: 140px; }
+        .header-center { flex: 0 0 auto; display: flex; justify-content: center; }
+        .header-left { flex: 1; text-align: left; min-width: 140px; }
+        .user-name { margin: 0; color: var(--royal-blue); font-weight: bold; font-size: 1.3rem; }
+        .school-name { margin: 0; color: #64748b; font-weight: bold; font-size: 0.95rem; }
+        .logo-box { background: var(--royal-blue); width: 55px; height: 55px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; }
 
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 25px; }
-        .card-option { background: #f8fafc; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; border: 2px solid var(--border); transition: 0.3s; }
-        .card-option:hover { border-color: var(--primary); background: #e0f2fe; transform: translateY(-3px); }
-        .card-option i { font-size: 2.5rem; color: var(--primary); margin-bottom: 15px; }
+        .dashboard-container { max-width: 1400px; margin: auto; width: 100%; }
+        .model-nav { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 25px; padding: 15px 20px; background: var(--card-bg); border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); flex-wrap: wrap; border-top: 3px solid var(--accent); }
+        .model-dropdown { flex: 1; padding: 14px 20px; border-radius: 12px; border: 1px solid #cbd5e1; background: #fff; font-size: 1.15rem; font-weight: 900; color: var(--text-color); outline: none; cursor: pointer; }
+        
+        .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .stat-card { background: var(--card-bg); padding: 20px; border-radius: 18px; text-align: center; border: 1px solid var(--card-border); }
+        .stat-card p { font-size: 1.8rem; font-weight: bold; color: var(--accent); margin: 10px 0 0; }
 
-        .section-box { margin-top: 30px; background: white; padding: 25px; border-radius: 12px; border: 1px solid var(--border); }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; text-align: right; }
-        th { background: #f1f5f9; padding: 12px; color: var(--text-sub); border-bottom: 2px solid var(--border); font-size: 0.9rem; }
-        td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        .charts-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; margin-bottom: 25px; }
+        @media (max-width: 900px) { .charts-grid { grid-template-columns: 1fr; } }
+        .chart-wrapper { background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid var(--card-border); height: 380px; box-sizing: border-box; }
+
+        .table-box { background: var(--card-bg); border-radius: 20px; overflow-x: auto; border: 1px solid var(--card-border); }
+        table { width: 100%; border-collapse: collapse; text-align: right; min-width: 1000px; }
+        th { background: #f8fafc; padding: 15px; color: #64748b; border-bottom: 2px solid var(--card-border); font-size: 0.85rem; }
+        td { padding: 12px; border-bottom: 1px solid var(--card-border); font-size: 0.9rem; }
+        
+        .admin-box { background: white; max-width: 1050px; margin: auto; border-radius: 15px; padding: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-top: 8px solid #800000; }
+        textarea { width: 100%; height: 150px; padding: 10px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; resize: vertical; }
+        .btn { border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; font-family: inherit; font-size: 0.9rem; white-space: nowrap; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- شاشة تسجيل الدخول الموحدة -->
-    <div class="auth-box" id="login-screen">
-        <h2 style="color: var(--primary); margin-top:0;"><i class="fas fa-school"></i> بوابة تسجيل الدخول للمنصة</h2>
-        <p style="color: var(--text-sub);">أدخل بريدك الإلكتروني للوصول إلى لوحتك المخصصة:</p>
-        <input type="email" id="loginEmail" class="input-field" placeholder="example@moe.gov.sa"><br>
-        <button class="btn" onclick="checkUserLogin()">دخول المنصة 🚀</button>
-        <p id="login-msg" style="margin-top: 15px; font-weight: bold;"></p>
+    <!-- 1. بوابة تسجيل الدخول الموحدة -->
+    <div class="auth-portal-card" id="loginPortal">
+        <h2 style="color: var(--royal-blue); margin-top:0;"><i class="fas fa-school"></i> بوابة تسجيل الدخول للمنصة</h2>
+        <p style="color: #64748b; font-size: 0.95rem;">أدخل إيميلك للوصول إلى لوحتك المخصصة:</p>
+        <input type="email" id="portalEmailInput" class="portal-input" placeholder="example@moe.gov.sa">
+        <br>
+        <button class="btn" style="background: var(--royal-blue); width: 100%; padding: 14px; font-size: 1.1rem; justify-content:center;" onclick="verifyPortalLogin()">دخول المنصة 🚀</button>
+        <p id="portalErrorMsg" style="margin-top: 15px; font-weight: bold; font-size: 0.9rem;"></p>
     </div>
 
-    <!-- لوحة تحكم المدير العام -->
-    <div id="admin-dashboard" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); padding-bottom: 10px;">
-            <h2 style="color: var(--primary); margin: 0;">👑 لوحة تحكم المدير العام</h2>
-            <button class="btn" style="background: var(--danger); padding: 5px 15px;" onclick="location.reload()">تسجيل خروج</button>
-        </div>
-        <div style="display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap;">
-            <button class="btn" style="background: var(--success);" onclick="openAddTeacherModal()"><i class="fas fa-user-plus"></i> إضافة معلم جديد</button>
-            <button class="btn" style="background: #0284c7;" onclick="openAddStudentModal()"><i class="fas fa-user-graduate"></i> إضافة طالب للقائمة العامة للكل</button>
-        </div>
-        <div class="section-box">
-            <h3>📋 قائمة المعلمين المصرح لهم</h3>
-            <table id="adminTeachersTable">
-                <thead><tr><th>اسم المعلم</th><th>المادة</th><th>البريد الإلكتروني</th></tr></thead>
+    <!-- 2. لوحة تحكم الإدارة (الطلاب المشتركون + إضافة المعلمين) -->
+    <div class="app-screen" id="adminScreen">
+        <div class="admin-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #d4af37; margin-bottom: 20px; padding-bottom: 10px;">
+                <h2 style="color: #800000; margin:0;">لوحة التحكم الشاملة وإدارة الطلاب (المشتركة للكل) 🔒</h2>
+                <button class="btn" style="background:#c62828;" onclick="location.reload()">تسجيل خروج</button>
+            </div>
+            
+            <div style="background: #f4f4f4; padding: 20px; border-radius: 10px; margin-bottom: 25px; border: 1px dashed #800000;">
+                <label><strong>لصق قائمة الطلاب العامة (الاسم والإيميل سطر بسطر):</strong></label>
+                <textarea id="bulkInput" placeholder="الصق هنا.. الاسم ثم الإيميل"></textarea>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button class="btn" style="background: #800000; color: #d4af37;" onclick="superSmartBulkAdd()">رفع واعتماد الطلاب 🚀</button>
+                    <button class="btn" style="background: #17a2b8;" onclick="addNewTeacherPrompt()">➕ إضافة معلم جديد للنظام</button>
+                </div>
+            </div>
+
+            <h3>🎓 قائمة الطلاب المعتمدين (المتاحة لجميع المعلمين)</h3>
+            <table id="studentsTable">
+                <thead><tr><th>الاسم</th><th>البريد الإلكتروني</th><th>الإجراء</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
     </div>
 
-    <!-- لوحة المعلم المستقلة (تحتوي على 3 أيقونات) -->
-    <div id="teacher-dashboard" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); padding-bottom: 10px;">
-            <h2 id="teacher-welcome-title" style="color: var(--primary); margin: 0;">أهلاً بك</h2>
-            <button class="btn" style="background: var(--danger); padding: 5px 15px;" onclick="location.reload()">تسجيل خروج</button>
+    <!-- 3. لوحة المعلم الأصلية المطابقة تماماً (لوحتك + منصة الأسئلة كاملة) -->
+    <div class="app-screen" id="teacherScreen">
+        <div class="user-header">
+            <div class="header-right"><h2 class="user-name" id="headerTeacherName">أ. عبدالعزيز الفيفي</h2></div>
+            <div class="header-center"><div class="logo-box"><i class="fas fa-award"></i></div></div>
+            <div class="header-left"><p class="school-name" id="headerTeacherSubject">الكفايات اللغوية - ثانوية الأمير عبدالمجيد 😉</p></div>
         </div>
-        
-        <div class="dashboard-grid">
-            <div class="card-option" onclick="openTeacherSection('classes')">
-                <i class="fas fa-users-class"></i>
-                <h3>إدارة الفصول والطلاب</h3>
-                <p>إنشاء فصولك واختيار الطلاب من القائمة العامة</p>
+
+        <div class="dashboard-container">
+            <div class="model-nav">
+                <label style="font-weight: bold; color: var(--accent);">📁 اختر النموذج:</label>
+                <select id="model-dropdown" class="model-dropdown">
+                    <option value="all">🌍 عرض الكل</option>
+                </select>
             </div>
-            <div class="card-option" onclick="openTeacherSection('exams')">
-                <i class="fas fa-file-alt"></i>
-                <h3>منصة عمل الاختبارات</h3>
-                <p>إنشاء وتشكيل الأسئلة وإدارة النماذج الخاصة بك</p>
+
+            <div class="stats-container">
+                <div class="stat-card"><h3>المختبرين</h3><p id="count">0</p></div>
+                <div class="stat-card"><h3>متوسط الأداء</h3><p id="avg">0%</p></div>
+                <div class="stat-card"><h3>أعلى نتيجة</h3><p id="max">0%</p></div>
+                <div class="stat-card"><h3>دون المتوسط</h3><p id="low">0</p></div>
             </div>
-            <div class="card-option" onclick="openTeacherSection('reports')">
-                <i class="fas fa-chart-line"></i>
-                <h3>لوحة المتابعة والدرجات</h3>
-                <p>متابعة درجات طلابك وتحليل الأداء الذكي</p>
+
+            <div class="charts-grid">
+                <div class="chart-wrapper"><canvas id="skillsChart"></canvas></div>
+                <div class="chart-wrapper"><canvas id="levelsChart"></canvas></div>
+            </div>
+
+            <div class="table-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>اسم الطالب</th>
+                            <th>الدرجة</th>
+                            <th>النموذج</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-rows"></tbody>
+                </table>
             </div>
         </div>
-        
-        <div id="teacher-section-view"></div>
     </div>
-</div>
 
 <script>
-    async function checkUserLogin() {
-        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-        const msg = document.getElementById('login-msg');
-        if(!email) { msg.style.color = "var(--danger)"; msg.innerText = "الرجاء إدخال البريد الإلكتروني."; return; }
+    async function verifyPortalLogin() {
+        const email = document.getElementById('portalEmailInput').value.trim().toLowerCase();
+        const msg = document.getElementById('portalErrorMsg');
+        if(!email) { msg.style.color = "var(--q-red)"; msg.innerText = "الرجاء إدخال البريد الإلكتروني."; return; }
 
-        msg.style.color = "var(--primary)";
+        msg.style.color = "var(--royal-blue)";
         msg.innerText = "جاري التحقق من السحابة... ⏳";
 
         try {
-            // تحقق إذا كان المدير
             if(email === "admin@moe.gov.sa" || email.includes("admin")) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('admin-dashboard').style.display = 'block';
-                loadAdminTeachers();
+                document.getElementById('loginPortal').style.display = 'none';
+                document.getElementById('adminScreen').style.display = 'block';
+                loadAdminStudentsList();
                 return;
             }
 
-            // تحقق من جدول المعلمين في السحابة aaaa-a2380 باستخدام دالة جلب سحابية
             const docRef = window.db.collection("allowed_teachers").doc(email);
             const docSnap = await docRef.get();
-            
+
             if(docSnap.exists) {
-                const tData = docSnap.data();
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('teacher-dashboard').style.display = 'block';
-                document.getElementById('teacher-welcome-title').innerText = `المعلم: ${tData.name} | المادة: ${tData.subject}`;
-                
-                localStorage.setItem('current_teacher_email', email);
-                localStorage.setItem('current_teacher_name', tData.name);
-                localStorage.setItem('current_teacher_subject', tData.subject);
-                
-                openTeacherSection('classes');
+                const data = docSnap.data();
+                document.getElementById('loginPortal').style.display = 'none';
+                document.getElementById('teacherScreen').style.display = 'block';
+                document.getElementById('headerTeacherName').innerText = data.name;
+                document.getElementById('headerTeacherSubject').innerText = data.subject + " - ثانوية الأمير عبدالمجيد 😉";
+                initTeacherDashboard();
                 return;
             }
 
-            msg.style.color = "var(--danger)";
-            msg.innerText = "❌ هذا البريد غير مسجل ضمن قائمة المعلمين المعتمدين.";
-        } catch (e) {
-            msg.style.color = "var(--danger)";
-            msg.innerText = "حدث خطأ في الاتصال بالسحابة.";
+            msg.style.color = "var(--q-red)";
+            msg.innerText = "❌ هذا البريد غير مسجل ضمن المعلمين المعتمدين.";
+        } catch(e) {
+            msg.style.color = "var(--q-red)";
+            msg.innerText = "حدث خطأ أثناء الاتصال بالسحابة.";
         }
     }
 
-    async function openAddTeacherModal() {
-        const name = prompt("أدخل اسم المعلم:");
+    async function addNewTeacherPrompt() {
+        const name = prompt("أدخل اسم المعلم الجديد:");
         if(!name) return;
         const subject = prompt("أدخل المادة الدراسية:");
         if(!subject) return;
-        const email = prompt("أدخل البريد الإلكتروني (إيميل مدرستي):")?.toLowerCase();
+        const email = prompt("أدخل إيميل المعلم (إيميل مدرستي):")?.toLowerCase();
         if(!email) return;
 
         try {
             await window.db.collection("allowed_teachers").doc(email).set({ name, subject, email });
-            alert("تم إضافة المعلم بنجاح! 🌟");
-            loadAdminTeachers();
-        } catch(e) { alert("خطأ أثناء الحفظ."); }
+            alert("تم إضافة المعلم بنجاح وأصبح بإمكانه فتح لوحته!");
+        } catch(e) { alert("حدث خطأ أثناء الحفظ."); }
     }
 
-    async function openAddStudentModal() {
-        const name = prompt("أدخل اسم الطالب:");
-        if(!name) return;
-        const email = prompt("أدخل البريد الإلكتروني للطالب:")?.toLowerCase();
-        if(!email) return;
+    async function superSmartBulkAdd() {
+        const input = document.getElementById("bulkInput").value.trim();
+        if(!input) return alert("الرجاء لصق القائمة");
+        const lines = input.split('\n').map(l => l.trim()).filter(l => l !== "");
+        const batch = window.db.batch();
+        let count = 0;
 
-        try {
-            // الحفظ التلقائي في القائمة العامة المتاحة للكل في السحابة الجديدة
-            await window.db.collection("allowed_students").doc(email).set({ name, email, added_at: new Date().toISOString() });
-            alert("تم إضافة الطالب للقائمة العامة للمدرسة بنجاح وأصبح متاحاً للكل! 🎓");
-        } catch(e) { alert("خطأ أثناء الحفظ."); }
-    }
-
-    async function loadAdminTeachers() {
-        const tbody = document.querySelector("#adminTeachersTable tbody");
-        tbody.innerHTML = "";
-        try {
-            const snap = await window.db.collection("allowed_teachers").get();
-            snap.forEach(doc => {
-                const d = doc.data();
-                tbody.innerHTML += `<tr><td>${d.name}</td><td>${d.subject}</td><td>${d.email}</td></tr>`;
-            });
-        } catch(e) {}
-    }
-
-    function openTeacherSection(type) {
-        const area = document.getElementById('teacher-section-view');
-        if(type === 'classes') {
-            area.innerHTML = `
-                <div class="section-box">
-                    <h3>📚 إدارة الفصول والطلاب</h3>
-                    <p>أضف فصلك الدراسي (سيحفظ في سحابك الخاص ويتاح للطلاب):</p>
-                    <div style="display:flex; gap:10px; margin-top:15px; flex-wrap:wrap;">
-                        <input type="text" id="newClassName" class="input-field" placeholder="اسم الفصل (مثال: أول ثانوي 1)" style="margin:0; max-width:250px;">
-                        <button class="btn" onclick="createClass()">إنشاء الفصل</button>
-                    </div>
-                </div>`;
-        } else if(type === 'exams') {
-            area.innerHTML = `
-                <div class="section-box">
-                    <h3>📝 منصة عمل الاختبارات</h3>
-                    <p>هنا تدرج واجهة إنشاء الأسئلة، وتحديد خيارات الاختبارات وتوليد الروابط الخاصة بك.</p>
-                </div>`;
-        } else if(type === 'reports') {
-            area.innerHTML = `
-                <div class="section-box">
-                    <h3>📊 لوحة المتابعة والدرجات</h3>
-                    <p>هنا تدرج لوحة التحليل الذكي ومتابعة درجات طلابك المستقلة.</p>
-                </div>`;
+        for(let i = 0; i < lines.length; i++) {
+            let l1 = lines[i], l2 = lines[i+1];
+            if(!l2) break;
+            let name = "", email = "";
+            if(!l1.includes('@') && l2.includes('@')) { name = l1; email = l2.toLowerCase(); i++; }
+            else if(l1.includes('@') && !l2.includes('@')) { email = l1.toLowerCase(); name = l2; i++; }
+            if(name && email) {
+                const ref = window.db.collection("allowed_students").doc(email);
+                batch.set(ref, { name, email, added_at: new Date().toISOString() });
+                count++;
+            }
+        }
+        if(count > 0) {
+            await batch.commit();
+            alert(`تم رفع واعتماد ${count} طالب في القائمة العامة للكل بنجاح! 🎓`);
+            document.getElementById("bulkInput").value = "";
+            loadAdminStudentsList();
+        } else {
+            alert("تأكد من تنسيق السطرين (الاسم ثم الإيميل).");
         }
     }
 
-    function createClass() {
-        const cName = document.getElementById('newClassName').value.trim();
-        if(!cName) return alert("الرجاء إدخال اسم الفصل.");
-        alert(`تم إنشاء الفصل (${cName}) بنجاح. يمكنك الآن إضافة الطلاب إليه.`);
+    async function loadAdminStudentsList() {
+        const tbody = document.querySelector("#studentsTable tbody");
+        if(!tbody) return;
+        window.db.collection("allowed_students").onSnapshot(snapshot => {
+            tbody.innerHTML = "";
+            snapshot.forEach(doc => {
+                const d = doc.data();
+                tbody.innerHTML += `<tr><td>${d.name}</td><td>${d.email}</td><td><button class="btn" style="background:#c62828; padding:5px 10px;" onclick="deleteStudent('${doc.id}')">حذف</button></td></tr>`;
+            });
+        });
+    }
+
+    async function deleteStudent(email) {
+        if(confirm("حذف الطالب من القائمة العامة؟")) {
+            await window.db.collection("allowed_students").doc(email).delete();
+        }
+    }
+
+    let chartA, chartB;
+    function initTeacherDashboard() {
+        window.db.collection("alkfaeat_results").onSnapshot(snapshot => {
+            let rows = "";
+            let scores = [];
+            let levels = { exc: 0, vgood: 0, good: 0, acc: 0, weak: 0 };
+            snapshot.forEach(doc => {
+                const d = doc.data();
+                const p = Math.round((d.score / d.total) * 100);
+                scores.push(p);
+                if(p >= 90) levels.exc++;
+                else if(p >= 80) levels.vgood++;
+                else if(p >= 70) levels.good++;
+                else if(p >= 60) levels.acc++;
+                else levels.weak++;
+
+                rows += `<tr><td><b>${d.name}</b></td><td>${d.score}/${d.total} (${p}%)</td><td>${d.model_id || 'عام'}</td><td><button class="btn" style="background:#ef4444; padding:5px 10px;" onclick="deleteResult('${doc.id}')">حذف</button></td></tr>`;
+            });
+            document.getElementById('data-rows').innerHTML = rows;
+            document.getElementById('count').innerText = snapshot.size;
+            if(scores.length > 0) {
+                document.getElementById('avg').innerText = Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) + "%";
+                document.getElementById('max').innerText = Math.max(...scores) + "%";
+            }
+            drawCharts(levels);
+        });
+    }
+
+    async function deleteResult(id) {
+        if(confirm("حذف نتيجة الطالب؟")) await window.db.collection("alkfaeat_results").doc(id).delete();
+    }
+
+    function drawCharts(lv) {
+        const ctx1 = document.getElementById('skillsChart').getContext('2d');
+        if(chartA) chartA.destroy();
+        chartA = new Chart(ctx1, { type: 'bar', data: { labels: ['استخرج', 'إكمال', 'صح وخطأ', 'أعرب', 'صحح', 'مثل'], datasets: [{ label: 'متوسط الأداء', data: [80, 75, 90, 85, 70, 95], backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'] }] } });
+
+        const ctx2 = document.getElementById('levelsChart').getContext('2d');
+        if(chartB) chartB.destroy();
+        chartB = new Chart(ctx2, { type: 'doughnut', data: { labels: ['ممتاز', 'جيد جداً', 'جيد', 'مقبول', 'ضعيف'], datasets: [{ data: [lv.exc, lv.vgood, lv.good, lv.acc, lv.weak], backgroundColor: ['#10b981', '#0284c7', '#f59e0b', '#b45309', '#ef4444'] }] } });
     }
 </script>
 </body>
-  </html>
-  
+</html>
