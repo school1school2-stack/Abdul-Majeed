@@ -122,17 +122,17 @@
             <div class="card-option" onclick="openTeacherSection('reports')">
                 <i class="fas fa-chart-line"></i>
                 <h3>متابعة الطلاب والدرجات</h3>
-                <p>لوحة تحليل الأداء والرسوم البيانية المطابقة تماماً</p>
+                <p>لوحة تحليل الأداء والرسوم البيانية الخاصة بي</p>
             </div>
             <div class="card-option" onclick="openTeacherSection('exams')">
                 <i class="fas fa-file-alt"></i>
                 <h3>منصة عمل الاختبارات</h3>
-                <p>إنشاء وتشكيل وتوليد الاختبارات المتقدمة</p>
+                <p>إنشاء وتشكيل وتوليد الاختبارات المتقدمة الخاصة بي</p>
             </div>
             <div class="card-option" onclick="openTeacherSection('classes')">
                 <i class="fas fa-users"></i>
                 <h3>إضافة وفصول الطلاب</h3>
-                <p>إنشاء الفصول وإضافة الطلاب بالبحث من القائمة الأساسية</p>
+                <p>إنشاء فصولي الخاصة وإدارة طلابي بحرية تامة</p>
             </div>
         </div>
 
@@ -141,6 +141,7 @@
 
 <script>
     const adminEmail = "t486739@rb.moe.gov.sa";
+    let currentTeacherEmail = "";
 
     window.onload = function() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -166,6 +167,7 @@
                 return;
             }
 
+            currentTeacherEmail = email;
             let tData = { name: "معلم المادة", subject: "الكفايات اللغوية", email: email };
             try {
                 const docRef = doc(window.db, "allowed_teachers", email);
@@ -205,8 +207,7 @@
             document.getElementById('tEmail').value = "";
             loadAdminData();
         } catch(e) {
-            console.error(e);
-            alert("خطأ أثناء حفظ المعلم. تأكد من قواعد الأمان في Firebase.");
+            alert("خطأ أثناء حفظ المعلم.");
         }
     }
 
@@ -230,7 +231,7 @@
                         </td>
                     </tr>`;
             });
-        } catch(e) { console.error(e); }
+        } catch(e) {}
 
         const sTbody = document.querySelector("#studentsTable tbody");
         window.FirestoreFunctions.onSnapshot(window.FirestoreFunctions.collection(window.db, "allowed_students"), (snapshot) => {
@@ -262,18 +263,14 @@
 
     async function deleteTeacher(email) {
         if(confirm("حذف المعلم؟")) {
-            try {
-                await window.FirestoreFunctions.deleteDoc(doc(window.db, "allowed_teachers", email));
-                loadAdminData();
-            } catch(e) { alert("خطأ أثناء الحذف."); }
+            await window.FirestoreFunctions.deleteDoc(doc(window.db, "allowed_teachers", email));
+            loadAdminData();
         }
     }
 
     async function deleteStudent(email) {
         if(confirm("حذف الطالب من القائمة العامة؟")) {
-            try {
-                await window.FirestoreFunctions.deleteDoc(doc(window.db, "allowed_students", email));
-            } catch(e) { alert("خطأ أثناء الحذف."); }
+            await window.FirestoreFunctions.deleteDoc(doc(window.db, "allowed_students", email));
         }
     }
 
@@ -290,11 +287,9 @@
             if(!l1.includes('@') && l2.includes('@')) { name = l1; email = l2.toLowerCase(); i++; }
             else if(l1.includes('@') && !l2.includes('@')) { email = l1.toLowerCase(); name = l2; i++; }
             if(name && email) {
-                try {
-                    const ref = doc(window.db, "allowed_students", email);
-                    await window.FirestoreFunctions.setDoc(ref, { name, email, added_at: new Date().toISOString() });
-                    count++;
-                } catch(err) { console.error(err); }
+                const ref = doc(window.db, "allowed_students", email);
+                await window.FirestoreFunctions.setDoc(ref, { name, email, added_at: new Date().toISOString() });
+                count++;
             }
         }
         if(count > 0) {
@@ -307,46 +302,172 @@
 
     async function deleteAllStudents() {
         if(!confirm("تحذير: مسح جميع الطلاب المعتمدين؟")) return;
-        try {
-            const querySnapshot = await window.FirestoreFunctions.getDocs(window.FirestoreFunctions.collection(window.db, "allowed_students"));
-            for (const documentSnapshot of querySnapshot.docs) {
-                await window.FirestoreFunctions.deleteDoc(documentSnapshot.ref);
-            }
-            alert("تمت تصفية قائمة الطلاب.");
-        } catch(e) { alert("خطأ أثناء مسح الطلاب."); }
+        const querySnapshot = await window.FirestoreFunctions.getDocs(window.FirestoreFunctions.collection(window.db, "allowed_students"));
+        for (const documentSnapshot of querySnapshot.docs) {
+            await window.FirestoreFunctions.deleteDoc(documentSnapshot.ref);
+        }
+        alert("تمت تصفية قائمة الطلاب.");
     }
 
+    // أقسام لوحة المعلم الثلاثة المستقلة تماماً سحابياً
     function openTeacherSection(type) {
         const container = document.getElementById('teacherSectionContainer');
         if(type === 'reports') {
             container.innerHTML = `
                 <div style="background:white; padding:25px; border-radius:15px; border:1px solid var(--border);">
-                    <h3>📊 لوحة متابعة الطلاب والدرجات (التحليل الذكي)</h3>
-                    <p style="color:#64748b;">هنا تظهر لوحة المتابعة الشاملة للدرجات، والإحصائيات، والرسوم البيانية بدقة تامة.</p>
+                    <h3>📊 لوحة متابعة الطلاب والدرجات (الخاصة بي)</h3>
+                    <p style="color:#64748b;">هنا تظهر لوحة المتابعة والتحليل الخاصة بدرجات طلابك المسجلين فقط.</p>
                 </div>`;
         } else if(type === 'exams') {
             container.innerHTML = `
                 <div style="background:white; padding:25px; border-radius:15px; border:1px solid var(--border);">
-                    <h3>📝 منصة عمل الاختبارات</h3>
-                    <p style="color:#64748b;">هنا تفتح منصة الأسئلة المتقدمة لإنشاء الاختبارات وتوليد الروابط.</p>
+                    <h3>📝 منصة عمل الاختبارات الخاصة بي</h3>
+                    <p style="color:#64748b;">أنشئ اختباراتك واربطها بنطاقك السحابي المستقل.</p>
                 </div>`;
         } else if(type === 'classes') {
             container.innerHTML = `
                 <div style="background:white; padding:25px; border-radius:15px; border:1px solid var(--border);">
-                    <h3>📚 إضافة وفصول الطلاب</h3>
-                    <p>أنشئ فصلك الدراسي، وابحث عن أسماء الطلاب لإضافتهم مباشرة من القائمة الأساسية العامة للمدرسة:</p>
-                    <div style="display:flex; gap:10px; margin-top:15px;">
-                        <input type="text" id="newClassName" class="input-field" placeholder="اسم الفصل (مثال: أول ثانوي 1)" style="margin:0; max-width:300px;">
+                    <h3>📚 إدارة فصولي وطلاب الفصول</h3>
+                    <div style="display:flex; gap:10px; margin-top:15px; flex-wrap:wrap;">
+                        <input type="text" id="newClassName" class="input-field" placeholder="اسم الفصل (مثال: أول ثانوي 1)" style="margin:0; flex:1;">
                         <button class="btn" style="background:var(--primary);" onclick="createTeacherClass()">إنشاء الفصل 📁</button>
                     </div>
+                    <div id="teacherClassesList" style="margin-top:20px;"></div>
                 </div>`;
+            loadTeacherClasses();
         }
     }
 
-    function createTeacherClass() {
+    async function createTeacherClass() {
         const cName = document.getElementById('newClassName').value.trim();
         if(!cName) return alert("الرجاء إدخال اسم الفصل.");
-        alert(`تم إنشاء الفصل (${cName}) بنجاح!`);
+        
+        try {
+            const classId = cName.replace(/\s+/g, '_');
+            const classRef = doc(window.db, `teacher_data_${currentTeacherEmail.replace(/[@.]/g, '_')}`, `class_${classId}`);
+            await window.FirestoreFunctions.setDoc(classRef, { className: cName, students: [] });
+            alert(`تم إنشاء الفصل (${cName}) بنجاح في سحابك الخاص!`);
+            document.getElementById('newClassName').value = "";
+            loadTeacherClasses();
+        } catch(e) { alert("حدث خطأ أثناء إنشاء الفصل."); }
+    }
+
+    async function loadTeacherClasses() {
+        const listDiv = document.getElementById('teacherClassesList');
+        if(!listDiv) return;
+        listDiv.innerHTML = "<p>جاري تحميل فصولك الدراسية...</p>";
+
+        try {
+            const colRef = window.FirestoreFunctions.collection(window.db, `teacher_data_${currentTeacherEmail.replace(/[@.]/g, '_')}`);
+            const snapshot = await window.FirestoreFunctions.getDocs(colRef);
+            listDiv.innerHTML = "";
+            if(snapshot.empty) {
+                listDiv.innerHTML = "<p style='color:#666;'>لا توجد فصول مضافة حتى الآن. قم بإنشاء فصل جديد بالأعلى.</p>";
+                return;
+            }
+
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                if(!data.className) return;
+                
+                let studentsHtml = "";
+                if(data.students && data.students.length > 0) {
+                    data.students.forEach((st, idx) => {
+                        studentsHtml += `<tr><td>${st.name}</td><td>${st.email}</td><td><button class="btn" style="background:var(--danger); padding:2px 6px; font-size:0.75rem;" onclick="removeStudentFromClass('${docSnap.id}', '${st.email}')">حذف</button></td></tr>`;
+                    });
+                } else {
+                    studentsHtml = `<tr><td colspan="3" style="color:#888;">لا يوجد طلاب في هذا الفصل حالياً</td></tr>`;
+                }
+
+                listDiv.innerHTML += `
+                    <div style="background:#f8fafc; border:1px solid var(--border); padding:15px; border-radius:10px; margin-bottom:15px;">
+                        <h4 style="margin-top:0; color:var(--maroon);">${data.className}</h4>
+                        <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+                            <button class="btn" style="background:var(--success); font-size:0.8rem;" onclick="addStudentFromGlobalList('${docSnap.id}')">➕ إضافة من القائمة العامة</button>
+                            <button class="btn" style="background:var(--info); font-size:0.8rem;" onclick="addNewStudentDirectly('${docSnap.id}')">✨ إضافة طالب جديد (وتسجيله بالعامة)</button>
+                        </div>
+                        <table>
+                            <thead><tr><th>اسم الطالب</th><th>البريد الإلكتروني</th><th>إجراء</th></tr></thead>
+                            <tbody>${studentsHtml}</tbody>
+                        </table>
+                    </div>`;
+            });
+        } catch(e) { listDiv.innerHTML = "<p style='color:red;'>خطأ في جلب الفصول.</p>"; }
+    }
+
+    async function addStudentFromGlobalList(classDocId) {
+        try {
+            const globalSnap = await window.FirestoreFunctions.getDocs(window.FirestoreFunctions.collection(window.db, "allowed_students"));
+            if(globalSnap.empty) return alert("القائمة العامة فارغة حالياً.");
+            
+            let optionsStr = "اختر رقماً من القائمة العامة للطلاب:\n";
+            let studentsArr = [];
+            let i = 1;
+            globalSnap.forEach(s => {
+                let d = s.data();
+                studentsArr.push(d);
+                optionsStr += `${i++}. ${d.name} (${d.email})\n`;
+            });
+
+            let choice = prompt(optionsStr);
+            if(!choice) return;
+            let idx = parseInt(choice) - 1;
+            if(isNaN(idx) || idx < 0 || idx >= studentsArr.length) return alert("اختيار غير صالح.");
+
+            let selectedStudent = studentsArr[idx];
+            const classRef = doc(window.db, `teacher_data_${currentTeacherEmail.replace(/[@.]/g, '_')}`, classDocId);
+            const classSnap = await window.FirestoreFunctions.getDoc(classRef);
+            if(classSnap.exists()) {
+                let currentStudents = classSnap.data().students || [];
+                if(currentStudents.some(s => s.email === selectedStudent.email)) return alert("الطالب مضاف مسبقاً في هذا الفصل.");
+                currentStudents.push(selectedStudent);
+                await window.FirestoreFunctions.updateDoc(classRef, { students: currentStudents });
+                alert("تم إضافة الطالب للفصل بنجاح!");
+                loadTeacherClasses();
+            }
+        } catch(e) { alert("حدث خطأ أثناء الإضافة."); }
+    }
+
+    async function addNewStudentDirectly(classDocId) {
+        let name = prompt("أدخل اسم الطالب الجديد:");
+        if(!name) return;
+        let email = prompt("أدخل البريد الإلكتروني للطالب:");
+        if(!email) return;
+        email = email.trim().toLowerCase();
+
+        try {
+            // حفظ الطالب في القائمة العامة للمدرسة تلقائياً
+            const globalRef = doc(window.db, "allowed_students", email);
+            await window.FirestoreFunctions.setDoc(globalRef, { name, email, added_at: new Date().toISOString() });
+
+            // إضافة الطالب للفصل الخاص بمعلمك
+            const classRef = doc(window.db, `teacher_data_${currentTeacherEmail.replace(/[@.]/g, '_')}`, classDocId);
+            const classSnap = await window.FirestoreFunctions.getDoc(classRef);
+            if(classSnap.exists()) {
+                let currentStudents = classSnap.data().students || [];
+                if(!currentStudents.some(s => s.email === email)) {
+                    currentStudents.push({ name, email });
+                    await window.FirestoreFunctions.updateDoc(classRef, { students: currentStudents });
+                }
+                alert("تم إضافة الطالب وحفظه في القائمة العامة وفصلك بنجاح! 🌟");
+                loadTeacherClasses();
+            }
+        } catch(e) { alert("حدث خطأ أثناء الحفظ."); }
+    }
+
+    async function removeStudentFromClass(classDocId, studentEmail) {
+        if(!confirm("إزالة الطالب من هذا الفصل؟")) return;
+        try {
+            const classRef = doc(window.db, `teacher_data_${currentTeacherEmail.replace(/[@.]/g, '_')}`, classDocId);
+            const classSnap = await window.FirestoreFunctions.getDoc(classRef);
+            if(classSnap.exists()) {
+                let currentStudents = classSnap.data().students || [];
+                let updatedStudents = currentStudents.filter(s => s.email !== studentEmail);
+                await window.FirestoreFunctions.updateDoc(classRef, { students: updatedStudents });
+                alert("تمت إزالة الطالب من الفصل.");
+                loadTeacherClasses();
+            }
+        } catch(e) { alert("خطأ أثناء الإزالة."); }
     }
 </script>
 </body>
