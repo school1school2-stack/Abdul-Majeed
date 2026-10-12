@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة المعلم الشاملة - أ. عبدالعزيز الفيفي</title>
+    <title>منصة أ. عبدالعزيز الفيفي - النسخة المعتمدة الشاملة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -23,12 +23,13 @@
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, Arial; 
             background: var(--bg-page); color: var(--text-color); margin: 0; padding: 20px; 
-            display: flex; flex-direction: column; align-items: center; line-height: 1.6; box-sizing: border-box;
+            display: flex; flex-direction: column; align-items: center; line-height: 1.6;
+            box-sizing: border-box;
         }
 
         .auth-card {
             background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 20px; padding: 40px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; box-sizing: border-box; margin-top: 50px; border-top: 8px solid var(--royal-blue);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; box-sizing: border-box; margin-top: 40px; border-top: 8px solid var(--royal-blue);
         }
         .auth-input { width: 100%; padding: 15px; border-radius: 10px; border: 2px solid #cbd5e1; margin-bottom: 15px; text-align: center; font-size: 1.1rem; outline: none; box-sizing: border-box; font-family: inherit; }
 
@@ -44,7 +45,7 @@
         .btn { border: none; padding: 10px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; font-family: inherit; font-size: 0.95rem; }
         .btn:hover { opacity: 0.9; }
 
-        /* تنسيقات لوحة التحليل الذكي (الأيقونة الأولى) */
+        /* تنسيقات لوحة التحليل الذكي والأيقونات والجدول */
         .model-nav { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 25px; padding: 15px 20px; background: #fff; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); flex-wrap: wrap; border-top: 3px solid var(--accent); }
         .model-dropdown { flex: 1; padding: 12px 20px; border-radius: 12px; border: 1px solid #cbd5e1; background: #f1f5f9; font-size: 1.1rem; font-weight: bold; outline: none; cursor: pointer; }
         .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px; }
@@ -52,23 +53,22 @@
         .stat-card p { font-size: 1.8rem; font-weight: bold; color: var(--accent); margin: 10px 0 0; }
         .charts-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; margin-bottom: 25px; }
         .chart-wrapper { background: #fff; padding: 20px; border-radius: 20px; border: 1px solid var(--card-border); height: 380px; box-sizing: border-box; }
-        table { width: 100%; border-collapse: collapse; text-align: right; }
-        th { background: #f8fafc; padding: 12px; border-bottom: 2px solid var(--card-border); font-size: 0.85rem; }
+        table { width: 100%; border-collapse: collapse; text-align: right; min-width: 800px; }
+        th { background: #f8fafc; padding: 12px; border-bottom: 2px solid var(--card-border); font-size: 0.85rem; text-align: center; }
         td { padding: 12px; border-bottom: 1px solid var(--card-border); font-size: 0.9rem; text-align: center; }
-
-        /* تنسيقات منصة الاختبارات (الأيقونة الثانية) */
-        .exam-builder-wrap { background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid var(--card-border); }
-        .question-card-builder { background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; border: 2px solid var(--card-border); position: relative; }
-        .question-card-builder::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 6px; background: var(--royal-blue); border-radius: 0 10px 10px 0; }
-        .q-text-input { width: 100%; min-height: 55px; padding: 10px; border: 2px solid #cbd5e1; border-radius: 10px; font-weight: bold; font-size: 1rem; margin-bottom: 12px; outline: none; text-align: right; box-sizing: border-box; font-family: inherit; }
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .opt-pair-row { display: flex; align-items: center; background: #fff; border: 1px solid #d1d5db; border-radius: 8px; padding: 8px 12px; gap: 8px; }
-        .opt-word { width: 100%; border: none; outline: none; font-weight: bold; background: transparent; text-align: right; font-family: inherit; font-size: 1rem; }
+        
+        .top-action-bar { width: 100%; background: #1e293b; border-radius: 15px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; box-sizing: border-box; gap: 12px; flex-wrap: wrap; }
+        .question-card { background: var(--card-bg); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 2px solid var(--card-border); position: relative; text-align: right; }
+        .question-card::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: var(--k-purple); border-radius: 0 10px 10px 0; }
+        .q-text-input { width: 100%; min-height: 60px; padding: 12px; border: 2px solid #cbd5e1; border-radius: 12px; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px; outline: none; text-align: right; box-sizing: border-box; font-family: inherit; background: rgba(0,0,0,0.02); resize: none; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .opt-pair-row { display: flex; align-items: center; background: var(--card-bg); border: 1.5px solid #d1d5db; border-radius: 10px; padding: 12px; gap: 8px; }
+        .opt-word { width: 100%; border: none; outline: none; font-weight: bold; background: transparent; text-align: right; font-family: inherit; font-size: 1.05rem; }
     </style>
 </head>
 <body>
 
-    <!-- شاشة تسجيل الدخول بإيميل المعلم -->
+    <!-- شاشة تسجيل دخول المعلم بإيميله (عزل سحابي تام) -->
     <div class="auth-card" id="loginScreen">
         <h2 style="color: var(--royal-blue); margin-top: 0;"><i class="fas fa-school"></i> منصة المعلم المعتمدة 🎓</h2>
         <p style="color: #64748b; font-size: 0.95rem;">أدخل إيميلك المعتمد للدخول إلى سحابتك الخاصة:</p>
@@ -78,7 +78,7 @@
         <p id="loginMsg" style="margin-top: 15px; font-weight: bold;"></p>
     </div>
 
-    <!-- لوحة التحكم الرئيسية للمعلم (الثلاث أيقونات) -->
+    <!-- لوحة المعلم الرئيسية (الثلاث أيقونات المطابقة لكودك تماماً) -->
     <div class="teacher-hub" id="teacherHub">
         <div class="hub-header">
             <div>
@@ -100,14 +100,14 @@
                 <p style="color: #64748b; font-size: 0.95rem;">إنشاء اختبارات جديدة، صياغة الأسئلة، تحديد الأوقات، وتوليد روابط الطلاب.</p>
             </div>
             <div class="card-option" onclick="openSection('classes')">
-                <i class="fas fa-users-class" style="font-size: 3rem; color: var(--royal-blue); margin-bottom: 15px;"></i>
+                <i class="fas fa-users" style="font-size: 3rem; color: var(--royal-blue); margin-bottom: 15px;"></i>
                 <h3>إدارة وفصول الطلاب</h3>
                 <p style="color: #64748b; font-size: 0.95rem;">إنشاء الفصول الدراسية، إضافة الطلاب، وإدارتهم بكل إتقان.</p>
             </div>
         </div>
     </div>
 
-    <!-- القسم الأول: لوحة التحليل الذكي -->
+    <!-- الأيقونة الأولى: لوحة التحليل الذكي -->
     <div class="section-view" id="sectionAnalytics">
         <button class="btn" style="background: #64748b; margin-bottom: 20px;" onclick="backToHub()"><i class="fas fa-arrow-right"></i> عودة للقائمة الرئيسية</button>
         <div class="model-nav">
@@ -132,23 +132,23 @@
         <div style="background: white; border-radius: 15px; overflow-x: auto; border: 1px solid var(--card-border);">
             <table>
                 <thead>
-                    <tr><th>اسم الطالب</th><th>الدرجة</th><th>النسبة</th><th>النموذج</th></tr>
+                    <tr><th>اسم الطالب</th><th>البريد الإلكتروني</th><th>الدرجة</th><th>النسبة</th><th>النموذج</th></tr>
                 </thead>
                 <tbody id="analyticsTableRows"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- القسم الثاني: منصة عمل الاختبارات -->
+    <!-- الأيقونة الثانية: منصة عمل الاختبارات الكامِلة -->
     <div class="section-view" id="sectionExams">
         <button class="btn" style="background: #64748b; margin-bottom: 20px;" onclick="backToHub()"><i class="fas fa-arrow-right"></i> عودة للقائمة الرئيسية</button>
-        <div class="exam-builder-wrap">
+        <div style="background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid var(--card-border);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                <h2 style="color: var(--royal-blue); margin: 0;">📝 منصة عمل الاختبارات الخاصة بي</h2>
+                <h2 style="color: var(--royal-blue); margin: 0;">📝 منصة عمل الاختبارات ونماذج الأسئلة</h2>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button class="btn" style="background: #3b82f6;" onclick="addExamQuestion()"><i class="fas fa-plus"></i> إضافة سؤال</button>
-                    <button class="btn" style="background: var(--success-green);" onclick="saveExamToCloud()"><i class="fas fa-save"></i> حفظ بالسحابة 💾</button>
-                    <button class="btn" style="background: #06b6d4;" onclick="copyExamLink()"><i class="fas fa-link"></i> نسخ رابط الطلاب 🔗</button>
+                    <button class="btn" style="background: var(--success-green);" onclick="saveExamToCloud()"><i class="fas fa-save"></i> حفظ في سحابتي 💾</button>
+                    <button class="btn" style="background: #06b6d4;" onclick="copyExamLink()"><i class="fas fa-link"></i> رابط الطلاب 🔗</button>
                 </div>
             </div>
             <div style="margin-bottom: 20px;">
@@ -158,14 +158,14 @@
         </div>
     </div>
 
-    <!-- القسم الثالث: إدارة وفصول الطلاب -->
+    <!-- الأيقونة الثالثة: إدارة وفصول الطلاب -->
     <div class="section-view" id="sectionClasses">
         <button class="btn" style="background: #64748b; margin-bottom: 20px;" onclick="backToHub()"><i class="fas fa-arrow-right"></i> عودة للقائمة الرئيسية</button>
-        <h2 style="color: var(--royal-blue); margin-top: 0;">📚 إدارة فصول وطلاب المادة</h2>
+        <h2 style="color: var(--royal-blue); margin-top: 0;">📚 إضافة فصول وادراج طلاب</h2>
         <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--card-border);">
             <h4 style="margin: 0 0 10px 0; color: var(--royal-blue);">إضافة فصل دراسي جديد:</h4>
             <input type="text" id="newClassName" class="auth-input" placeholder="اسم الفصل (مثال: أول ثانوي 1)" style="max-width: 300px; display: inline-block; margin-left: 10px; margin-bottom: 0;">
-            <button class="btn" style="background: var(--royal-blue);" onclick="createClassroom()">إنشاء فصل 📁</button>
+            <button class="btn" style="background: var(--royal-blue);" onclick="createClassroom()">إنشاء الفصل 📁</button>
         </div>
         <div id="teacherClassesList"></div>
     </div>
@@ -220,18 +220,16 @@
             document.getElementById('teacherHub').style.display = 'block';
         }
 
-        // --- دوال الأيقونة الأولى (التحليل الذكي) ---
+        // --- لوحة التحليل الذكي ---
         function initAnalyticsDashboard() {
             setInterval(() => {
                 const now = new Date();
                 document.getElementById('analyticsClock').innerHTML = `🕒 ${now.toLocaleDateString('ar-SA')} | ${now.toLocaleTimeString('ar-SA')}`;
             }, 1000);
-
             loadAnalyticsData('all');
         }
 
         async function loadAnalyticsData(selectedModel) {
-            const teacherKey = currentTeacherEmail.replace(/[.#$\/\[\]]/g, '_');
             try {
                 const snap = await fsDb.collection("teacher_results")
                     .where("teacherEmail", "==", currentTeacherEmail).get();
@@ -247,7 +245,6 @@
                     }
                 });
 
-                // تحديث قائمة النماذج المنسدلة
                 const dropdown = document.getElementById('analyticsModelDropdown');
                 let optionsHtml = '<option value="all">🌍 عرض الكل</option>';
                 modelsSet.forEach(m => { optionsHtml += `<option value="${m}">📂 ${m}</option>`; });
@@ -258,9 +255,7 @@
             } catch(e) {}
         }
 
-        function filterAnalyticsModel(val) {
-            loadAnalyticsData(val);
-        }
+        function filterAnalyticsModel(val) { loadAnalyticsData(val); }
 
         function renderAnalyticsTableAndStats(results) {
             let scores = [], rows = "";
@@ -278,13 +273,14 @@
 
                 rows += `<tr>
                     <td><b>${d.studentName}</b></td>
+                    <td>${d.studentEmail}</td>
                     <td style="color:var(--accent); font-weight:bold;">${d.score} / ${d.total}</td>
                     <td>${pct}%</td>
                     <td>${d.model_id || 'النموذج الأول'}</td>
                 </tr>`;
             });
 
-            document.getElementById('analyticsTableRows').innerHTML = rows || '<tr><td colspan="4">لا توجد نتائج مسجلة لطلابك بعد.</td></tr>';
+            document.getElementById('analyticsTableRows').innerHTML = rows || '<tr><td colspan="5">لا توجد نتائج مسجلة لطلابك بعد.</td></tr>';
             document.getElementById('stCount').innerText = count;
             document.getElementById('stAvg').innerText = count > 0 ? Math.round(scores.reduce((a,b)=>a+b,0)/count) + "%" : "0%";
             document.getElementById('stMax').innerText = count > 0 ? Math.max(...scores) + "%" : "0%";
@@ -317,7 +313,7 @@
             });
         }
 
-        // --- دوال الأيقونة الثانية (منصة عمل الاختبارات) ---
+        // --- منصة عمل الاختبارات ---
         function initExamBuilder() {
             const container = document.getElementById('builderQuestionsContainer');
             container.innerHTML = "";
@@ -327,12 +323,12 @@
         function addExamQuestion(data = null) {
             const container = document.getElementById('builderQuestionsContainer');
             const card = document.createElement('div');
-            card.className = 'question-card-builder';
+            card.className = 'question-card';
             
             card.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                     <b style="color:var(--royal-blue);">سؤال جديد</b>
-                    <i class="fas fa-trash" style="color:var(--q-red); cursor:pointer;" onclick="this.closest('.question-card-builder').remove()"></i>
+                    <i class="fas fa-trash" style="color:var(--q-red); cursor:pointer;" onclick="this.closest('.question-card').remove()"></i>
                 </div>
                 <textarea class="q-text-input" placeholder="اكتب نص السؤال هنا...">${data?.text || ''}</textarea>
                 <div class="options-grid">
@@ -351,7 +347,7 @@
             const title = document.getElementById('builderExamTitle').value.trim();
             if(!title) return alert("أدخل عنوان النموذج.");
 
-            const cards = document.querySelectorAll('.question-card-builder');
+            const cards = document.querySelectorAll('.question-card');
             let questions = [];
             cards.forEach(c => {
                 const text = c.querySelector('.q-text-input').value.trim();
@@ -369,9 +365,7 @@
                     date: new Date().toLocaleString()
                 });
                 alert(`تم حفظ نموذج (${title}) في سحابنك بنجاح! 💾`);
-            } catch(e) {
-                alert("حدث خطأ أثناء الحفظ.");
-            }
+            } catch(e) { alert("حدث خطأ أثناء الحفظ."); }
         }
 
         function copyExamLink() {
@@ -381,7 +375,7 @@
             navigator.clipboard.writeText(link).then(() => alert("تم نسخ رابط اختبار الطلاب بنجاح! 🔗"));
         }
 
-        // --- دوال الأيقونة الثالثة (إدارة الفصول والطلاب) ---
+        // --- إدارة الفصول وإدراج الطلاب ---
         async function createClassroom() {
             const cName = document.getElementById('newClassName').value.trim();
             if(!cName) return alert("أدخل اسم الفصل.");
@@ -418,7 +412,7 @@
                             <div style="margin-bottom:10px;">
                                 <input type="text" id="st_name_${cKey}" placeholder="اسم الطالب" class="auth-input" style="max-width:200px; display:inline-block; margin-left:8px; margin-bottom:0; padding:8px;">
                                 <input type="email" id="st_email_${cKey}" placeholder="إيميل الطالب" class="auth-input" style="max-width:250px; display:inline-block; margin-left:8px; margin-bottom:0; padding:8px;">
-                                <button class="btn" style="background:var(--success-green); padding:8px 15px;" onclick="addStudentToClass('${cKey}')">إضافة للطالب ➕</button>
+                                <button class="btn" style="background:var(--success-green); padding:8px 15px;" onclick="addStudentToClass('${cKey}')">إدراج طالب ➕</button>
                             </div>
                             <table>
                                 <thead><tr><th>#</th><th>اسم الطالب</th><th>الإيميل</th></tr></thead>
