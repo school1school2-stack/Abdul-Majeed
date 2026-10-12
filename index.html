@@ -10,10 +10,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-    <!-- ربط سحابة مشروع aaaa-a2380 -->
+    <!-- ربط سحابة مشروع aaaa-a2380 مع التحديث السليم للدوال -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDhd5CSkNMoppGby6uKxHsQCB",
@@ -27,7 +27,16 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
         window.db = db;
+        window.FB_doc = doc;
+        window.FB_setDoc = setDoc;
+        window.FB_getDoc = getDoc;
+        window.FB_collection = collection;
+        window.FB_getDocs = getDocs;
+        window.FB_deleteDoc = deleteDoc;
+        window.FB_onSnapshot = onSnapshot;
+        window.FB_writeBatch = writeBatch;
     </script>
 
     <style>
@@ -61,10 +70,10 @@
 </head>
 <body>
 
-    <!-- 1. شاشة تسجيل الدخول المباشر -->
+    <!-- 1. شاشة تسجيل الدخول -->
     <div class="auth-card" id="loginScreen">
         <h2 style="color: var(--maroon); margin-top:0;"><i class="fas fa-school"></i> بوابة المنصة المدرسية</h2>
-        <p style="color: #666; font-size: 0.95rem;">أدخل إيميلك للدخول (إيميلك الإداري أو إيميل أي معلم):</p>
+        <p style="color: #666; font-size: 0.95rem;">أدخل إيميلك للدخول:</p>
         <input type="email" id="loginEmail" class="input-field" placeholder="t486739@rb.moe.gov.sa" value="t486739@rb.moe.gov.sa">
         <button class="btn btn-main" onclick="verifyLogin()">دخول المنصة 🚀</button>
         <p id="loginMsg" style="margin-top: 15px; font-weight: bold;"></p>
@@ -141,7 +150,6 @@
 <script>
     const adminEmail = "t486739@rb.moe.gov.sa";
 
-    // التحقق التلقائي إذا كان الرابط يحتوي على معلم قادم من رابط خاص
     window.onload = function() {
         const urlParams = new URLSearchParams(window.location.search);
         const tParam = urlParams.get('teacher');
@@ -159,7 +167,6 @@
         msg.innerText = "جاري الدخول... ⏳";
 
         try {
-            // إذا كان إيميل المدير عبدالعزيز الفيفي
             if(email === adminEmail || email.includes("admin")) {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminScreen').style.display = 'block';
@@ -167,12 +174,12 @@
                 return;
             }
 
-            // محاولة جلب المعلم من السحابة، وإذا لم يوجد، السماح له بالدخول كمعلم افتراضي لضمان عدم تعطل العمل
             let tData = { name: "معلم المادة", subject: "الكفايات اللغوية", email: email };
             try {
-                const docRef = await window.db.collection("allowed_teachers").doc(email).get();
-                if(docRef.exists) {
-                    tData = docRef.data();
+                const docRef = window.FB_doc(window.db, "allowed_teachers", email);
+                const docSnap = await window.FB_getDoc(docRef);
+                if(docSnap.exists()) {
+                    tData = docSnap.data();
                 }
             } catch(err) {}
 
@@ -194,21 +201,26 @@
         if(!name || !subject || !email) return alert("الرجاء تعبئة بيانات المعلم كاملة.");
 
         try {
-            await window.db.collection("allowed_teachers").doc(email).set({ name, subject, email });
+            const docRef = window.FB_doc(window.db, "allowed_teachers", email);
+            await window.FB_setDoc(docRef, { name, subject, email });
             alert("تم حفظ المعلم بنجاح! 🌟");
             document.getElementById('tName').value = "";
             document.getElementById('tEmail').value = "";
             loadAdminData();
-        } catch(e) { alert("خطأ أثناء حفظ المعلم."); }
+        } catch(e) { 
+            console.error(e);
+            alert("حدث خطأ أثناء حفظ المعلم في السحابة."); 
+        }
     }
 
     async function loadAdminData() {
         const tTbody = document.querySelector("#teachersTable tbody");
         tTbody.innerHTML = "";
         try {
-            const tSnap = await window.db.collection("allowed_teachers").get();
-            tSnap.forEach(doc => {
-                const d = doc.data();
+            const colRef = window.FB_collection(window.db, "allowed_teachers");
+            const tSnap = await window.FB_getDocs(colRef);
+            tSnap.forEach(docSnap => {
+                const d = docSnap.data();
                 const shareLink = `${window.location.origin}${window.location.pathname}?teacher=${encodeURIComponent(d.email)}`;
                 tTbody.innerHTML += `
                     <tr>
@@ -225,11 +237,12 @@
         } catch(e) {}
 
         const sTbody = document.querySelector("#studentsTable tbody");
-        window.db.collection("allowed_students").orderBy("name").onSnapshot(snapshot => {
+        const studentsCol = window.FB_collection(window.db, "allowed_students");
+        window.FB_onSnapshot(studentsCol, (snapshot) => {
             sTbody.innerHTML = "";
-            snapshot.forEach(doc => {
-                const d = doc.data();
-                sTbody.innerHTML += `<tr><td>${d.name}</td><td>${doc.id}</td><td><button class="btn" style="background:var(--danger); padding:4px 10px;" onclick="deleteStudent('${doc.id}')">حذف</button></td></tr>`;
+            snapshot.forEach(docSnap => {
+                const d = docSnap.data();
+                sTbody.innerHTML += `<tr><td>${d.name}</td><td>${docSnap.id}</td><td><button class="btn" style="background:var(--danger); padding:4px 10px;" onclick="deleteStudent('${docSnap.id}')">حذف</button></td></tr>`;
             });
         });
     }
@@ -245,7 +258,8 @@
         if(!newSub) return;
 
         try {
-            await window.db.collection("allowed_teachers").doc(email).update({ name: newName, subject: newSub });
+            const docRef = window.FB_doc(window.db, "allowed_teachers", email);
+            await window.FB_setDoc(docRef, { name: newName, subject: newSub, email: email }, { merge: true });
             alert("تم تحديث بيانات المعلم بنجاح!");
             loadAdminData();
         } catch(e) { alert("خطأ أثناء التحديث."); }
@@ -253,14 +267,20 @@
 
     async function deleteTeacher(email) {
         if(confirm("حذف المعلم؟")) {
-            await window.db.collection("allowed_teachers").doc(email).delete();
-            loadAdminData();
+            try {
+                const docRef = window.FB_doc(window.db, "allowed_teachers", email);
+                await window.FB_deleteDoc(docRef);
+                loadAdminData();
+            } catch(e) { alert("خطأ أثناء الحذف."); }
         }
     }
 
     async function deleteStudent(email) {
         if(confirm("حذف الطالب من القائمة العامة؟")) {
-            await window.db.collection("allowed_students").doc(email).delete();
+            try {
+                const docRef = window.FB_doc(window.db, "allowed_students", email);
+                await window.FB_deleteDoc(docRef);
+            } catch(e) { alert("خطأ أثناء الحذف."); }
         }
     }
 
@@ -268,37 +288,40 @@
         const input = document.getElementById("bulkInput").value.trim();
         if(!input) return alert("يرجى لصق قائمة الطلاب");
         const lines = input.split('\n').map(l => l.trim()).filter(l => l !== "");
-        const batch = window.db.batch();
         let count = 0;
 
-        for(let i = 0; i < lines.length; i++) {
-            let l1 = lines[i], l2 = lines[i+1];
-            if(!l2) break;
-            let name = "", email = "";
-            if(!l1.includes('@') && l2.includes('@')) { name = l1; email = l2.toLowerCase(); i++; }
-            else if(l1.includes('@') && !l2.includes('@')) { email = l1.toLowerCase(); name = l2; i++; }
-            if(name && email) {
-                const ref = window.db.collection("allowed_students").doc(email);
-                batch.set(ref, { name, email, added_at: new Date().toISOString() });
-                count++;
+        try {
+            for(let i = 0; i < lines.length; i++) {
+                let l1 = lines[i], l2 = lines[i+1];
+                if(!l2) break;
+                let name = "", email = "";
+                if(!l1.includes('@') && l2.includes('@')) { name = l1; email = l2.toLowerCase(); i++; }
+                else if(l1.includes('@') && !l2.includes('@')) { email = l1.toLowerCase(); name = l2; i++; }
+                if(name && email) {
+                    const docRef = window.FB_doc(window.db, "allowed_students", email);
+                    await window.FB_setDoc(docRef, { name, email, added_at: new Date().toISOString() });
+                    count++;
+                }
             }
-        }
-        if(count > 0) {
-            await batch.commit();
-            alert(`تم رفع واعتماد ${count} طالب في القائمة العامة بنجاح! 🎓`);
-            document.getElementById("bulkInput").value = "";
-        } else {
-            alert("تأكد من تنسيق السطرين (الاسم ثم الإيميل).");
-        }
+            if(count > 0) {
+                alert(`تم رفع واعتماد ${count} طالب في القائمة العامة بنجاح! 🎓`);
+                document.getElementById("bulkInput").value = "";
+            } else {
+                alert("تأكد من تنسيق السطرين (الاسم ثم الإيميل).");
+            }
+        } catch(e) { alert("حدث خطأ أثناء رفع الطلاب."); }
     }
 
     async function deleteAllStudents() {
         if(!confirm("تحذير: مسح جميع الطلاب المعتمدين؟")) return;
-        const snap = await window.db.collection("allowed_students").get();
-        const batch = window.db.batch();
-        snap.forEach(doc => batch.delete(doc.ref));
-        await batch.commit();
-        alert("تمت تصفية قائمة الطلاب.");
+        try {
+            const colRef = window.FB_collection(window.db, "allowed_students");
+            const snap = await window.FB_getDocs(colRef);
+            for(const docSnap of snap.docs) {
+                await window.FB_deleteDoc(docSnap.ref);
+            }
+            alert("تمت تصفية قائمة الطلاب.");
+        } catch(e) { alert("حدث خطأ أثناء الحذف."); }
     }
 
     function openTeacherSection(type) {
