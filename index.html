@@ -10,20 +10,19 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-    <!-- ربط سحابة مشروع client-management-a57b3 الحقيقية -->
+    <!-- ربط سحابة مشروع AAAA (aaaa-a2380) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyArsQ4ct7T7nLS75t_IKrSv_",
-            authDomain: "client-management-a57b3.firebaseapp.com",
-            databaseURL: "https://client-management-a57b3.firebaseio.com",
-            projectId: "client-management-a57b3",
-            storageBucket: "client-management-a57b3.firebasestorage.app",
-            messagingSenderId: "29013402535",
-            appId: "1:29013402535:web:db1c7d417e17a7adaacc82",
-            measurementId: "G-68FPK7FNG7"
+            apiKey: "AIzaSyDhd5CSkNMoppGby6uKxHsQCB",
+            authDomain: "aaaa-a2380.firebaseapp.com",
+            projectId: "aaaa-a2380",
+            storageBucket: "aaaa-a2380.firebasestorage.app",
+            messagingSenderId: "593036424543",
+            appId: "1:593036424543:web:b2f8f9e8391220ab2e72ea",
+            measurementId: "G-2161Q2Q0JQ"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -31,14 +30,13 @@
         window.db = db;
         window.FirestoreFunctions = { doc, setDoc, getDoc, collection, getDocs, deleteDoc, onSnapshot, updateDoc };
 
-        // الدوال السحابية المطلوبة لمشروع client-management
+        // الدوال السحابية المحدثة
         window.saveToCloud = async function(data, docId = 'main_data') {
             try {
-                await setDoc(doc(db, "clients_data", docId), {
+                await setDoc(doc(db, "user_data", docId), {
                     ...data,
                     updatedAt: new Date().toISOString()
                 });
-                console.log("تم حفظ البيانات في مشروع client-management بنجاح!");
                 return true;
             } catch (error) {
                 console.error("خطأ أثناء الحفظ:", error);
@@ -48,7 +46,7 @@
 
         window.loadFromCloud = async function(docId = 'main_data') {
             try {
-                const docRef = doc(db, "clients_data", docId);
+                const docRef = doc(db, "user_data", docId);
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
                     return docSnap.data();
@@ -59,15 +57,6 @@
                 console.error("خطأ أثناء الجلب:", error);
                 return null;
             }
-        };
-
-        window.syncCloudData = function(callback, docId = 'main_data') {
-            const docRef = doc(db, "clients_data", docId);
-            return onSnapshot(docRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    callback(docSnap.data());
-                }
-            });
         };
     </script>
 
@@ -148,7 +137,7 @@
         </div>
     </div>
 
-    <!-- 3. لوحة المعلم المستقلة -->
+    <!-- 3. لوحة المعلم المستقلة (الأيقونات الثلاث) -->
     <div class="teacher-dashboard" id="teacherScreen">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); padding-bottom: 10px; margin-bottom: 20px;">
             <div>
@@ -219,7 +208,7 @@
 
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('teacherScreen').style.display = 'block';
-            document.getElementById('teacherWelcomeTitle').innerText = `المعلم: ${tData.name}`;
+            document.getElementById('teacherWelcomeTitle', email).innerText = `المعلم: ${tData.name}`;
             document.getElementById('teacherSubjectTitle').innerText = `${tData.subject} - ثانوية الأمير عبدالمجيد 😉`;
             
         } catch (e) {
@@ -349,7 +338,6 @@
         alert("تمت تصفية قائمة الطلاب.");
     }
 
-    // أقسام لوحة المعلم الثلاثة المستقلة تماماً سحابياً
     function openTeacherSection(type) {
         const container = document.getElementById('teacherSectionContainer');
         if(type === 'reports') {
@@ -386,7 +374,6 @@
             const classId = cName.replace(/\s+/g, '_');
             const docIdKey = `teacher_${currentTeacherEmail.replace(/[@.]/g, '_')}_class_${classId}`;
             
-            // استخدام saveToCloud السحابية المحدثة
             await window.saveToCloud({
                 className: cName,
                 teacherEmail: currentTeacherEmail,
@@ -405,7 +392,7 @@
         listDiv.innerHTML = "<p>جاري تحميل فصولك الدراسية...</p>";
 
         try {
-            const querySnapshot = await window.FirestoreFunctions.getDocs(window.FirestoreFunctions.collection(window.db, "clients_data"));
+            const querySnapshot = await window.FirestoreFunctions.getDocs(window.FirestoreFunctions.collection(window.db, "user_data"));
             listDiv.innerHTML = "";
             let found = false;
 
@@ -413,13 +400,12 @@
                 const docId = docSnap.id;
                 const data = docSnap.data();
                 
-                // فلترة الفصول الخاصة بهذا المعلم فقط بناءً على إيميله
                 if(docId.startsWith(`teacher_${currentTeacherEmail.replace(/[@.]/g, '_')}_`) && data.className) {
                     found = true;
                     let studentsHtml = "";
                     if(data.students && data.students.length > 0) {
                         data.students.forEach((st) => {
-                            studentsHtml += `<tr><td>${st.name}</td><td>${st.email}</td><td><button class="btn" style="background:var(--danger); padding:2px 6px; font-size:0.75rem;" onclick="removeStudentFromClass('${docId}')">حذف</button></td></tr>`;
+                            studentsHtml += `<tr><td>${st.name}</td><td>${st.email}</td><td><button class="btn" style="background:var(--danger); padding:2px 6px; font-size:0.75rem;" onclick="removeStudentFromClass('${docId}', '${st.email}')">حذف</button></td></tr>`;
                         });
                     } else {
                         studentsHtml = `<tr><td colspan="3" style="color:#888;">لا يوجد طلاب في هذا الفصل حالياً</td></tr>`;
@@ -487,11 +473,9 @@
         email = email.trim().toLowerCase();
 
         try {
-            // حفظ الطالب في القائمة العامة للمدرسة تلقائياً
             const globalRef = doc(window.db, "allowed_students", email);
             await window.FirestoreFunctions.setDoc(globalRef, { name, email, added_at: new Date().toISOString() });
 
-            // إضافة الطالب للفصل الخاص بمعلمك في سحابة client-management
             const currentData = await window.loadFromCloud(docIdKey) || { students: [] };
             let currentStudents = currentData.students || [];
 
