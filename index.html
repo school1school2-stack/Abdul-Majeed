@@ -10,10 +10,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-    <!-- ربط سحابة مشروع aaaa-a2380 مع التحديث السليم للدوال -->
+    <!-- ربط سحابة مشروع aaaa-a2380 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDhd5CSkNMoppGby6uKxHsQCB",
@@ -27,16 +27,8 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-
         window.db = db;
-        window.FB_doc = doc;
-        window.FB_setDoc = setDoc;
-        window.FB_getDoc = getDoc;
-        window.FB_collection = collection;
-        window.FB_getDocs = getDocs;
-        window.FB_deleteDoc = deleteDoc;
-        window.FB_onSnapshot = onSnapshot;
-        window.FB_writeBatch = writeBatch;
+        window.FirestoreFunctions = { doc, setDoc, getDoc, collection, getDocs, deleteDoc, onSnapshot, updateDoc };
     </script>
 
     <style>
@@ -70,10 +62,10 @@
 </head>
 <body>
 
-    <!-- 1. شاشة تسجيل الدخول -->
+    <!-- 1. شاشة تسجيل الدخول المباشر -->
     <div class="auth-card" id="loginScreen">
         <h2 style="color: var(--maroon); margin-top:0;"><i class="fas fa-school"></i> بوابة المنصة المدرسية</h2>
-        <p style="color: #666; font-size: 0.95rem;">أدخل إيميلك للدخول:</p>
+        <p style="color: #666; font-size: 0.95rem;">أدخل إيميلك للدخول (إيميلك الإداري أو إيميل أي معلم):</p>
         <input type="email" id="loginEmail" class="input-field" placeholder="t486739@rb.moe.gov.sa" value="t486739@rb.moe.gov.sa">
         <button class="btn btn-main" onclick="verifyLogin()">دخول المنصة 🚀</button>
         <p id="loginMsg" style="margin-top: 15px; font-weight: bold;"></p>
@@ -116,7 +108,7 @@
         </div>
     </div>
 
-    <!-- 3. لوحة المعلم المستقلة (الأيقونات الثلاث) -->
+    <!-- 3. لوحة المعلم المستقلة -->
     <div class="teacher-dashboard" id="teacherScreen">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); padding-bottom: 10px; margin-bottom: 20px;">
             <div>
@@ -176,12 +168,12 @@
 
             let tData = { name: "معلم المادة", subject: "الكفايات اللغوية", email: email };
             try {
-                const docRef = window.FB_doc(window.db, "allowed_teachers", email);
-                const docSnap = await window.FB_getDoc(docRef);
+                const docRef = doc(window.db, "allowed_teachers", email);
+                const docSnap = await window.FirestoreFunctions.getDoc(docRef);
                 if(docSnap.exists()) {
                     tData = docSnap.data();
                 }
-            } catch(err) {}
+            } catch(err) { console.error(err); }
 
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('teacherScreen').style.display = 'block';
@@ -198,18 +190,23 @@
         const name = document.getElementById('tName').value.trim();
         const subject = document.getElementById('tSubject').value.trim();
         const email = document.getElementById('tEmail').value.trim().toLowerCase();
-        if(!name || !subject || !email) return alert("الرجاء تعبئة بيانات المعلم كاملة.");
+        
+        if(!name || !subject || !email) {
+            alert("الرجاء تعبئة بيانات المعلم كاملة.");
+            return;
+        }
 
         try {
-            const docRef = window.FB_doc(window.db, "allowed_teachers", email);
-            await window.FB_setDoc(docRef, { name, subject, email });
+            const docRef = doc(window.db, "allowed_teachers", email);
+            await window.FirestoreFunctions.setDoc(docRef, { name, subject, email });
             alert("تم حفظ المعلم بنجاح! 🌟");
             document.getElementById('tName').value = "";
+            document.getElementById('tSubject').value = "الكفايات اللغوية";
             document.getElementById('tEmail').value = "";
             loadAdminData();
-        } catch(e) { 
+        } catch(e) {
             console.error(e);
-            alert("حدث خطأ أثناء حفظ المعلم في السحابة."); 
+            alert("خطأ أثناء حفظ المعلم. تأكد من قواعد الأمان في Firebase.");
         }
     }
 
@@ -217,10 +214,9 @@
         const tTbody = document.querySelector("#teachersTable tbody");
         tTbody.innerHTML = "";
         try {
-            const colRef = window.FB_collection(window.db, "allowed_teachers");
-            const tSnap = await window.FB_getDocs(colRef);
-            tSnap.forEach(docSnap => {
-                const d = docSnap.data();
+            const querySnapshot = await window.FirestoreFunctions.getDocs(window.FirestoreFunctions.collection(window.db, "allowed_teachers"));
+            querySnapshot.forEach((documentSnapshot) => {
+                const d = documentSnapshot.data();
                 const shareLink = `${window.location.origin}${window.location.pathname}?teacher=${encodeURIComponent(d.email)}`;
                 tTbody.innerHTML += `
                     <tr>
@@ -234,11 +230,10 @@
                         </td>
                     </tr>`;
             });
-        } catch(e) {}
+        } catch(e) { console.error(e); }
 
         const sTbody = document.querySelector("#studentsTable tbody");
-        const studentsCol = window.FB_collection(window.db, "allowed_students");
-        window.FB_onSnapshot(studentsCol, (snapshot) => {
+        window.FirestoreFunctions.onSnapshot(window.FirestoreFunctions.collection(window.db, "allowed_students"), (snapshot) => {
             sTbody.innerHTML = "";
             snapshot.forEach(docSnap => {
                 const d = docSnap.data();
@@ -258,8 +253,8 @@
         if(!newSub) return;
 
         try {
-            const docRef = window.FB_doc(window.db, "allowed_teachers", email);
-            await window.FB_setDoc(docRef, { name: newName, subject: newSub, email: email }, { merge: true });
+            const docRef = doc(window.db, "allowed_teachers", email);
+            await window.FirestoreFunctions.updateDoc(docRef, { name: newName, subject: newSub });
             alert("تم تحديث بيانات المعلم بنجاح!");
             loadAdminData();
         } catch(e) { alert("خطأ أثناء التحديث."); }
@@ -268,8 +263,7 @@
     async function deleteTeacher(email) {
         if(confirm("حذف المعلم؟")) {
             try {
-                const docRef = window.FB_doc(window.db, "allowed_teachers", email);
-                await window.FB_deleteDoc(docRef);
+                await window.FirestoreFunctions.deleteDoc(doc(window.db, "allowed_teachers", email));
                 loadAdminData();
             } catch(e) { alert("خطأ أثناء الحذف."); }
         }
@@ -278,8 +272,7 @@
     async function deleteStudent(email) {
         if(confirm("حذف الطالب من القائمة العامة؟")) {
             try {
-                const docRef = window.FB_doc(window.db, "allowed_students", email);
-                await window.FB_deleteDoc(docRef);
+                await window.FirestoreFunctions.deleteDoc(doc(window.db, "allowed_students", email));
             } catch(e) { alert("خطأ أثناء الحذف."); }
         }
     }
@@ -290,38 +283,37 @@
         const lines = input.split('\n').map(l => l.trim()).filter(l => l !== "");
         let count = 0;
 
-        try {
-            for(let i = 0; i < lines.length; i++) {
-                let l1 = lines[i], l2 = lines[i+1];
-                if(!l2) break;
-                let name = "", email = "";
-                if(!l1.includes('@') && l2.includes('@')) { name = l1; email = l2.toLowerCase(); i++; }
-                else if(l1.includes('@') && !l2.includes('@')) { email = l1.toLowerCase(); name = l2; i++; }
-                if(name && email) {
-                    const docRef = window.FB_doc(window.db, "allowed_students", email);
-                    await window.FB_setDoc(docRef, { name, email, added_at: new Date().toISOString() });
+        for(let i = 0; i < lines.length; i++) {
+            let l1 = lines[i], l2 = lines[i+1];
+            if(!l2) break;
+            let name = "", email = "";
+            if(!l1.includes('@') && l2.includes('@')) { name = l1; email = l2.toLowerCase(); i++; }
+            else if(l1.includes('@') && !l2.includes('@')) { email = l1.toLowerCase(); name = l2; i++; }
+            if(name && email) {
+                try {
+                    const ref = doc(window.db, "allowed_students", email);
+                    await window.FirestoreFunctions.setDoc(ref, { name, email, added_at: new Date().toISOString() });
                     count++;
-                }
+                } catch(err) { console.error(err); }
             }
-            if(count > 0) {
-                alert(`تم رفع واعتماد ${count} طالب في القائمة العامة بنجاح! 🎓`);
-                document.getElementById("bulkInput").value = "";
-            } else {
-                alert("تأكد من تنسيق السطرين (الاسم ثم الإيميل).");
-            }
-        } catch(e) { alert("حدث خطأ أثناء رفع الطلاب."); }
+        }
+        if(count > 0) {
+            alert(`تم رفع واعتماد ${count} طالب في القائمة العامة بنجاح! 🎓`);
+            document.getElementById("bulkInput").value = "";
+        } else {
+            alert("تأكد من تنسيق السطرين (الاسم ثم الإيميل).");
+        }
     }
 
     async function deleteAllStudents() {
         if(!confirm("تحذير: مسح جميع الطلاب المعتمدين؟")) return;
         try {
-            const colRef = window.FB_collection(window.db, "allowed_students");
-            const snap = await window.FB_getDocs(colRef);
-            for(const docSnap of snap.docs) {
-                await window.FB_deleteDoc(docSnap.ref);
+            const querySnapshot = await window.FirestoreFunctions.getDocs(window.FirestoreFunctions.collection(window.db, "allowed_students"));
+            for (const documentSnapshot of querySnapshot.docs) {
+                await window.FirestoreFunctions.deleteDoc(documentSnapshot.ref);
             }
             alert("تمت تصفية قائمة الطلاب.");
-        } catch(e) { alert("حدث خطأ أثناء الحذف."); }
+        } catch(e) { alert("خطأ أثناء مسح الطلاب."); }
     }
 
     function openTeacherSection(type) {
