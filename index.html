@@ -136,7 +136,6 @@
         body.student-mode .teacher-icon-bar, body.student-mode .sub-action-bar, body.student-mode .remove-btn, body.student-mode .type-select, body.student-mode .correct-ans-box, body.student-mode .admin-only { display: none !important; }
         body.student-mode .selected-opt { background: #dbeafe !important; border: 2px solid #2563eb !important; box-shadow: 0 4px 12px rgba(37,99,235,0.25); }
 
-        /* وضع الاطلاع فقط للمدير */
         body.view-only-mode .admin-only, 
         body.view-only-mode .sub-action-bar, 
         body.view-only-mode .btn-delete,
@@ -1039,7 +1038,7 @@
 
         const fsDb = firebase.firestore();
         const rtdb = firebase.database();
-        const db = fsDb; // مرجع موحد لقاعدة البيانات Firestore لخدمة كود المعلم والمرشد
+        const db = fsDb;
 
         function updateLiveClock() {
             const now = new Date();
@@ -2117,7 +2116,7 @@
             });
         }
 
-        /* ==================== دوال كود المرشد الطلابي ==================== */
+        /* ==================== دوال كود المرشد الطلابي المحدثة ==================== */
         let allStudents = [];
         let studentCount = 0;
         let selectedStudentName = "";
@@ -2146,7 +2145,7 @@
         };
 
         function formatTimestamp(timestamp) {
-            if (!timestamp) return 'تاريخ غير محدد';
+            if (!timestamp) return 'تاريخ غير مححدد';
             let date;
             if (timestamp.toDate) {
                 date = timestamp.toDate();
@@ -2684,7 +2683,7 @@
                     reply: replyText,
                     replyCreatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                showToast("تم حفظ الرد وتوقيته وإخفاء التقرير من قائمة المرشد!");
+                showToast("تم حفظ الرد وإرساله للمعلم بنجاح وإخفاؤه من قائمتك!");
             } catch (error) {
                 alert("حدث خطأ أثناء حفظ الرد.");
             }
