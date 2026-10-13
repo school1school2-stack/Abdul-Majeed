@@ -182,7 +182,7 @@
         </div>
     </div>
 
-    <!-- نافذة إدارة الطلاب والفصول للمعلم -->
+    <!-- نافذة إدارة الطلاب والفصول للمعلم (مع خاصية البحث والإضافة السريعة من القائمة العامة) -->
     <div id="students-manage-modal">
         <h2 style="text-align: center; color: var(--royal-blue); margin-top:0; font-size:1.3rem;"><i class="fas fa-user-graduate"></i> إدارة الطلاب والفصول</h2>
         <p style="text-align: center; color: #64748b; font-size: 0.9rem;">ابحث عن الطالب المضاف من قِبل المشرف وأضفه لفصلك:</p>
@@ -245,9 +245,9 @@
         <button class="btn" style="background:#64748b; width:100%; margin-top:20px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق لوحة التحليل</button>
     </div>
 
-    <!-- نافذة مصفوفة الاختبارات والكود (١-١) -->
+    <!-- نافذة مصفوفة الاختبارات والكود -->
     <div id="matrix-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:95%; max-width:850px; background:#fff; z-index:2000; border-radius:20px; padding:25px; box-shadow:0 0 40px rgba(0,0,0,0.3); box-sizing:border-box;">
-        <h2 style="color:var(--royal-blue); margin-top:0;"><i class="fas fa-file-code"></i> مصفوفة الأسئلة البرمجية (١-١)</h2>
+        <h2 style="color:var(--royal-blue); margin-top:0;"><i class="fas fa-file-code"></i> مصفوفة الأسئلة البرمجية</h2>
         <p style="color:#64748b; font-size:0.9rem;">ألصق مصفوفة الأسئلة البرمجية هنا لتوليدها وتوزيعها تلقائياً:</p>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <label style="font-weight: bold; color: #0284c7; font-size:0.95rem;">كود المصفوفة:</label>
@@ -260,7 +260,7 @@
 
     <!-- نوافذ أخرى فرعية -->
     <div id="cloud-modal">
-        <h2 style="text-align: center; color: var(--royal-blue); margin-top:0; font-size:1.3rem;"><i class="fas fa-cloud"></i> النماذج المحفوظة في السحاب (aaaa)</h2>
+        <h2 style="text-align: center; color: var(--royal-blue); margin-top:0; font-size:1.3rem;"><i class="fas fa-cloud"></i> النماذج المحفوظة في السحاب</h2>
         <div id="cloud-models-list" style="margin-top: 20px; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;"></div>
         <button class="btn" style="background:#64748b; width:100%; margin-top:20px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق</button>
     </div>
@@ -327,23 +327,26 @@
         <div class="header-left"><p class="school-name" id="header-teacher-subject">الكفايات اللغوية</p></div>
     </div>
 
-    <!-- الشريط الرئيسي: الأيقونات الثلاثة الكبيرة المرتبة للمعلم -->
+    <!-- الشريط الرئيسي: الأيقونات الثلاثة الكبيرة والمرتبة للمعلم -->
     <div class="teacher-icon-bar admin-only" id="teacher-icon-bar">
+        <!-- 1. أيقونة إدارة الطلاب والفصول -->
         <button class="icon-action-btn btn-students" onclick="openStudentsManagementModal()">
             <i class="fas fa-users-cog"></i>
             <span>إدارة الطلاب والفصول</span>
         </button>
+        <!-- 2. أيقونة لوحة التحليل الذكي -->
         <button class="icon-action-btn btn-analytics" onclick="openAnalyticsModal()">
             <i class="fas fa-chart-line"></i>
             <span>لوحة التحليل الذكي</span>
         </button>
+        <!-- 3. أيقونة مصفوفة الاختبارات والكود -->
         <button class="icon-action-btn btn-matrix" onclick="openMatrixModal()">
             <i class="fas fa-file-code"></i>
-            <span>مصفوفة الاختبارات (١-١)</span>
+            <span>مصفوفة الاختبارات</span>
         </button>
     </div>
 
-    <!-- شريط فرعي لتنظيم عمليات الحصص والنماذج -->
+    <!-- شريط فرعي لتنظيم عمليات بناء الحصص والنماذج وتوقيتها -->
     <div class="sub-action-bar admin-only">
         <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
             <span id="current-model-label" style="font-weight: bold; color: var(--royal-blue);">📁 نموذج جديد</span>
@@ -400,9 +403,6 @@
         let currentTeacherName = "أ. عبدالعزيز الفيفي";
         let currentTeacherSubject = "الكفايات اللغوية";
 
-        // السحابة المحددة aaaa ومسار المعلم الخاص بها
-        const targetCloudRoot = "aaaa";
-
         let chartA = null, chartB = null, studentLineChart = null;
         let globalResultsSnapshot = [];
         let analyticsSelectedModel = 'all';
@@ -442,10 +442,9 @@
             return array;
         }
 
-        // ربط المعلم بمجلده الخاص داخل السحابة aaaa
         function getTeacherCloudPath() {
             const safeKey = currentTeacherEmail.replace(/\./g, '_');
-            return `${targetCloudRoot}/teachers_data/${safeKey}`;
+            return `teachers_data/${safeKey}`;
         }
 
         function saveAll() {
@@ -469,6 +468,7 @@
             localStorage.setItem('fifi_final_v_secured_' + currentTeacherEmail, JSON.stringify(dataToSave));
         }
 
+        // --- إضافة الطلاب دفعة واحدة من لوحة المشرف ---
         async function uploadBulkStudents() {
             const rawText = document.getElementById('bulkStudentsInput').value.trim();
             if (!rawText) { alert("الرجاء لصق قائمة الطلاب أولاً!"); return; }
@@ -480,6 +480,7 @@
                 for (let i = 0; i < lines.length; i++) {
                     let line1 = lines[i];
                     let line2 = lines[i+1] || "";
+
                     let name = "", email = "";
                     if (line1.includes('@')) { email = line1; name = line2; i++; }
                     else if (line2.includes('@')) { name = line1; email = line2; i++; }
@@ -514,6 +515,7 @@
             } catch(e) {}
         }
 
+        // --- إدارة الطلاب والفصول للمعلم مع البحث والاختيار السريع ---
         function openStudentsManagementModal() {
             loadRegisteredStudents();
             loadGlobalStudentsCache();
@@ -549,7 +551,7 @@
             const className = document.getElementById('regStudentClass').value.trim();
 
             if (!name || !email || !className) {
-                alert("الرجاء اختيار الطالب وإدخال الفصل.");
+                alert("الرجاء اختيار الطالب من القائمة وإدخال الفصل.");
                 return;
             }
 
@@ -568,19 +570,19 @@
                 document.getElementById('regStudentClass').value = "";
                 loadRegisteredStudents();
             } catch (e) {
-                alert("حدث خطأ أثناء حفظ الطالب.");
+                alert("حدث خطأ أثناء حفظ الطالب في فصلك.");
             }
         }
 
         async function loadRegisteredStudents() {
             const tbody = document.getElementById('registered-students-table-body');
             if (!tbody) return;
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">جاري التحميل...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">جاري تحميل الطلاب...</td></tr>`;
 
             try {
                 const snap = await fsDb.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).get();
                 if (snap.empty) {
-                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا يوجد طلاب مسجلين.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا يوجد طلاب مسجلين في فصولك حالياً.</td></tr>`;
                     return;
                 }
                 tbody.innerHTML = "";
@@ -601,15 +603,16 @@
         }
 
         async function deleteRegisteredStudent(emailId) {
-            if (confirm("هل أنت متأكد من حذف هذا الطالب؟")) {
+            if (confirm("هل أنت متأكد من حذف هذا الطالب من قائمتك؟")) {
                 try {
                     await fsDb.collection("allowed_students").doc(emailId).delete();
                     alert("تم الحذف بنجاح.");
                     loadRegisteredStudents();
-                } catch(e) { alert("حدث خطأ."); }
+                } catch(e) { alert("حدث خطأ أثناء الحذف."); }
             }
         }
 
+        // --- لوحة التحليل الذكي ---
         function openAnalyticsModal() {
             document.getElementById('analytics-modal').style.display = 'block';
             document.getElementById('modal-overlay').style.display = 'block';
@@ -799,7 +802,7 @@
             document.getElementById('modal-overlay').style.display = 'block';
         }
 
-        // مصفوفة الاختبارات والكود (١-١)
+        // --- مصفوفة الاختبارات والكود ---
         function openMatrixModal() {
             generateCurrentArrayCodeText();
             document.getElementById('matrix-modal').style.display = 'block';
@@ -851,7 +854,7 @@
                     });
                 });
                 saveAll();
-                alert(`تم استيراد ${arr.length} سؤالاً بنجاح في مصفوفة (١-١)! 🌟`);
+                alert(`تم استيراد ${arr.length} سؤالاً بنجاح! 🌟`);
                 closeModals();
             } catch (e) { 
                 alert("خطأ في قراءة المصفوفة البرمجية. تأكد من صحة التنسيق."); 
@@ -1180,7 +1183,7 @@
                 const listContainer = document.getElementById('cloud-models-list');
                 listContainer.innerHTML = "";
                 const keys = Object.keys(cloudMs);
-                if(keys.length === 0) { listContainer.innerHTML = "<p style='text-align:center; padding:20px;'>لا توجد نماذج محفوظة في مجلسك السحابي الخاص.</p>"; }
+                if(keys.length === 0) { listContainer.innerHTML = "<p style='text-align:center; padding:20px;'>لا توجد نماذج محفوظة في مسارك السحابي.</p>"; }
                 else {
                     keys.forEach(name => {
                         listContainer.innerHTML += `<div class="cloud-item"><b>${name}</b><button class="btn" style="background:#a855f7; padding:6px 12px;" onclick="openModel('${name}')">فتح</button></div>`;
@@ -1238,7 +1241,7 @@
 
             let modelPackage = { teacher: currentTeacherName, email: currentTeacherEmail, data: dataToSave, startTime: currentExamStartTime, endTime: currentExamEndTime };
             await rtdb.ref(getTeacherCloudPath() + '/models/' + currentOpenModelName).set(modelPackage);
-            alert(`تم حفظ نموذج "${currentOpenModelName}" في مجلدك السحابي الخاص (${targetCloudRoot}) بنجاح! 💾`);
+            alert(`تم حفظ نموذج "${currentOpenModelName}" في السحاب بنجاح! 💾`);
         }
 
         function closeModals() { 
@@ -1254,13 +1257,13 @@
             const email = document.getElementById('newTeacherEmail').value.trim().toLowerCase();
             const subject = document.getElementById('newTeacherSubject').value.trim();
             if (!name || !email || !subject) return;
-            await rtdb.ref(targetCloudRoot + '/teachers_registry/' + email.replace(/\./g, '_')).set({ name, email, subject });
+            await rtdb.ref('teachers_registry/' + email.replace(/\./g, '_')).set({ name, email, subject });
             alert("تمت الإضافة بنجاح!");
             loadTeachersRegistry();
         }
 
         function loadTeachersRegistry() {
-            rtdb.ref(targetCloudRoot + '/teachers_registry').on('value', snapshot => {
+            rtdb.ref('teachers_registry').on('value', snapshot => {
                 const tbody = document.getElementById('teachers-table-body');
                 if (!tbody) return;
                 tbody.innerHTML = "";
@@ -1281,7 +1284,7 @@
 
             if (teacherEmailParam) {
                 const safeKey = teacherEmailParam.trim().toLowerCase().replace(/\./g, '_');
-                rtdb.ref(targetCloudRoot + '/teachers_registry/' + safeKey).once('value', snap => {
+                rtdb.ref('teachers_registry/' + safeKey).once('value', snap => {
                     if (snap.exists()) {
                         let tData = snap.val();
                         currentTeacherEmail = tData.email;
