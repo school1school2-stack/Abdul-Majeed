@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة المعلمين والتحليل الذكي - النسخة المعتمدة بمعزل سحابي</title>
+    <title>منصة المعلمين والتحليل الذكي - لوحة متابعة المعلم</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -59,6 +59,7 @@
         .icon-action-btn.btn-students { background: #047857; }
         .icon-action-btn.btn-analytics { background: #0284c7; }
         .icon-action-btn.btn-matrix { background: #7c3aed; }
+        .icon-action-btn.btn-share { background: #059669; }
 
         .sub-action-bar {
             width: 100%; max-width: 900px; background: #ffffff; border-radius: 15px; padding: 15px 20px;
@@ -114,6 +115,12 @@
 
         body.student-mode .teacher-icon-bar, body.student-mode .sub-action-bar, body.student-mode .remove-btn, body.student-mode .type-select, body.student-mode .correct-ans-box, body.student-mode .admin-only { display: none !important; }
         body.student-mode .selected-opt { background: #dbeafe !important; border: 2px solid #2563eb !important; box-shadow: 0 4px 12px rgba(37,99,235,0.25); }
+
+        /* نمط وضع الاطلاع فقط للمدير/المشرف */
+        body.view-only-mode .admin-only, 
+        body.view-only-mode .sub-action-bar, 
+        body.view-only-mode .btn-delete,
+        body.view-only-mode .action-btn.btn-review { display: none !important; }
 
         .btn { border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; font-size: 0.9rem; white-space: nowrap; }
         .btn:hover { opacity: 0.9; }
@@ -269,6 +276,7 @@
     <div class="teacher-icon-bar teacher-only admin-only" id="teacher-icon-bar">
         <button class="icon-action-btn btn-students" onclick="openStudentsManagementModal()"><i class="fas fa-users-cog"></i><span>إدارة الطلاب والفصول</span></button>
         <button class="icon-action-btn btn-analytics" onclick="openFullAnalyticsPage()"><i class="fas fa-chart-line"></i><span>لوحة التحليل الذكي</span></button>
+        <button class="icon-action-btn btn-share" onclick="shareTeacherDashboardForManager()"><i class="fas fa-share-alt"></i><span>مشاركة اللوحة للمدير</span></button>
         <button class="icon-action-btn btn-matrix" onclick="openMatrixModal()"><i class="fas fa-file-code"></i><span>مصفوفة الاختبارات</span></button>
     </div>
 
@@ -296,7 +304,7 @@
                 </select>
             </div>
             <div class="live-clock-badge" id="live-clock-display">🕒 جاري تحميل الوقت...</div>
-            <button class="btn" style="background:#64748b;" onclick="closeAnalyticsPage()"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button>
+            <button class="btn" style="background:#64748b;" id="return-home-btn" onclick="closeAnalyticsPage()"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button>
         </div>
 
         <div class="header-analytics">
@@ -305,7 +313,7 @@
                 <span style="font-size: 1.4rem; color: #0284c7; font-weight: bold; margin-top: 4px; display: block;" id="sub-title">الكفايات اللغوية</span>
             </div>
             <div class="action-buttons no-print" id="action-area">
-                <button class="btn" style="background:#1e293b;" onclick="window.print()">🖨️ طباعة</button>
+                <button class="btn admin-only" style="background:#059669;" onclick="shareTeacherDashboardForManager()"><i class="fas fa-share-alt"></i> مشاركة اللوحة للمدير</button>
             </div>
         </div>
 
@@ -350,7 +358,7 @@
                         <th>صحح</th>
                         <th>مثل</th>
                         <th>النموذج</th>
-                        <th class="no-print">إجراء</th>
+                        <th class="no-print col-actions">إجراء</th>
                     </tr>
                 </thead>
                 <tbody id="data-rows"></tbody>
@@ -460,6 +468,15 @@
             return `teachers_data/${safeEmailKey}`;
         }
 
+        function shareTeacherDashboardForManager() {
+            const shareUrl = window.location.origin + window.location.pathname + "?teacher=" + encodeURIComponent(currentTeacherEmail) + "&view=true";
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert("تم نسخ رابط لوحة المتابعة المخصص للإدارة والمدير بنجاح! 🔗\n(يمكن للمدير الآن الاطلاع فقط على نتائج وأعمال معلم المادة دون إمكانية للتعديل).");
+            }).catch(() => {
+                prompt("نسخ رابط مشاركة لوحة المعلم للمدير والاطلاع فقط:", shareUrl);
+            });
+        }
+
         function openFullAnalyticsPage() {
             document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
             document.querySelector('.container').style.display = 'none';
@@ -468,6 +485,7 @@
         }
 
         function closeAnalyticsPage() {
+            if (isViewOnly) return;
             document.getElementById('analytics-fullscreen-view').style.display = 'none';
             document.getElementById('main-header').style.display = 'flex';
             document.getElementById('teacher-icon-bar').style.display = 'flex';
@@ -537,6 +555,12 @@
                     let s = calculateStudentSkillsAna(d, p);
                     Object.keys(skillsSums).forEach(k => skillsSums[k] += (s[k] !== undefined ? s[k] : p));
 
+                    let actionsTd = isViewOnly ? `<td class="no-print col-actions"><span style="color:#64748b; font-size:0.85rem;">[اطلاع فقط]</span></td>` : `
+                        <td class="no-print col-actions">
+                            <button class="action-btn btn-review" onclick="openReviewAna('${d.id}')">👁 مراجعة</button>
+                            <button class="action-btn btn-delete" onclick="deleteDocAna('${d.id}')">حذف</button>
+                        </td>`;
+
                     rows += `<tr>
                         <td><strong>${d.name}</strong></td>
                         <td style="color:var(--accent); font-weight:bold">${d.score}/${d.total}</td>
@@ -545,10 +569,7 @@
                             return `<td>${val}%<div class="prog-circle"><div class="prog-fill" style="width:${val}\%; background:${val<60?'#ef4444':val<80?'#f59e0b':'#10b981'}"></div></div></td>`;
                         }).join('')}
                         <td>${actualModel}</td>
-                        <td class="no-print">
-                            <button class="action-btn btn-review" onclick="openReviewAna('${d.id}')">👁 مراجعة</button>
-                            <button class="action-btn btn-delete" onclick="deleteDocAna('${d.id}')">حذف</button>
-                        </td>
+                        ${actionsTd}
                     </tr>`;
                 }
             });
@@ -631,10 +652,12 @@
         }
 
         async function deleteDocAna(id) {
+            if (isViewOnly) return;
             if(confirm("حذف الطالب؟")) await fsDb.collection("alkfaeat_results").doc(id).delete();
         }
 
         async function openReviewAna(docId) {
+            if (isViewOnly) return;
             const doc = await fsDb.collection("alkfaeat_results").doc(docId).get();
             const data = doc.data();
             document.getElementById('review-student-name').innerText = `مراجعة إجابات الطالب: ${data.name}`;
@@ -677,6 +700,7 @@
         }
 
         function saveAll() {
+            if (isViewOnly) return;
             const dataToSave = [];
             document.querySelectorAll('.question-card').forEach(c => {
                 const qType = c.querySelector('.type-select')?.value;
@@ -1405,6 +1429,7 @@
         }
 
         async function saveToCloud() {
+            if (isViewOnly) return;
             let modelNameToSave = currentOpenModelName || prompt("أدخل اسم النموذج لحفظه:");
             if (!modelNameToSave) return;
             currentOpenModelName = modelNameToSave.trim();
@@ -1478,7 +1503,7 @@
                 let i = 1;
                 Object.keys(data).forEach(k => {
                     let t = data[k];
-                    tbody.innerHTML += `<tr><td>${i++}</td><td><b>${t.name}</b></td><td>${t.email}</td><td>${t.subject}</td><td><button class="btn" style="background:#10b981; padding:4px 8px;" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=${t.email}').then(()=>alert('تم النسخ'))">رابط</button></td></tr>`;
+                    tbody.innerHTML += `<tr><td>${i++}</td><td><b>${t.name}</b></td><td>${t.email}</td><td>${t.subject}</td><td><button class="btn" style="background:#10b981; padding:4px 8px;" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=${t.email}').then(()=>alert('تم النسخ'))">رابط المعلم</button> <button class="btn" style="background:#0284c7; padding:4px 8px;" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=${t.email}&view=true').then(()=>alert('تم نسخ رابط الاطلاع للمدير'))">رابط المدير</button></td></tr>`;
                 });
             }).catch(error => {
                 tbody.innerHTML = `<tr><td colspan="5" style="color:var(--q-red);">تعذر تحميل قائمة المعلمين. تأكد من تفعيل Realtime Database.</td></tr>`;
@@ -1486,13 +1511,21 @@
         }
 
         function loadQuestions() {
-            const urlParams = new URLSearchParams(window.location.search);
             const teacherEmailParam = urlParams.get('teacher');
             const examId = urlParams.get('exam');
 
+            if (isViewOnly) {
+                document.body.classList.add('view-only-mode');
+            }
+
             if (teacherEmailParam) {
                 document.getElementById('admin-management-card').style.display = 'none';
-                document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'flex');
+                
+                if (!isViewOnly) {
+                    document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'flex');
+                } else {
+                    document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
+                }
 
                 const safeKey = teacherEmailParam.trim().toLowerCase().replace(/\./g, '_');
                 rtdb.ref('teachers_registry/' + safeKey).once('value', snap => {
@@ -1504,12 +1537,26 @@
                         
                         document.getElementById('header-teacher-name').innerText = currentTeacherName;
                         document.getElementById('header-teacher-subject').innerText = currentTeacherSubject;
+                        
                         const mainTitle = document.getElementById('main-title');
-                        if (mainTitle) mainTitle.innerHTML = `📊 منصة أ / ${currentTeacherName} ( التحليل الذكي )`;
+                        if (mainTitle) {
+                            if (isViewOnly) {
+                                mainTitle.innerHTML = `👁️ لوحة الاطلاع ومتابعة أداء الطلاب - أ / ${currentTeacherName}`;
+                            } else {
+                                mainTitle.innerHTML = `📊 منصة أ / ${currentTeacherName} ( التحليل الذكي )`;
+                            }
+                        }
                         const subTitle = document.getElementById('sub-title');
-                        if (subTitle) subTitle.innerText = currentTeacherSubject;
+                        if (subTitle) subTitle.innerText = `${currentTeacherSubject} - [وضع الاطلاع مخصص للقيادة والمدير]`;
                     }
-                    proceedInit(examId);
+
+                    if (isViewOnly) {
+                        openFullAnalyticsPage();
+                        const btnReturn = document.getElementById('return-home-btn');
+                        if (btnReturn) btnReturn.style.display = 'none';
+                    } else {
+                        proceedInit(examId);
+                    }
                 });
             } else if (!examId) {
                 document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
