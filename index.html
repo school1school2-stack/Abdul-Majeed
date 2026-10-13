@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة المعلمين والتحليل الذكي - لوحة المشرف العامة</title>
+    <title>منصة المعلمين والتحليل الذكي - النسخة المعتمدة بمعزل سحابي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -979,6 +979,46 @@
             });
         }
 
+        function validateMatchingStudentInput(inputEl, maxCount) {
+            const card = inputEl.closest('.question-card');
+            const errorMsgEl = card.querySelector('.matching-error-msg');
+            let val = inputEl.value.replace(/[^0-9]/g, '');
+            
+            if (errorMsgEl) {
+                errorMsgEl.style.display = 'none';
+                errorMsgEl.innerText = '';
+            }
+
+            if (val.length > 1) val = val.slice(-1);
+            
+            if (val !== '') {
+                let num = parseInt(val, 10);
+                if (num < 1 || num > maxCount) {
+                    inputEl.value = '';
+                    if (errorMsgEl) {
+                        errorMsgEl.innerText = `⚠️ عذراً، الرقم يجب أن يكون بين 1 و ${maxCount} فقط.`;
+                        errorMsgEl.style.display = 'block';
+                    }
+                    return;
+                }
+
+                let duplicated = false;
+                card.querySelectorAll('.matching-ans-input').forEach(inp => {
+                    if (inp !== inputEl && inp.value.trim() === val) duplicated = true;
+                });
+
+                if (duplicated) {
+                    inputEl.value = '';
+                    if (errorMsgEl) {
+                        errorMsgEl.innerText = `⚠️ عذراً، الرقم (${val}) مستخدم مسبقاً في فقرة أخرى.`;
+                        errorMsgEl.style.display = 'block';
+                    }
+                    return;
+                }
+            }
+            inputEl.value = val;
+        }
+
         function renderOptionsByType(type, data, isStudent) {
             if (type === 'سؤال مزاوجة (توصيل)' || type === 'k_matching') {
                 let leftOpts = data?.opts || data?.matchA || ['', ''];
@@ -999,8 +1039,8 @@
                                 <input type="number" step="0.5" class="matching-score-field sub-score-input" value="${scoreVal}" oninput="updateMatchingTotalScore(this); saveAll();">
                                 <input type="text" class="matching-ans-key-field key-input" value="${keyVal}" placeholder="رقم الإجابة" oninput="updateMatchingTotalScore(this); saveAll();">
                             ` : `
-                                <span style="flex:1;">${idx+1})${item}</span>
                                 <input type="text" class="matching-ans-input" data-left-idx="${idx}" oninput="validateMatchingStudentInput(this, ${rightOpts.length})" value="${sVal}" style="width:50px; text-align:center; padding:6px; border:1px solid #cbd5e1; border-radius:6px; font-weight:bold;" maxlength="1">
+                                <span style="flex:1;">${idx+1})${item}</span>
                             `}
                         </div>`;
                 });
@@ -1034,8 +1074,9 @@
                 return `
                     <div class="matching-container-grid">
                         <div class="matching-column-box left-box">
-                            <div style="font-weight:bold; color:var(--royal-blue); margin-bottom:8px; font-size:0.9rem;">الفقرات (العمود الأول مع درجة كل فقرة):</div>
+                            <div style="font-weight:bold; color:var(--royal-blue); margin-bottom:8px; font-size:0.9rem;">الفقرات (العمود الأول):</div>
                             <div class="matching-left-list">${leftRows}</div>
+                            <div class="matching-error-msg" style="color: #ef4444; font-size: 0.88rem; font-weight: bold; margin-top: 10px; display: none;"></div>
                         </div>
                         <div class="matching-column-box right-box">
                             <div style="font-weight:bold; color:var(--royal-blue); margin-bottom:8px; font-size:0.9rem;">الإجابات (العمود الثاني): مدعمة بـ (<span class="right-count-badge">${rightOpts.length}</span> إجابات متاحة)</div>
@@ -1122,30 +1163,6 @@
             const card = btn.closest('.question-card');
             const container = card.querySelector('.ans-grid-area > div');
             if (container.children.length > 2) { container.lastChild.remove(); saveAll(); }
-        }
-
-        function validateMatchingStudentInput(inputEl, maxCount) {
-            let val = inputEl.value.replace(/[^0-9]/g, '');
-            if (val.length > 1) val = val.slice(-1);
-            if (val !== '') {
-                let num = parseInt(val, 10);
-                if (num < 1 || num > maxCount) {
-                    alert(`عذراً، الرقم متاح فقط من 1 إلى ${maxCount}!`);
-                    inputEl.value = '';
-                    return;
-                }
-                const card = inputEl.closest('.question-card');
-                let duplicated = false;
-                card.querySelectorAll('.matching-ans-input').forEach(inp => {
-                    if (inp !== inputEl && inp.value.trim() === val) duplicated = true;
-                });
-                if (duplicated) {
-                    alert(`الرقم (${val}) مستخدم مسبقاً في فقرة أخرى.`);
-                    inputEl.value = '';
-                    return;
-                }
-            }
-            inputEl.value = val;
         }
 
         function addMatchingLeftRow(btn) {
@@ -1469,7 +1486,6 @@
             const teacherEmailParam = urlParams.get('teacher');
             const examId = urlParams.get('exam');
 
-            // إذا تضمن الرابط إيميل معلم، يظهر وضع المعلم الخاص
             if (teacherEmailParam) {
                 document.getElementById('admin-management-card').style.display = 'none';
                 document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'flex');
@@ -1492,13 +1508,11 @@
                     proceedInit(examId);
                 });
             } else if (!examId) {
-                // وضع المشرف العام: إخفاء أدوات وعناصر المعلمين واقتصار الصفحة على لوحة المشرف
                 document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
                 document.getElementById('admin-management-card').style.display = 'block';
                 loadTeachersRegistry();
                 loadGlobalStudentsCache();
             } else {
-                // وضع الطالب لتقديم الاختبار
                 document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
                 document.getElementById('admin-management-card').style.display = 'none';
                 proceedInit(examId);
