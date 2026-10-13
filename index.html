@@ -454,7 +454,8 @@
         }
 
         function getTeacherCloudPath() {
-            return `teachers_data/aaaa_moe_gov_sa`;
+            const safeEmailKey = currentTeacherEmail.trim().toLowerCase().replace(/\./g, '_');
+            return `teachers_data/${safeEmailKey}`;
         }
 
         function openFullAnalyticsPage() {
@@ -1391,24 +1392,38 @@
             const name = document.getElementById('newTeacherName').value.trim();
             const email = document.getElementById('newTeacherEmail').value.trim().toLowerCase();
             const subject = document.getElementById('newTeacherSubject').value.trim();
-            if (!name || !email || !subject) return;
-            await rtdb.ref('teachers_registry/' + email.replace(/\./g, '_')).set({ name, email, subject });
-            alert("تمت الإضافة بنجاح!");
-            loadTeachersRegistry();
+            if (!name || !email || !subject) { alert("الرجاء تعبئة جميع الحقول!"); return; }
+            try {
+                await rtdb.ref('teachers_registry/' + email.replace(/\./g, '_')).set({ name, email, subject });
+                alert("تمت إضافة المعلم بنجاح! 🌟");
+                document.getElementById('newTeacherName').value = "";
+                document.getElementById('newTeacherEmail').value = "";
+                document.getElementById('newTeacherSubject').value = "";
+                loadTeachersRegistry();
+            } catch (e) {
+                alert("حدث خطأ أثناء حفظ المعلم.");
+            }
         }
 
         function loadTeachersRegistry() {
-            rtdb.ref('teachers_registry').on('value', snapshot => {
-                const tbody = document.getElementById('teachers-table-body');
-                if (!tbody) return;
+            const tbody = document.getElementById('teachers-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = `<tr><td colspan="5">جاري التحميل...</td></tr>`;
+            
+            rtdb.ref('teachers_registry').once('value', snapshot => {
                 tbody.innerHTML = "";
                 const data = snapshot.val();
-                if (!data) { tbody.innerHTML = `<tr><td colspan="5">لا يوجد معلمون.</td></tr>`; return; }
+                if (!data) { 
+                    tbody.innerHTML = `<tr><td colspan="5" style="color:#64748b;">لا يوجد معلمون مسجلون حالياً.</td></tr>`; 
+                    return; 
+                }
                 let i = 1;
                 Object.keys(data).forEach(k => {
                     let t = data[k];
                     tbody.innerHTML += `<tr><td>${i++}</td><td><b>${t.name}</b></td><td>${t.email}</td><td>${t.subject}</td><td><button class="btn" style="background:#10b981; padding:4px 8px;" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=${t.email}').then(()=>alert('تم النسخ'))">رابط</button></td></tr>`;
                 });
+            }).catch(error => {
+                tbody.innerHTML = `<tr><td colspan="5" style="color:var(--q-red);">تعذر تحميل قائمة المعلمين. تأكد من تفعيل Realtime Database.</td></tr>`;
             });
         }
 
@@ -1425,12 +1440,37 @@
                         currentTeacherEmail = tData.email;
                         currentTeacherName = tData.name;
                         currentTeacherSubject = tData.subject;
+                        
                         document.getElementById('header-teacher-name').innerText = currentTeacherName;
                         document.getElementById('header-teacher-subject').innerText = currentTeacherSubject;
+                        const mainTitle = document.getElementById('main-title');
+                        if (mainTitle) mainTitle.innerHTML = `📊 منصة أ / ${currentTeacherName} ( التحليل الذكي )`;
+                        const subTitle = document.getElementById('sub-title');
+                        if (subTitle) subTitle.innerText = currentTeacherSubject;
                     }
                     proceedInit(examId);
                 });
             } else {
+                rtdb.ref('teachers_registry').once('value', snap => {
+                    const data = snap.val();
+                    if (data) {
+                        const keys = Object.keys(data);
+                        if (keys.length > 0) {
+                            let lastTeacher = data[keys[keys.length - 1]];
+                            currentTeacherEmail = lastTeacher.email;
+                            currentTeacherName = lastTeacher.name;
+                            currentTeacherSubject = lastTeacher.subject;
+
+                            document.getElementById('header-teacher-name').innerText = currentTeacherName;
+                            document.getElementById('header-teacher-subject').innerText = currentTeacherSubject;
+                            const mainTitle = document.getElementById('main-title');
+                            if (mainTitle) mainTitle.innerHTML = `📊 منصة أ / ${currentTeacherName} ( التحليل الذكي )`;
+                            const subTitle = document.getElementById('sub-title');
+                            if (subTitle) subTitle.innerText = currentTeacherSubject;
+                        }
+                    }
+                });
+
                 document.getElementById('admin-management-card').style.display = 'block';
                 loadTeachersRegistry();
                 loadGlobalStudentsCache();
