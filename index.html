@@ -2527,7 +2527,7 @@
                     const id = doc.id;
 
                     if (!isCounselorView && data.isArchived === true) return;
-                    if (isCounselorView && (data.reply && data.reply !== "لم يتم الرد بعد")) return;
+                    if (isCounselorView && (data.reply && data.reply !== "لم يتم الرد بعد" && data.reply.trim() !== "")) return;
 
                     studentCount++;
 
@@ -2565,9 +2565,9 @@
                         <td>
                             <textarea class="notes-input" ${isCounselorView ? 'disabled' : ''} placeholder="سلوكيات وملاحظات المعلم..." onblur="updateCloudField('${id}', 'notes', this.value)">${data.notes || ''}</textarea>
                             <div id="counselor_box_${id}" style="display:none; margin-top: 5px;">
-                                <textarea id="reply_${id}" class="counselor-reply" placeholder="اكتب رد المرشد الطلابي هنا...">${data.reply !== "لم يتم الرد بعد" ? (data.reply || '') : ''}</textarea>
+                                <textarea id="reply_${id}" class="counselor-reply" placeholder="اكتب رد المرشد الطلابي واتخاذه للإجراء هنا...">${data.reply !== "لم يتم الرد بعد" ? (data.reply || '') : ''}</textarea>
                                 ${replyTimeStr ? `<div style="text-align: right;"><span class="time-badge-reply"><i class="fa-solid fa-reply-all"></i> وقت الرد: ${replyTimeStr}</span></div>` : ''}
-                                <button class="btn-save-reply" onclick="saveReply('${id}')"><i class="fa-solid fa-paper-plane"></i> حفظ رد المرشد</button>
+                                <button class="btn-save-reply" onclick="saveReply('${id}')"><i class="fa-solid fa-paper-plane"></i> حفظ الرد وإخفاء الحالة</button>
                             </div>
                         </td>
                         <td class="no-print" style="display: flex; gap: 4px; justify-content: center; align-items: center; padding-top: 15px;">
@@ -2676,14 +2676,14 @@
 
         async function saveReply(id) {
             const replyText = document.getElementById(`reply_${id}`).value;
-            if (!replyText.trim()) return alert("يرجى كتابة الرد قبل الحفظ!");
+            if (!replyText.trim()) return alert("يرجى كتابة رد المرشد واتخاذه للإجراء قبل الحفظ!");
 
             try {
                 await db.collection("referral_list").doc(id).update({ 
                     reply: replyText,
                     replyCreatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                showToast("تم حفظ الرد وإرساله للمعلم بنجاح وإخفاؤه من قائمتك!");
+                showToast("تم حفظ رد المرشد وإرساله للمعلم، واختفت الحالة من لوحتك بنجاح!");
             } catch (error) {
                 alert("حدث خطأ أثناء حفظ الرد.");
             }
