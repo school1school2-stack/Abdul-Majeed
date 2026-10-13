@@ -80,9 +80,12 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); font-weight: bold; box-sizing: border-box; flex-wrap: wrap; gap: 10px;
         }
 
-        .question-card { background: var(--card-bg); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 2px solid var(--card-border); position: relative; text-align: right; box-sizing: border-box; }
+        .question-card { background: var(--card-bg); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 2px solid var(--card-border); position: relative; text-align: right; box-sizing: border-box; transition: all 0.3s ease; }
         .question-card::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: var(--k-purple); border-radius: 0 10px 10px 0; }
         
+        /* تنبيه السؤال الناقص باللون الأحمر */
+        .question-card.unanswered-alert { border-color: var(--q-red) !important; background-color: #fff5f5 !important; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
+
         .card-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; justify-content: space-between; }
         .q-number-badge { background: var(--k-purple); color: white; padding: 4px 15px; border-radius: 50px; font-weight: bold; font-size: 0.9rem; }
         .type-select { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 10px; border-radius: 10px; font-weight: bold; font-family: inherit; cursor: pointer; color: var(--royal-blue); outline: none; }
@@ -412,7 +415,6 @@
         const urlParams = new URLSearchParams(window.location.search);
         const isViewOnly = urlParams.has('view');
 
-        // إعدادات السحابة الصحيحة (aaaa-a2380) متوافقة مع الإصدار الثامن
         const firebaseConfig = {
             apiKey: "AIzaSyDhd5CSkNMoppGby6uKxHsQCBPmi6xxO58",
             authDomain: "aaaa-a2380.firebaseapp.com",
@@ -426,7 +428,6 @@
             firebase.initializeApp(firebaseConfig);
         }
 
-        // تهيئة قواعد البيانات (Firestore و Realtime Database باستخدام السحابة الموحدة)
         const fsDb = firebase.firestore();
         const rtdb = firebase.database();
 
@@ -974,6 +975,7 @@
                     
                     card.querySelectorAll('.opt-pair-row').forEach(r => r.classList.remove('selected-opt'));
                     row.classList.add('selected-opt');
+                    card.classList.remove('unanswered-alert');
                 };
             });
         }
@@ -1248,8 +1250,44 @@
         }
 
         async function gradeExam() {
-            if (examTimerInterval) clearInterval(examTimerInterval);
             const cards = document.querySelectorAll('.question-card');
+            let hasUnanswered = false;
+
+            cards.forEach(c => {
+                c.classList.remove('unanswered-alert');
+                const qType = c.querySelector('.type-select')?.value || "";
+                let isAnswered = true;
+
+                if (['اختر الإجابة الصحيحة', 'صح وخطأ'].includes(qType)) {
+                    const selected = c.querySelector('.selected-opt');
+                    if (!selected) isAnswered = false;
+                } else if (qType === 'سؤال مزاوجة (توصيل)' || qType === 'k_matching') {
+                    c.querySelectorAll('.matching-ans-input').forEach(inp => {
+                        if (!inp.value.trim()) isAnswered = false;
+                    });
+                } else if (qType === 'عددّد (نقاط متعددة)') {
+                    c.querySelectorAll('.enum-ans-input').forEach(inp => {
+                        if (!inp.value.trim()) isAnswered = false;
+                    });
+                } else {
+                    const txt = c.querySelector('.student-answer-textarea');
+                    if (!txt || !txt.value.trim()) isAnswered = false;
+                }
+
+                if (!isAnswered) {
+                    hasUnanswered = true;
+                    c.classList.add('unanswered-alert');
+                }
+            });
+
+            if (hasUnanswered) {
+                alert("⚠️ تنبيه: توجد أسئلة لم تقم بالإجابة عليها! تم تحديد الأسئلة الناقصة باللون الأحمر، يرجى استكمالها قبل اعتماد النتيجة.");
+                const firstAlert = document.querySelector('.question-card.unanswered-alert');
+                if (firstAlert) firstAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            if (examTimerInterval) clearInterval(examTimerInterval);
             if (!confirm("هل أنت متأكد من إرسال واعتماد النتيجة النهائية؟")) return;
 
             let totalScore = 0, totalPossibleScore = 0, details = [];
@@ -1299,7 +1337,7 @@
                         درجتك الإجمالية: ${totalScore} من ${totalPossibleScore}
                     </div>
                     <button class="btn" style="background:#0284c7; padding:12px 25px; font-size:1rem;" onclick="showStudentReport(lastSubmittedDetails, ${totalScore}, ${totalPossibleScore})">
-                        <i class="fas fa-file-alt"></i> استعراض إجاباتك وتقريك 📋
+                        <i class="fas fa-file-alt"></i> استعراض إجاباتك وتقريدك 📋
                     </button>
                 `;
                 
