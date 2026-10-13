@@ -60,7 +60,6 @@
         .icon-action-btn.btn-matrix { background: #7c3aed; }
         .icon-action-btn.btn-share { background: #059669; }
         .icon-action-btn.btn-counselor { background: #6b0c22; }
-        .icon-action-btn.btn-shared-counselor { background: #b45309; }
 
         .sub-action-bar {
             width: 100%; max-width: 1000px; background: #ffffff; border-radius: 15px; padding: 15px 20px;
@@ -76,38 +75,66 @@
 
         .container { width: 100%; max-width: 1000px; padding-bottom: 120px; display: none; box-sizing: border-box; }
         
-        /* نوافذ النظام المدمجة */
-        #counselor-modal, #shared-counselor-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 96%; max-width: 1150px; max-height: 90vh; background: #ffffff; color: #1e293b; z-index: 2100; border-radius: 20px; padding: 25px; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,0.4); box-sizing: border-box; }
-        
-        .counselor-select-section { margin-bottom: 20px; background: linear-gradient(135deg, #fffcf0 0%, #fff8e1 100%); padding: 18px; border: 1px solid #fef08a; border-radius: 14px; }
-        .counselor-search-box-wrapper { position: relative; flex-grow: 1; min-width: 280px; }
-        .counselor-student-search { width: 100%; padding: 11px 15px; border-radius: 10px; border: 1.5px solid #cbd5e1; font-size: 0.95rem; font-family: inherit; outline: none; background: white; }
-        .counselor-search-results { position: absolute; top: 105%; right: 0; left: 0; background: white; border: 1px solid #cbd5e1; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 2200; box-shadow: 0 10px 25px rgba(0,0,0,0.08); display: none; }
-        .counselor-search-results div { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-weight: 500; font-size: 0.9rem; text-align: right; }
-        .counselor-search-results div:hover { background-color: #fdf2f8; color: #6b0c22; font-weight: bold; }
-        
-        .counselor-history-section { background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 15px; margin-bottom: 20px; display: none; }
-        .counselor-history-card { background: white; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
-        
+        /* شاشات ونوافذ النظام المحدثة */
+        .select-section {
+            margin-bottom: 25px; background: linear-gradient(135deg, #fffcf0 0%, #fff8e1 100%);
+            padding: 20px; border: 1px solid #fef08a; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .select-section label { font-weight: 700; color: var(--maroon); display: block; margin-bottom: 10px; font-size: 1rem; }
+        .search-container { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .search-box-wrapper { position: relative; flex-grow: 1; min-width: 280px; }
+        input[type="text"].student-search {
+            width: 100%; padding: 12px 16px; border-radius: 8px; border: 1.5px solid #cbd5e1;
+            font-size: 0.95rem; font-family: inherit; outline: none; background: white;
+        }
+        .search-results {
+            position: absolute; top: 105%; right: 0; left: 0; background: white; border: 1px solid #cbd5e1;
+            border-radius: 8px; max-height: 220px; overflow-y: auto; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.08); display: none;
+        }
+        .search-results div { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-weight: 500; }
+        .search-results div:hover { background-color: #fdf2f8; color: var(--maroon); font-weight: 700; }
+
+        .history-section {
+            background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 20px; margin-bottom: 25px; display: none;
+        }
+        .history-card { background: white; padding: 18px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 12px; }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 20px; border-radius: 14px; overflow: hidden; border: 1px solid #cbd5e1; background: #fff; }
+        th, td { padding: 12px; text-align: center; font-size: 0.9rem; vertical-align: middle; border-bottom: 1px solid #cbd5e1; }
+        th { background-color: var(--maroon); color: white; font-weight: 700; }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background-color: #f8fafc; }
+
         .violation-tags-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; text-align: right; }
-        .violation-tag-inline { background: #fffbeb; border: 1.5px solid #fef08a; padding: 5px 10px; border-radius: 8px; display: inline-flex; align-items: center; gap: 10px; width: fit-content; }
-        .violation-name-text { color: #854d0e; font-weight: bold; font-size: 0.85rem; }
-        .violation-count-text { color: #1d4ed8; background-color: #eff6ff; border: 1px solid #bfdbfe; padding: 2px 6px; border-radius: 6px; font-weight: bold; font-size: 0.78rem; }
-        .btn-remove-tag { background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 0.85rem; padding: 0 4px; }
+        .violation-tag-inline {
+            background: #fffbeb; border: 1.5px solid #fef08a; padding: 6px 12px; border-radius: 8px;
+            display: inline-flex; align-items: center; gap: 12px; width: fit-content;
+        }
+        .violation-name-text { color: #854d0e; font-weight: 800; font-size: 0.88rem; }
+        .violation-count-text { color: #1d4ed8; background-color: #eff6ff; border: 1px solid #bfdbfe; padding: 2px 8px; border-radius: 6px; font-weight: 800; font-size: 0.8rem; }
+        .btn-remove-tag { background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 0.9rem; padding: 0 4px; }
 
-        textarea.notes-input, textarea.counselor-reply { width: 100%; min-height: 55px; padding: 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 0.85rem; resize: vertical; box-sizing: border-box; }
-        textarea.counselor-reply { background-color: #f1f5f9; color: #1e293b; font-weight: bold; border-color: #cbd5e1; }
-        
-        .time-badge-referral { display: inline-flex; align-items: center; gap: 5px; background: #fff5f5; color: #991b1b; border: 1px solid #fca5a5; padding: 3px 8px; border-radius: 15px; font-size: 0.75rem; font-weight: bold; margin-top: 3px; }
-        .time-badge-reply { display: inline-flex; align-items: center; gap: 5px; background: #f0f9ff; color: #0369a1; border: 1px solid #7dd3fc; padding: 3px 8px; border-radius: 15px; font-size: 0.75rem; font-weight: bold; margin-top: 3px; }
+        textarea.notes-input, textarea.counselor-reply {
+            width: 100%; min-height: 60px; padding: 8px 12px; border: 1.5px solid #cbd5e1;
+            border-radius: 8px; font-family: inherit; font-size: 0.85rem; resize: vertical; margin-bottom: 4px;
+        }
+        textarea.counselor-reply { background-color: #f1f5f9; color: #1e293b; font-weight: 600; border-color: #cbd5e1; }
 
-        select.violation-select, select.count-select { width: 100%; padding: 7px 10px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-size: 0.8rem; outline: none; background: #fff; cursor: pointer; font-family: inherit; margin-bottom: 5px; }
-        .btn-add-violation { background: #d97706; color: white; padding: 5px 8px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; border: none; width: 100%; font-family: inherit; font-weight: bold; }
-        .btn-save-student { background: #16a34a; color: white; padding: 6px 10px; font-size: 0.78rem; border-radius: 6px; cursor: pointer; border: none; font-family: inherit; font-weight: bold; }
-        .btn-view-report { background: #0284c7; color: white; padding: 6px 10px; font-size: 0.78rem; border-radius: 6px; border: none; cursor: pointer; }
-        .btn-remove { background: #dc2626; color: white; padding: 6px 10px; font-size: 0.78rem; border-radius: 6px; border: none; cursor: pointer; }
+        .time-badge-referral {
+            display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #fff5f5 0%, #ffe3e3 100%);
+            color: #991b1b; border: 1px solid #fca5a5; padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; margin-top: 4px;
+        }
+        .time-badge-reply {
+            display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            color: #0369a1; border: 1px solid #7dd3fc; padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; margin-top: 4px;
+        }
 
-        .toast-notification { position: fixed; bottom: 25px; right: 25px; background: #0f172a; color: white; padding: 12px 20px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; z-index: 9999; transform: translateY(150%); transition: transform 0.3s ease; font-weight: bold; font-size: 0.9rem; }
+        select.violation-select, select.count-select {
+            width: 100%; padding: 9px 12px; border-radius: 8px; border: 1.5px solid #cbd5e1;
+            font-size: 0.85rem; outline: none; background-color: #fff; cursor: pointer; font-family: inherit; margin-bottom: 6px;
+        }
+
+        .toast-notification { position: fixed; bottom: 25px; right: 25px; background: #0f172a; color: white; padding: 14px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px; z-index: 9999; transform: translateY(150%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-weight: 600; }
         .toast-notification.show { transform: translateY(0); }
 
         .exam-timer-banner {
@@ -157,6 +184,13 @@
 
         .btn { border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; font-size: 0.9rem; white-space: nowrap; }
         .btn:hover { opacity: 0.9; }
+        .btn-add { background: var(--maroon); color: white; }
+        .btn-add-violation { background: #d97706; color: white; padding: 6px 10px; font-size: 0.78rem; border-radius: 6px; cursor: pointer; border: none; width: 100%; margin-top: 4px; font-family: inherit; font-weight: 700; }
+        .btn-save-student { background: #16a34a; color: white; padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; cursor: pointer; border: none; font-family: inherit; font-weight: 700; }
+        .btn-save-reply { background: #16a34a; color: white; padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; cursor: pointer; border: none; display: none; margin-top: 4px; font-family: inherit; font-weight: 700; }
+        .btn-view-report { background: #0284c7; color: white; padding: 6px 10px; font-size: 0.8rem; border-radius: 6px; border: none; cursor: pointer; }
+        .btn-remove { background: #dc2626; color: white; padding: 6px 10px; font-size: 0.8rem; border-radius: 6px; border: none; cursor: pointer; }
+        .btn-close { background: #64748b; color: white; }
 
         #report-modal, #cloud-modal, #history-modal, #time-modal, #qr-modal, #student-report-modal, #students-manage-modal, #matrix-modal, #single-counselor-report-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 750px; max-height: 85%; background: #ffffff; color: #1e293b; z-index: 2000; border-radius: 20px; padding: 25px; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,0.4); box-sizing: border-box; }
         .report-table { width: 100%; border-collapse: collapse; margin-top: 15px; display: block; overflow-x: auto; }
@@ -262,8 +296,8 @@
         <div style="overflow-x: auto;"><table class="teachers-table"><thead><tr><th>#</th><th>اسم المعلم</th><th>الإيميل</th><th>المادة</th><th>الإجراءات</th></tr></thead><tbody id="teachers-table-body"><tr><td colspan="5">جاري التحميل...</td></tr></tbody></table></div>
     </div>
 
-    <!-- نافذة تحويل المرشد للمعلم (إرسال، أرشفة، حذف، معاينة) -->
-    <div id="counselor-modal">
+    <!-- نافذة إشعار وتحويل المرشد الطلابي (المنظومة المحدثة برابط مباشر) -->
+    <div id="counselor-modal" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 1100px; max-height: 90vh; background: #ffffff; color: #1e293b; z-index: 2100; border-radius: 20px; padding: 25px; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,0.4); box-sizing: border-box;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px;">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div style="width: 45px; height: 45px; background: linear-gradient(135deg, var(--maroon), var(--maroon-light)); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
@@ -271,90 +305,54 @@
                 </div>
                 <div>
                     <h2 style="margin: 0; color: var(--maroon); font-size: 1.3rem;">إشعار تحويل طلاب للمرشد الطلابي</h2>
-                    <small style="color: #64748b; font-weight: bold;">أ/ عبدالعزيز الفيفي - الكفايات اللغوية</small>
+                    <small style="color: #64748b; font-weight: bold;" id="counselorHeaderSub">أ/ عبدالعزيز الفيفي - الكفايات اللغوية</small>
                 </div>
             </div>
-            <button class="btn" style="background: #64748b; padding: 6px 14px;" onclick="closeCounselorModal()"><i class="fas fa-times"></i> إغلاق</button>
+            <button class="btn btn-close" onclick="closeCounselorModal()"><i class="fas fa-times"></i> إغلاق</button>
         </div>
 
-        <div class="counselor-inner-container">
-            <div class="counselor-select-section" id="counselorControlSection">
-                <label style="font-weight: bold; color: var(--maroon); display: block; margin-bottom: 8px;"><i class="fa-solid fa-magnifying-glass"></i> ابحث عن اسم الطالب من فصولك واختاره لإضافته للمرشد:</label>
-                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                    <div class="counselor-search-box-wrapper" style="position:relative; flex-grow:1;">
-                        <input type="text" id="counselorSearchInput" class="counselor-student-search" placeholder="اكتب اسم الطالب هنا..." oninput="filterCounselorStudents()" onfocus="filterCounselorStudents()">
-                        <div id="counselorSearchResults" class="counselor-search-results"></div>
-                    </div>
-                    <button class="btn" style="background: var(--maroon);" onclick="addCounselorSelectedStudent()"><i class="fa-solid fa-paper-plane"></i> إرسال للمرشد</button>
+        <div class="select-section" id="counselorControlSection">
+            <label for="counselorSearchInput"><i class="fa-solid fa-magnifying-glass"></i> ابحث عن اسم الطالب واختاره لإضافته للقائمة:</label>
+            <div class="search-container">
+                <div class="search-box-wrapper" style="position:relative; flex-grow:1;">
+                    <input type="text" id="counselorSearchInput" class="student-search" placeholder="اكتب اسم الطالب هنا..." oninput="filterCounselorStudents()" onfocus="filterCounselorStudents()">
+                    <div id="counselorSearchResults" class="search-results"></div>
                 </div>
-            </div>
-
-            <div class="counselor-history-section" id="counselorStudentHistorySection">
-                <h3 id="counselorHistoryTitle" style="color: #0369a1; margin-top: 0; border-bottom: 1px solid #e0f2fe; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 1rem;">
-                    <span><i class="fa-solid fa-folder-open"></i> سجل تقارير الطالب السابقة</span>
-                    <button class="btn" style="background: #64748b; padding: 2px 8px; font-size: 0.75rem;" onclick="document.getElementById('counselorStudentHistorySection').style.display='none'">إخفاء</button>
-                </h3>
-                <div id="counselorHistoryContent">جاري البحث...</div>
-            </div>
-
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 5%;">#</th>
-                            <th style="width: 20%;">اسم الطالب وتاريخ التحويل</th>
-                            <th style="width: 25%;">اختيار مخالفة وإضافتها</th>
-                            <th style="width: 20%;">قائمة المخالفات</th>
-                            <th style="width: 15%;">ملاحظات المعلم</th>
-                            <th style="width: 15%;">الإجراءات (حذف/أرشفة/معاينة)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="counselorTableBody"></tbody>
-                </table>
+                <button class="btn btn-add" onclick="addCounselorSelectedStudent()"><i class="fa-solid fa-plus"></i> إضافة للقائمة</button>
             </div>
         </div>
-    </div>
 
-    <!-- نافذة "مشارك مع المرشد" (خاصة بالمرشد: يطالع، يتخذ الإجراء، يحفظ فيختفي من عنده) -->
-    <div id="shared-counselor-modal">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #b45309, #d97706); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
-                    <i class="fa-solid fa-user-tie"></i>
-                </div>
-                <div>
-                    <h2 style="margin: 0; color: #b45309; font-size: 1.3rem;">لوحة متابعة المرشد الطلابي (الطلاب المحالون)</h2>
-                    <small style="color: #64748b; font-weight: bold;">اطلاع، اتخاذ الإجراء، والحفظ (ليتم الاختفاء التلقائي)</small>
-                </div>
-            </div>
-            <button class="btn" style="background: #64748b; padding: 6px 14px;" onclick="closeSharedCounselorModal()"><i class="fas fa-times"></i> إغلاق</button>
+        <div class="history-section" id="counselorStudentHistorySection">
+            <h3 id="counselorHistoryTitle" style="color: #0369a1; margin-top: 0; border-bottom: 1px solid #e0f2fe; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 1rem;">
+                <span><i class="fa-solid fa-folder-open"></i> سجل تقارير الطالب السابقة</span>
+                <button class="btn btn-close" style="padding: 2px 8px; font-size: 0.75rem;" onclick="document.getElementById('counselorStudentHistorySection').style.display='none'">إخفاء الأرشيف</button>
+            </h3>
+            <div id="counselorHistoryContent">جاري البحث...</div>
         </div>
 
-        <div class="counselor-inner-container">
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 5%;">#</th>
-                            <th style="width: 20%;">اسم الطالب والإحالة</th>
-                            <th style="width: 25%;">المخالفات المسجلة</th>
-                            <th style="width: 20%;">ملاحظات المعلم</th>
-                            <th style="width: 20%;">رد وإجراء المرشد الطلابي</th>
-                            <th style="width: 10%;">حفظ واتخاذ الإجراء</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sharedCounselorTableBody"></tbody>
-                </table>
-            </div>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">#</th>
+                        <th style="width: 22%;">اسم الطالب وتاريخ التحويل</th>
+                        <th style="width: 25%;" class="counselor-no-print">اختيار مخالفة وإضافتها</th>
+                        <th style="width: 25%;">قائمة المخالفات المسجلة للطالب</th>
+                        <th style="width: 18%;">ملاحظات وسلوكيات المعلم / رد المرشد</th>
+                        <th class="counselor-no-print" style="width: 12%;">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="counselorTableBody"></tbody>
+            </table>
         </div>
     </div>
 
     <!-- نافذة معاينة تقرير مفرد -->
     <div id="single-counselor-report-modal">
-        <h3 style="color: var(--maroon); margin-top: 0; border-bottom: 2px solid var(--gold); padding-bottom: 10px;"><i class="fa-solid fa-file-lines"></i> تفاصيل التقرير</h3>
+        <h3 style="color: var(--maroon); margin-top: 0; border-bottom: 2px solid var(--gold); padding-bottom: 10px;"><i class="fa-solid fa-file-lines"></i> تفاصيل التقرير ورد المرشد</h3>
         <div id="singleCounselorReportContent" style="line-height: 1.8; font-size: 0.95rem; margin-bottom: 20px;"></div>
         <div style="display: flex; justify-content: flex-end;">
-            <button class="btn" style="background: #64748b;" onclick="closeSingleCounselorReportModal()">إغلاق</button>
+            <button class="btn btn-close" onclick="closeSingleCounselorReportModal()">إغلاق</button>
         </div>
     </div>
 
@@ -421,12 +419,11 @@
         <div class="header-left"><p class="school-name" id="header-teacher-subject">الكفايات اللغوية</p></div>
     </div>
 
-    <!-- شريط الأيقونات العلوي (مكتمل وموزع بسطر واحد متناسق تماماً) -->
+    <!-- شريط الأيقونات العلوي -->
     <div class="teacher-icon-bar teacher-only admin-only" id="teacher-icon-bar">
         <button class="icon-action-btn btn-students" onclick="openStudentsManagementModal()"><i class="fas fa-users-cog"></i><span>إدارة الطلاب</span></button>
         <button class="icon-action-btn btn-analytics" onclick="openFullAnalyticsPage()"><i class="fas fa-chart-line"></i><span>التحليل الذكي</span></button>
         <button class="icon-action-btn btn-counselor" onclick="openCounselorModal()"><i class="fas fa-user-shield"></i><span>تحويل المرشد</span></button>
-        <button class="icon-action-btn btn-shared-counselor" onclick="openSharedCounselorModal()"><i class="fas fa-user-tie"></i><span>مشارك مع المرشد</span></button>
         <button class="icon-action-btn btn-share" onclick="shareTeacherDashboardForManager()"><i class="fas fa-share-alt"></i><span>مشاركة اللوحة</span></button>
         <button class="icon-action-btn btn-matrix" onclick="openMatrixModal()"><i class="fas fa-file-code"></i><span>مصفوفة الأسئلة</span></button>
     </div>
@@ -582,6 +579,7 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const isViewOnly = urlParams.has('view');
+        const isCounselorView = urlParams.get('mode') === 'counselor';
 
         const firebaseConfig = {
             apiKey: "AIzaSyDhd5CSkNMoppGby6uKxHsQCBPmi6xxO58",
@@ -600,51 +598,30 @@
         const rtdb = firebase.database();
 
         // ----------------------------------------------------
-        // برمجيات نظام تحويل وإشعار المرشد الطلابي والمشارك
+        // برمجيات نظام تحويل وإشعار المرشد الطلابي (الرابط المباشر)
         // ----------------------------------------------------
         let teacherRegisteredStudentsNames = [];
         let counselorSelectedStudentName = "";
 
-        function openCounselorModal() {
-            document.getElementById('counselor-modal').style.display = 'block';
-            document.getElementById('modal-overlay').style.display = 'block';
-            loadTeacherRegisteredStudentsForCounselor();
-            listenToCounselorReferrals();
-        }
-
-        function closeCounselorModal() {
-            document.getElementById('counselor-modal').style.display = 'none';
-            document.getElementById('modal-overlay').style.display = 'none';
-        }
-
-        function openSharedCounselorModal() {
-            document.getElementById('shared-counselor-modal').style.display = 'block';
-            document.getElementById('modal-overlay').style.display = 'block';
-            listenToSharedCounselorReferrals();
-        }
-
-        function closeSharedCounselorModal() {
-            document.getElementById('shared-counselor-modal').style.display = 'none';
-            document.getElementById('modal-overlay').style.display = 'none';
-        }
-
-        function showToast(message) {
-            const toast = document.getElementById("toast");
-            document.getElementById("toastMsg").textContent = message;
-            toast.classList.add("show");
-            setTimeout(() => toast.classList.remove("show"), 3000);
-        }
+        const countOptionsMap = {
+            "عدم إحضار الواجبات": [
+                { value: "واجب 1", text: "واجب 1" }, { value: "واجب 2", text: "واجب 2" },
+                { value: "واجب 3", text: "واجب 3" }, { value: "واجب 4", text: "واجب 4" }, { value: "واجب 5", text: "واجب 5" }
+            ],
+            "عدم إحضار البحث": [
+                { value: "1. لم يقدم البحث", text: "1. لم يقدم البحث" }, { value: "2. البحث غير مكتمل", text: "2. البحث غير مكتمل" }
+            ],
+            "كثرة النوم": [
+                { value: "1. نوم خفيف", text: "1. نوم خفيف" }, { value: "2. نوم متكرر", text: "2. نوم متكرر" }
+            ],
+            "ضعف المشاركة": [
+                { value: "1. مشاركة ضعيفة", text: "1. مشاركة ضعيفة" }, { value: "2. عدم مشاركة مطلقاً", text: "2. عدم مشاركة مطلقاً" }
+            ]
+        };
 
         function formatTimestamp(timestamp) {
             if (!timestamp) return 'تاريخ غير محدد';
-            let date;
-            if (timestamp.toDate) {
-                date = timestamp.toDate();
-            } else if (timestamp instanceof Date) {
-                date = timestamp;
-            } else {
-                date = new Date(timestamp);
-            }
+            let date = timestamp.toDate ? timestamp.toDate() : (timestamp instanceof Date ? timestamp : new Date(timestamp));
             return date.toLocaleString('ar-SA', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true });
         }
 
@@ -652,7 +629,7 @@
             if (!violationsArray || violationsArray.length === 0) {
                 return '<span style="color: #94a3b8; font-size: 0.8rem; font-style: italic;">لا توجد مخالفات مسجلة</span>';
             }
-            let html = '<div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">';
+            let html = '<div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start; margin-top: 4px;">';
             violationsArray.forEach(item => {
                 const parts = item.split(':');
                 const vName = parts[0] ? parts[0].trim() : item;
@@ -666,6 +643,28 @@
             });
             html += '</div>';
             return html;
+        }
+
+        function openCounselorModal() {
+            const currentUrl = window.location.href.split('?')[0];
+            const counselorUrl = currentUrl + "?mode=counselor&teacher=" + encodeURIComponent(currentTeacherEmail);
+            navigator.clipboard.writeText(counselorUrl).then(() => {
+                showToast("تم نسخ رابط المرشد الطلابي المباشر بنجاح! 🔗");
+            });
+
+            document.getElementById('counselor-modal').style.display = 'block';
+            document.getElementById('modal-overlay').style.display = 'block';
+            loadTeacherRegisteredStudentsForCounselor();
+            listenToCounselorReferrals();
+
+            if (isCounselorView) {
+                document.getElementById('counselorControlSection').style.display = 'none';
+            }
+        }
+
+        function closeCounselorModal() {
+            document.getElementById('counselor-modal').style.display = 'none';
+            document.getElementById('modal-overlay').style.display = 'none';
         }
 
         function loadTeacherRegisteredStudentsForCounselor() {
@@ -694,7 +693,7 @@
 
             const filtered = teacherRegisteredStudentsNames.filter(name => name.toLowerCase().includes(query));
             if (filtered.length === 0) {
-                resultsContainer.innerHTML = '<div style="color: #888;">لا توجد نتائج مطابقة في طلابك المسجلين</div>';
+                resultsContainer.innerHTML = '<div style="color: #888;">لا توجد نتائج مطابقة</div>';
             } else {
                 filtered.forEach(name => {
                     const div = document.createElement("div");
@@ -716,7 +715,7 @@
             const historyTitle = document.getElementById("counselorHistoryTitle").querySelector("span");
             const historyContent = document.getElementById("counselorHistoryContent");
 
-            historyTitle.innerHTML = `<i class="fa-solid fa-folder-open"></i> سجل تقارير الطالب: ${studentName}`;
+            historyTitle.innerHTML = `<i class="fa-solid fa-folder-open"></i> سجل تقارير الطالب السابقة: ${studentName}`;
             historyContent.innerHTML = "جاري البحث في الأرشيف...";
             historySection.style.display = "block";
 
@@ -726,17 +725,26 @@
                     historyContent.innerHTML = "<p style='color: #666; margin: 0;'>لا توجد تقارير سابقة مسجلة لهذا الطالب في السحابة.</p>";
                     return;
                 }
+
                 let html = "";
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const createdTimeStr = formatTimestamp(data.createdAt);
+                    const replyTimeStr = data.replyCreatedAt ? formatTimestamp(data.replyCreatedAt) : null;
                     const currentViolations = data.violations || [];
                     const violationsHTML = generateFormattedViolationsHTML(currentViolations);
+                    
                     html += `
-                        <div class="counselor-history-card">
-                            <div style="font-size: 0.82rem; margin-bottom: 4px;"><span class="time-badge-referral"><i class="fa-solid fa-calendar-check"></i> ${createdTimeStr}</span></div>
-                            <div style="font-size: 0.85rem; margin-bottom: 4px;"><strong>المخالفات:</strong> ${violationsHTML}</div>
-                            <div style="font-size: 0.85rem;"><strong>ملاحظات:</strong> ${data.notes || 'لا توجد'} | <strong>إجراء المرشد:</strong> ${data.reply || 'لم يتم اتخاذ إجراء بعد'}</div>
+                        <div class="history-card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span class="time-badge-referral"><i class="fa-solid fa-calendar-check"></i> إحالة المعلم: ${createdTimeStr}</span>
+                            </div>
+                            <div style="font-size: 0.85rem; margin-bottom: 6px;"><strong>المخالفات:</strong><br>${violationsHTML}</div>
+                            <div style="font-size: 0.85rem; margin-bottom: 4px;"><strong>ملاحظاتك:</strong> ${data.notes || 'لا توجد ملاحظات'}</div>
+                            <div style="font-size: 0.85rem; color: #0284c7; margin-bottom: 4px;">
+                                <strong>رد المرشد الطلابي:</strong> ${data.reply || 'لم يتم الرد بعد'} 
+                                ${replyTimeStr ? `<br><span class="time-badge-reply"><i class="fa-solid fa-reply-all"></i> وقت الرد: ${replyTimeStr}</span>` : ''}
+                            </div>
                         </div>
                     `;
                 });
@@ -758,32 +766,25 @@
                     teacher_email: currentTeacherEmail,
                     violations: [],
                     notes: "",
-                    reply: "لم يتم اتخاذ إجراء بعد",
+                    reply: "لم يتم الرد بعد",
                     isArchived: false,
-                    isProcessedByCounselor: false,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 document.getElementById("counselorSearchInput").value = "";
                 counselorSelectedStudentName = "";
                 document.getElementById("counselorStudentHistorySection").style.display = "none";
-                showToast(`تم إرسال الطالب (${studentName}) للمرشد بنجاح!`);
+                showToast(`تم إدراج الطالب (${studentName}) للقائمة النشطة!`);
             } catch (e) {
-                alert("حدث خطأ أثناء الإضافة.");
+                console.error(e);
             }
         }
-
-        const countOptionsMap = {
-            "عدم إحضار الواجبات": [{ value: "واجب 1", text: "واجب 1" }, { value: "واجب 2", text: "واجب 2" }, { value: "واجب 3", text: "واجب 3" }],
-            "عدم إحضار البحث": [{ value: "1. لم يقدم البحث", text: "1. لم يقدم البحث" }, { value: "2. البحث غير مكتمل", text: "2. البحث غير مكتمل" }],
-            "كثرة النوم": [{ value: "1. نوم خفيف", text: "1. نوم خفيف" }, { value: "2. نوم متكرر", text: "2. نوم متكرر" }],
-            "ضعف المشاركة": [{ value: "1. مشاركة ضعيفة", text: "1. مشاركة ضعيفة" }, { value: "2. عدم مشاركة مطلقاً", text: "2. عدم مشاركة مطلقاً" }]
-        };
 
         function onTypeSelectChange(id) {
             const typeSelect = document.getElementById(`type_select_${id}`);
             const countSelect = document.getElementById(`count_select_${id}`);
             const selectedType = typeSelect.value;
             countSelect.innerHTML = '<option value="">-- اختر العدد --</option>';
+
             if (countOptionsMap[selectedType]) {
                 countOptionsMap[selectedType].forEach(opt => {
                     const optionEl = document.createElement("option");
@@ -799,7 +800,8 @@
             const countSelect = document.getElementById(`count_select_${id}`);
             const typeVal = typeSelect.value;
             const countVal = countSelect.value;
-            if (!typeVal || !countVal) return alert("يرجى اختيار نوع المخالفة والعدد!");
+
+            if (!typeVal || !countVal) return alert("يرجى اختيار نوع المخالفة والعدد قبل الضغط على إضافة!");
 
             const violationString = `${typeVal}: ${countVal}`;
             const docRef = fsDb.collection("referral_list").doc(id);
@@ -810,7 +812,7 @@
                 await docRef.update({ violations: currentArray });
                 typeSelect.value = "";
                 countSelect.innerHTML = '<option value="">-- اختر العدد --</option>';
-                showToast("تمت إضافة المخالفة بنجاح!");
+                showToast("تمت إضافة المخالفة للقائمة بنجاح!");
             }
         }
 
@@ -829,59 +831,82 @@
             const container = document.getElementById(`violation_tags_${id}`);
             if (!container) return;
             container.innerHTML = "";
+
             if (!violationsArray || violationsArray.length === 0) {
-                container.innerHTML = '<span style="color: #94a3b8; font-size: 0.78rem; font-style: italic;">لا توجد مخالفات</span>';
+                container.innerHTML = '<span style="color: #94a3b8; font-size: 0.8rem; font-style: italic;">لا توجد مخالفات مضافة</span>';
                 return;
             }
+
             violationsArray.forEach((vItem, index) => {
                 const parts = vItem.split(':');
-                const vName = parts[0] ? parts[0].trim() : vItem;
-                const vCount = parts[1] ? parts[1].trim() : '';
+                const violationName = parts[0] ? parts[0].trim() : vItem;
+                const violationCount = parts[1] ? parts[1].trim() : '';
+
                 const tag = document.createElement("div");
                 tag.className = "violation-tag-inline";
                 tag.innerHTML = `
-                    <span class="violation-name-text">• ${vName}</span>
-                    ${vCount ? `<span class="violation-count-text">${vCount}</span>` : ''}
-                    <button class="btn-remove-tag" onclick="removeViolationFromStudent('${id}',${index})" title="حذف"><i class="fa-solid fa-xmark"></i></button>
+                    <span class="violation-name-text">• ${violationName}</span>
+                    ${violationCount ? `<span class="violation-count-text">${violationCount}</span>` : ''}
+                    ${!isCounselorView ? `<button class="btn-remove-tag" onclick="removeViolationFromStudent('${id}',${index})" title="حذف المخالفة"><i class="fa-solid fa-xmark"></i></button>` : ''}
                 `;
                 container.appendChild(tag);
             });
         }
 
         async function updateCloudField(id, field, value) {
-            await fsDb.collection("referral_list").doc(id).update({ [field]: value });
+            if (!isCounselorView) {
+                await fsDb.collection("referral_list").doc(id).update({ [field]: value });
+            }
         }
 
-        async function saveSingleCounselorStudent(id, studentName) {
+        async function saveReply(id) {
+            const replyText = document.getElementById(`reply_${id}`).value;
+            if (!replyText.trim()) return alert("يرجى كتابة الرد قبل الحفظ!");
+
+            try {
+                await fsDb.collection("referral_list").doc(id).update({ 
+                    reply: replyText,
+                    replyCreatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showToast("تم حفظ الرد وتوقيته وإخفاء التقرير من قائمة المرشد!");
+            } catch (error) {
+                alert("حدث خطأ أثناء حفظ الرد.");
+            }
+        }
+
+        async function saveSingleStudent(id, studentName) {
             try {
                 await fsDb.collection("referral_list").doc(id).update({ isArchived: true });
-                showToast(`تم أرشفة تقرير الطالب (${studentName}) بنجاح!`);
+                showToast(`تم أرشفة وحفظ تقرير الطالب (${studentName}) بنجاح!`);
             } catch (error) {
                 alert("حدث خطأ أثناء الحفظ.");
             }
         }
 
-        async function deleteCounselorStudent(id) {
-            if (confirm("إزالة هذا الطالب من القائمة؟")) {
+        async function deleteCloudStudent(id) {
+            if(!isCounselorView && confirm("إزالة هذا الطالب من القائمة الحالية؟")) {
                 await fsDb.collection("referral_list").doc(id).delete();
-                showToast("تم الحذف بنجاح!");
+                showToast("تم إزالة الطالب من القائمة!");
             }
         }
 
-        function openSingleCounselorReport(name, dateStr, violationsInput, notes, reply) {
+        function openSingleCounselorReport(name, dateStr, violationsInput, notes, reply, replyDateStr) {
             let violationsArr = [];
             if (typeof violationsInput === 'string') {
                 try { violationsArr = JSON.parse(violationsInput); } catch(e) { violationsArr = [violationsInput]; }
             } else if (Array.isArray(violationsInput)) {
                 violationsArr = violationsInput;
             }
+
             const formattedViolations = generateFormattedViolationsHTML(violationsArr);
             const content = `
                 <p><strong>اسم الطالب:</strong> ${name}</p>
-                <p><strong>تاريخ الإحالة:</strong> <span class="time-badge-referral">${dateStr}</span></p>
-                <div style="margin-bottom: 10px;"><strong>المخالفات:</strong><br>${formattedViolations}</div>
-                <p><strong>ملاحظات المعلم:</strong> ${notes || 'لا توجد'}</p>
-                <p><strong>إجراء المرشد الطلابي:</strong> ${reply || 'لم يتم اتخاذ إجراء بعد'}</p>
+                <p><strong>تاريخ ووقت الإحالة:</strong> <span class="time-badge-referral"><i class="fa-solid fa-calendar-check"></i> ${dateStr}</span></p>
+                <div style="margin-bottom: 15px;"><strong>المخالفات المسجلة:</strong><br>${formattedViolations}</div>
+                <p><strong>ملاحظات المعلم:</strong> ${notes}</p>
+                <hr style="border: 0; border-top: 1px solid #ddd; margin: 15px 0;">
+                <p><strong>رد المرشد الطلابي:</strong> <span style="color: #0284c7; font-weight: bold;">${reply}</span> 
+                ${replyDateStr ? `<br><span class="time-badge-reply" style="margin-top: 8px;"><i class="fa-solid fa-reply-all"></i> وقت الرد: ${replyDateStr}</span>` : ''}</p>
             `;
             document.getElementById('singleCounselorReportContent').innerHTML = content;
             document.getElementById('single-counselor-report-modal').style.display = 'flex';
@@ -892,119 +917,75 @@
             document.getElementById('single-counselor-report-modal').style.display = 'none';
         }
 
-        // استماع لجدول المعلم (المحالة للمرشد)
         function listenToCounselorReferrals() {
-            fsDb.collection("referral_list").where("teacher_email", "==", currentTeacherEmail).onSnapshot(snapshot => {
+            let query = fsDb.collection("referral_list");
+            if (!isCounselorView) {
+                query = query.where("teacher_email", "==", currentTeacherEmail);
+            }
+
+            query.onSnapshot(snapshot => {
                 const tbody = document.getElementById("counselorTableBody");
                 if (!tbody) return;
                 tbody.innerHTML = "";
-                let count = 0;
+                let studentCount = 0;
 
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const id = doc.id;
-                    if (data.isArchived === true) return;
-                    count++;
 
+                    if (!isCounselorView && data.isArchived === true) return;
+                    if (isCounselorView && (data.reply && data.reply !== "لم يتم الرد بعد")) return;
+
+                    studentCount++;
                     const currentViolations = data.violations || [];
                     const createdTimeStr = formatTimestamp(data.createdAt);
+                    const replyTimeStr = data.replyCreatedAt ? formatTimestamp(data.replyCreatedAt) : null;
                     const studentDisplayName = data.name || "اسم الطالب";
 
                     const row = document.createElement("tr");
                     row.innerHTML = `
-                        <td>${count}</td>
+                        <td>${studentCount}</td>
                         <td style="text-align: right; font-weight: bold;">
-                            ${studentDisplayName}<br>
+                            ${studentDisplayName}
+                            <br>
                             <span class="time-badge-referral"><i class="fa-solid fa-calendar-check"></i> ${createdTimeStr}</span>
-                            ${data.isProcessedByCounselor ? '<br><span class="time-badge-reply"><i class="fa-solid fa-check-circle"></i> تم إرسال الإجراء من المرشد</span>' : ''}
                         </td>
-                        <td>
-                            <select id="type_select_${id}" class="violation-select" onchange="onTypeSelectChange('${id}')">
-                                <option value="">-- اختر المخالفة --</option>
+                        <td class="counselor-no-print">
+                            <select id="type_select_${id}" class="violation-select" ${isCounselorView ? 'disabled' : ''} onchange="onTypeSelectChange('${id}')">
+                                <option value="">-- اختر نوع المخالفة --</option>
                                 <option value="عدم إحضار الواجبات">عدم إحضار الواجبات</option>
                                 <option value="عدم إحضار البحث">عدم إحضار البحث</option>
                                 <option value="كثرة النوم">كثرة النوم</option>
                                 <option value="ضعف المشاركة">ضعف المشاركة</option>
                             </select>
-                            <select id="count_select_${id}" class="count-select">
-                                <option value="">-- العدد --</option>
+                            
+                            <select id="count_select_${id}" class="count-select" ${isCounselorView ? 'disabled' : ''}>
+                                <option value="">-- اختر العدد --</option>
                             </select>
-                            <button class="btn-add-violation" onclick="addViolationToStudent('${id}')"><i class="fa-solid fa-circle-plus"></i> إضافة</button>
+                            
+                            <button class="btn-add-violation" ${isCounselorView ? 'style="display:none;"' : ''} onclick="addViolationToStudent('${id}')"><i class="fa-solid fa-circle-plus"></i> إضافة المخالفة للقائمة</button>
                         </td>
-                        <td><div id="violation_tags_${id}" class="violation-tags-list"></div></td>
                         <td>
-                            <textarea class="notes-input" placeholder="ملاحظات المعلم..." onblur="updateCloudField('${id}', 'notes', this.value)">${data.notes || ''}</textarea>
+                            <div id="violation_tags_${id}" class="violation-tags-list"></div>
                         </td>
-                        <td style="display: flex; gap: 4px; justify-content: center; align-items: center; padding-top: 15px;">
-                            <button class="btn-save-student" onclick="saveSingleCounselorStudent('${id}', '${studentDisplayName}')" title="أرشفة"><i class="fa-solid fa-floppy-disk"></i></button>
-                            <button class="btn-view-report" onclick="openSingleCounselorReport('${studentDisplayName}', '${createdTimeStr}', \`${JSON.stringify(currentViolations).replace(/"/g, '&quot;')}\`, \`${data.notes || 'لا توجد'}\`, \`${data.reply || 'لم يتم اتخاذ إجراء بعد'}\`)" title="معاينة"><i class="fa-solid fa-eye"></i></button>
-                            <button class="btn-remove" onclick="deleteCounselorStudent('${id}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                        <td>
+                            <textarea class="notes-input" ${isCounselorView ? 'disabled' : ''} placeholder="سلوكيات وملاحظات المعلم..." onblur="updateCloudField('${id}', 'notes', this.value)">${data.notes || ''}</textarea>
+                            <div id="counselor_box_${id}" style="display:${isCounselorView ? 'block' : 'none'}; margin-top: 5px;">
+                                <textarea id="reply_${id}" class="counselor-reply" placeholder="اكتب رد المرشد الطلابي هنا...">${data.reply !== "لم يتم الرد بعد" ? (data.reply || '') : ''}</textarea>
+                                ${replyTimeStr ? `<div style="text-align: right;"><span class="time-badge-reply"><i class="fa-solid fa-reply-all"></i> وقت الرد: ${replyTimeStr}</span></div>` : ''}
+                                <button class="btn-save-reply" style="display:${isCounselorView ? 'inline-block' : 'none'};" onclick="saveReply('${id}')"><i class="fa-solid fa-paper-plane"></i> حفظ رد المرشد</button>
+                            </div>
+                        </td>
+                        <td class="counselor-no-print" style="display: flex; gap: 4px; justify-content: center; align-items: center; padding-top: 15px;">
+                            <button class="btn-save-student" ${isCounselorView ? 'style="display:none;"' : ''} onclick="saveSingleStudent('${id}', '${studentDisplayName}')" title="حفظ وأرشفة الطالب"><i class="fa-solid fa-floppy-disk"></i></button>
+                            <button class="btn-view-report" onclick="openSingleCounselorReport('${studentDisplayName}', '${createdTimeStr}', \`${JSON.stringify(currentViolations).replace(/"/g, '&quot;')}\`, \`${data.notes || 'لا توجد'}\`, \`${data.reply || 'لم يتم الرد بعد'}\`, '${replyTimeStr || ''}')" title="معاينة"><i class="fa-solid fa-eye"></i></button>
+                            <button class="btn-remove" ${isCounselorView ? 'style="display:none;"' : ''} onclick="deleteCloudStudent('${id}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     `;
                     tbody.appendChild(row);
                     renderStudentViolationTags(id, currentViolations);
                 });
             });
-        }
-
-        // استماع لنافذة "مشارك مع المرشد" (يعرض فقط ما لم يتم معالجته أو حفظه من قبل المرشد ليختفي عند اعتماده)
-        function listenToSharedCounselorReferrals() {
-            fsDb.collection("referral_list").onSnapshot(snapshot => {
-                const tbody = document.getElementById("sharedCounselorTableBody");
-                if (!tbody) return;
-                tbody.innerHTML = "";
-                let count = 0;
-
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const id = doc.id;
-                    // إذا تمت المعالجة أو الأرشفة من قبل المرشد، يختفي من عنده
-                    if (data.isProcessedByCounselor === true || data.isArchived === true) return;
-                    count++;
-
-                    const currentViolations = data.violations || [];
-                    const createdTimeStr = formatTimestamp(data.createdAt);
-                    const studentDisplayName = data.name || "اسم الطالب";
-                    const violationsHTML = generateFormattedViolationsHTML(currentViolations);
-
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${count}</td>
-                        <td style="text-align: right; font-weight: bold;">
-                            ${studentDisplayName}<br>
-                            <span class="time-badge-referral"><i class="fa-solid fa-calendar-check"></i> ${createdTimeStr}</span>
-                        </td>
-                        <td>${violationsHTML}</td>
-                        <td style="font-size: 0.85rem; color: #475569;">${data.notes || 'لا توجد ملاحظات'}</td>
-                        <td>
-                            <textarea id="reply_input_${id}" class="counselor-reply" placeholder="اكتب إجراء ورد المرشد هنا...">${data.reply !== 'لم يتم اتخاذ إجراء بعد' ? data.reply : ''}</textarea>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="btn" style="background: var(--success-green); padding: 8px 12px; font-size: 0.8rem;" onclick="processAndHideByCounselor('${id}', '${studentDisplayName}')"><i class="fa-solid fa-check-to-slot"></i> اتخاذ الإجراء والحفظ</button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
-
-                if (count === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b; padding: 20px;">لا توجد إحالات معلقة جديدة تتطلب إجراءً من المرشد.</td></tr>`;
-                }
-            });
-        }
-
-        async function processAndHideByCounselor(id, studentName) {
-            const replyText = document.getElementById(`reply_input_${id}`).value.trim();
-            if (!replyText) { alert("الرجاء كتابة إجراء أو رد المرشد أولاً!"); return; }
-
-            try {
-                await fsDb.collection("referral_list").doc(id).update({
-                    reply: replyText,
-                    isProcessedByCounselor: true // لتختفي من واجهة المرشد
-                });
-                showToast(`تم حفظ إجراء الطالب (${studentName}) واختفاؤه من قائمة المعلقات بنجاح!`);
-            } catch (error) {
-                alert("حدث خطأ أثناء الحفظ.");
-            }
         }
         // ----------------------------------------------------
 
@@ -2029,7 +2010,7 @@
         }
 
         function closeModals() { 
-            document.querySelectorAll('#report-modal, #cloud-modal, #history-modal, #time-modal, #qr-modal, #student-report-modal, #students-manage-modal, #analytics-modal, #matrix-modal, #review-modal-ana, #counselor-modal, #shared-counselor-modal, #single-counselor-report-modal').forEach(m => m.style.display = 'none');
+            document.querySelectorAll('#report-modal, #cloud-modal, #history-modal, #time-modal, #qr-modal, #student-report-modal, #students-manage-modal, #analytics-modal, #matrix-modal, #review-modal-ana, #counselor-modal, #single-counselor-report-modal').forEach(m => m.style.display = 'none');
             document.getElementById('modal-overlay').style.display = 'none'; 
         }
 
@@ -2103,6 +2084,10 @@
                         openFullAnalyticsPage();
                         const btnReturn = document.getElementById('return-home-btn');
                         if (btnReturn) btnReturn.style.display = 'none';
+                    } else if (isCounselorView) {
+                        document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
+                        document.querySelector('.container').style.display = 'none';
+                        openCounselorModal();
                     } else {
                         proceedInit(examId);
                     }
@@ -2135,6 +2120,10 @@
                         if (mData.data) mData.data.forEach(q => addQuestion(q));
                     }
                 });
+            } else if (isCounselorView) {
+                document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
+                document.querySelector('.container').style.display = 'none';
+                openCounselorModal();
             } else {
                 document.querySelector('.container').style.display = 'block';
                 addQuestion();
