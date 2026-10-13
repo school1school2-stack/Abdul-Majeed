@@ -103,9 +103,9 @@
         .matching-num-badge { font-weight: bold; color: #0284c7; width: 25px; text-align: center; font-size: 1.05rem; }
 
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .opt-pair-row { display: flex; align-items: center; background: var(--card-bg); border: 1.5px solid #d1d5db; border-radius: 10px; padding: 12px; cursor: pointer; gap: 8px; }
+        .opt-pair-row { display: flex; align-items: center; background: var(--card-bg); border: 1.5px solid #d1d5db; border-radius: 10px; padding: 12px; cursor: pointer; gap: 8px; transition: 0.2s; }
         .opt-label { font-weight: bold; color: var(--royal-blue); white-space: nowrap; font-size: 1.05rem; }
-        .opt-word { width: 100%; border: none; outline: none; font-weight: bold; color: inherit; background: transparent; text-align: right; font-family: inherit; font-size: 1.05rem; }
+        .opt-word { width: 100%; border: none; outline: none; font-weight: bold; color: inherit; background: transparent; text-align: right; font-family: inherit; font-size: 1.05rem; cursor: pointer; }
 
         .correct-ans-box { margin-top: 15px; padding: 10px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; border: 1px solid #bbf7d0; text-align: right; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: space-between; }
         .correct-input { flex: 1; background: transparent; border: none; outline: none; color: #166534; font-weight: bold; text-align: right; font-family: inherit; min-width: 200px; }
@@ -299,7 +299,6 @@
         <div class="header-left"><p class="school-name" id="header-teacher-subject">الكفايات اللغوية</p></div>
     </div>
 
-    <!-- شريط الأيقونات: تم ربط زر التحليل الذكي ليفتح اللوحة في صفحة مستقلة كاملة -->
     <div class="teacher-icon-bar admin-only" id="teacher-icon-bar">
         <button class="icon-action-btn btn-students" onclick="openStudentsManagementModal()"><i class="fas fa-users-cog"></i><span>إدارة الطلاب والفصول</span></button>
         <button class="icon-action-btn btn-analytics" onclick="openFullAnalyticsPage()"><i class="fas fa-chart-line"></i><span>لوحة التحليل الذكي</span></button>
@@ -321,7 +320,6 @@
         </div>
     </div>
 
-    <!-- واجهة منصة التحليل الذكي المطابقة تماماً والتي تفتح كاملة في صفحة مستقلة -->
     <div class="analytics-fullscreen-page" id="analytics-fullscreen-view">
         <div class="model-nav no-print" id="nav-bar">
             <div class="model-select-wrapper">
@@ -330,9 +328,7 @@
                     <option value="all">🌍 عرض الكل</option>
                 </select>
             </div>
-            <div class="live-clock-badge" id="live-clock-display">
-                🕒 جاري تحميل الوقت...
-            </div>
+            <div class="live-clock-badge" id="live-clock-display">🕒 جاري تحميل الوقت...</div>
             <button class="btn" style="background:#64748b;" onclick="closeAnalyticsPage()"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button>
         </div>
 
@@ -398,7 +394,6 @@
         </div>
     </div>
 
-    <!-- نوافذ التحليل الذكي الفرعية (تعديل، QR، مراجعة، تقرير الطالب) -->
     <div id="edit-name-modal-ana">
         <div class="modal-content-ana" style="text-align: right;">
             <h3 style="color: var(--accent); margin-top: 0;">✏️ تعديل اسم الطالب</h3>
@@ -485,7 +480,7 @@
         let currentExamEndTime = "";
         let examTimerInterval = null;
 
-        let currentTeacherEmail = "aaaa@moe.gov.sa"; // سحابة المعلمين aaaa المعتمدة
+        let currentTeacherEmail = "aaaa@moe.gov.sa";
         let currentTeacherName = "أ. عبدالعزيز الفيفي";
         let currentTeacherSubject = "الكفايات اللغوية";
 
@@ -537,7 +532,6 @@
             return `teachers_data/aaaa_moe_gov_sa`;
         }
 
-        // دوال فتح وإغلاق منصة التحليل الذكي المدمجة في صفحة مستقلة كاملة
         function openFullAnalyticsPage() {
             document.getElementById('main-header').style.display = 'none';
             document.getElementById('teacher-icon-bar').style.display = 'none';
@@ -779,7 +773,6 @@
         }
         function copyLinkAna() { document.getElementById('share-url-ana').select(); document.execCommand("copy"); alert("تم النسخ"); }
 
-        // بقية دوال كود المعلمين الأصلي كاملة دون أي نقصان
         function saveAll() {
             const dataToSave = [];
             document.querySelectorAll('.question-card').forEach(c => {
@@ -1035,6 +1028,10 @@
                 <input type="hidden" class="hidden-q-text" value="${qTextVal}">
             `;
             container.appendChild(card);
+            
+            // تفعيل التفاعل والنقر على خيارات الاختيار من متعدد وصح وخطأ للطالب
+            bindOptionClickEvents(card, isStudent);
+
             card.querySelectorAll('textarea').forEach(ta => autoResizeTextarea(ta));
             updateNumbers();
             if(!isStudent) saveAll();
@@ -1061,7 +1058,26 @@
 
             card.querySelector('.ans-grid-area').innerHTML = renderOptionsByType(type, null, false);
             card.querySelector('.correct-ans-box').style.display = type.includes('مزاوجة') ? 'none' : 'flex';
+            
+            bindOptionClickEvents(card, false);
             saveAll();
+        }
+
+        function bindOptionClickEvents(card, isStudent) {
+            card.querySelectorAll('.opt-pair-row').forEach(row => {
+                row.onclick = () => {
+                    const examId = new URLSearchParams(window.location.search).get('exam');
+                    if (examId && localStorage.getItem('submitted_' + examId) === 'true') return;
+                    
+                    card.querySelectorAll('.opt-pair-row').forEach(r => r.classList.remove('selected-opt'));
+                    row.classList.add('selected-opt');
+                    
+                    const inputRadio = row.querySelector('input');
+                    if (inputRadio) {
+                        inputRadio.checked = true;
+                    }
+                };
+            });
         }
 
         function renderOptionsByType(type, data, isStudent) {
@@ -1166,7 +1182,12 @@
                     <textarea class="student-answer-textarea" ${readonlyAttr}>${studentVal}</textarea>
                 </div>`;
             } else if (type === 'صح وخطأ') {
-                return `<div class="options-grid"><div class="opt-pair-row"><input type="text" class="opt-word opt" readonly value="صح" style="text-align:center;"></div><div class="opt-pair-row"><input type="text" class="opt-word opt" readonly value="خطأ" style="text-align:center;"></div></div>`;
+                let opts = ['صح', 'خطأ'];
+                if (isStudent) opts = shuffleArray(opts);
+                return `<div class="options-grid">
+                    <div class="opt-pair-row"><input type="text" class="opt-word opt" readonly value="${opts[0]}" style="text-align:center;"></div>
+                    <div class="opt-pair-row"><input type="text" class="opt-word opt" readonly value="${opts[1]}" style="text-align:center;"></div>
+                </div>`;
             } else {
                 let opts = data?.opts ? [...data.opts] : ['', '', '', ''];
                 const labels = ['أ) ', 'ب) ', 'ج) ', 'د) '];
