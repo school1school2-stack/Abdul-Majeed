@@ -571,6 +571,7 @@
 
         .btn-add-violation { background: #d97706; color: white; padding: 6px 10px; font-size: 0.78rem; border-radius: 6px; cursor: pointer; border: none; width: 100%; margin-top: 4px; font-family: inherit; font-weight: 700; }
         .btn-save-student { background: #16a34a; color: white; padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; cursor: pointer; border: none; font-family: inherit; font-weight: 700; }
+        .btn-share-student { background: #7c3aed; color: white; padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; cursor: pointer; border: none; font-family: inherit; font-weight: 700; }
         .btn-save-reply { background: #16a34a; color: white; padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; cursor: pointer; border: none; display: none; margin-top: 4px; font-family: inherit; font-weight: 700; }
         .btn-view-report { background: #0284c7; color: white; padding: 6px 10px; font-size: 0.8rem; border-radius: 6px; border: none; cursor: pointer; }
         .btn-remove { background: #dc2626; color: white; padding: 6px 10px; font-size: 0.8rem; border-radius: 6px; border: none; cursor: pointer; }
@@ -621,7 +622,7 @@
         }
 
         @media print {
-            .select-section, .history-section, .actions-dropdown-container, .btn-remove, .btn-save-student, .btn-save-reply, .btn-add-violation, .btn-remove-tag, .action-dropdown, .no-print, .modal-overlay, .toast-notification {
+            .select-section, .history-section, .actions-dropdown-container, .btn-remove, .btn-save-student, .btn-share-student, .btn-save-reply, .btn-add-violation, .btn-remove-tag, .action-dropdown, .no-print, .modal-overlay, .toast-notification {
                 display: none !important;
             }
             body { background: white; padding: 0; }
@@ -764,11 +765,11 @@
                 <thead>
                     <tr>
                         <th style="width: 5%;">#</th>
-                        <th style="width: 22%;">اسم الطالب وتاريخ التحويل</th>
-                        <th style="width: 25%;" class="no-print">اختيار مخالفة وإضافتها</th>
-                        <th style="width: 25%;">قائمة المخالفات المسجلة للطالب</th>
+                        <th style="width: 20%;">اسم الطالب وتاريخ التحويل</th>
+                        <th style="width: 22%;" class="no-print">اختيار مخالفة وإضافتها</th>
+                        <th style="width: 22%;">قائمة المخالفات المسجلة للطالب</th>
                         <th style="width: 18%;">ملاحظات وسلوكيات المعلم</th>
-                        <th class="no-print" style="width: 12%;">الإجراءات</th>
+                        <th class="no-print" style="width: 13%;">الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -787,7 +788,7 @@
                     <option value="">⚙️ قائمة الإجراءات والتحكم الرئيسية...</option>
                     <option value="save_all">💾 حفظ وأرشفة جميع التقارير الحالية</option>
                     <option value="open_saved">📂 التقارير المحفوظة والأرشيف السحابي</option>
-                    <option value="share_link">🔗 مشاركة رابط المرشد الطلابي</option>
+                    <option value="share_link">🔗 مشاركة رابط المرشد الطلابي العام</option>
                     <option value="preview">👁️ معاينة الاستمارة قبل الطباعة</option>
                     <option value="pdf">📄 تحميل الاستمارة ملف PDF</option>
                     <option value="print">🖨️ طباعة الاستمارة</option>
@@ -931,7 +932,7 @@
         <div class="rankings-grid-ana">
             <div class="rank-card-ana top">
                 <div class="rank-title-ana">🏆 أفضل ٥ طلاب <span>(الأعلى درجات)</span></div>
-                <ol class="rank-list-ana" id="top5List"></ol>
+                ol class="rank-list-ana" id="top5List"></ol>
             </div>
             <div class="rank-card-ana bottom">
                 <div class="rank-title-ana">⚠️ أقل ٥ طلاب درجات <span>(بحاجة لمتابعة)</span></div>
@@ -2121,6 +2122,7 @@
         let studentCount = 0;
         let selectedStudentName = "";
         const isCounselorView = urlParams.get('mode') === 'counselor';
+        const targetStudentId = urlParams.get('studentId');
 
         const countOptionsMap = {
             "عدم إحضار الواجبات": [
@@ -2526,6 +2528,9 @@
                     const data = doc.data();
                     const id = doc.id;
 
+                    // تصفية حسب الطالب المحدد برابط المشاركة المباشر للمرشد
+                    if (isCounselorView && targetStudentId && id !== targetStudentId) return;
+
                     if (!isCounselorView && data.isArchived === true) return;
                     if (isCounselorView && (data.reply && data.reply !== "لم يتم الرد بعد" && data.reply.trim() !== "")) return;
 
@@ -2570,8 +2575,9 @@
                                 <button class="btn-save-reply" onclick="saveReply('${id}')"><i class="fa-solid fa-paper-plane"></i> حفظ الرد وإخفاء الحالة</button>
                             </div>
                         </td>
-                        <td class="no-print" style="display: flex; gap: 4px; justify-content: center; align-items: center; padding-top: 15px;">
+                        <td class="no-print" style="display: flex; gap: 4px; justify-content: center; align-items: center; padding-top: 15px; flex-wrap: wrap;">
                             <button class="btn-save-student" ${isCounselorView ? 'style="display:none;"' : ''} onclick="saveSingleStudent('${id}', '${studentDisplayName}')" title="حفظ وأرشفة الطالب"><i class="fa-solid fa-floppy-disk"></i></button>
+                            <button class="btn-share-student" ${isCounselorView ? 'style="display:none;"' : ''} onclick="shareStudentCounselorLink('${id}', '${studentDisplayName}')" title="نسخ رابط مشاركة للمرشد لهذا الطالب"><i class="fa-solid fa-share-nodes"></i></button>
                             <button class="btn-view-report" onclick="openSingleReport('${studentDisplayName}', '${createdTimeStr}', \`${JSON.stringify(currentViolations).replace(/"/g, '&quot;')}\`, \`${data.notes || 'لا توجد'}\`, \`${data.reply || 'لم يتم الرد بعد'}\`, '${replyTimeStr || ''}')" title="معاينة"><i class="fa-solid fa-eye"></i></button>
                             <button class="btn-remove" ${isCounselorView ? 'style="display:none;"' : ''} onclick="deleteCloudStudent('${id}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
                         </td>
@@ -2585,6 +2591,16 @@
                     document.querySelectorAll('[id^="counselor_box_"]').forEach(box => box.style.display = 'block');
                     document.querySelectorAll('.btn-save-reply').forEach(btn => btn.style.display = 'inline-block');
                 }
+            });
+        }
+
+        function shareStudentCounselorLink(studentId, studentName) {
+            const currentUrl = window.location.href.split('?')[0];
+            const counselorUrl = `${currentUrl}?mode=counselor&studentId=${studentId}`;
+            navigator.clipboard.writeText(counselorUrl).then(() => {
+                showToast(`تم نسخ رابط المرشد الخاص بالطالب (${studentName}) بنجاح!`);
+            }).catch(() => {
+                prompt("نسخ رابط المرشد الخاص بالطالب:", counselorUrl);
             });
         }
 
@@ -2700,7 +2716,7 @@
             const currentUrl = window.location.href.split('?')[0];
             const counselorUrl = currentUrl + "?mode=counselor";
             navigator.clipboard.writeText(counselorUrl).then(() => {
-                showToast("تم نسخ رابط المرشد الطلابي بنجاح!");
+                showToast("تم نسخ رابط المرشد الطلابي العام بنجاح!");
             });
         }
 
