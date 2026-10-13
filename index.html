@@ -105,8 +105,8 @@
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .opt-pair-row { display: flex; align-items: center; background: var(--card-bg); border: 1.5px solid #d1d5db; border-radius: 10px; padding: 12px; cursor: pointer; gap: 8px; transition: 0.2s; user-select: none; }
         .opt-pair-row:hover { border-color: var(--royal-blue); background: #f8fafc; }
-        .opt-label { font-weight: bold; color: var(--royal-blue); white-space: nowrap; font-size: 1.05rem; pointer-events: none; }
-        .opt-word { width: 100%; border: none; outline: none; font-weight: bold; color: inherit; background: transparent; text-align: right; font-family: inherit; font-size: 1.05rem; pointer-events: none; }
+        .opt-label { font-weight: bold; color: var(--royal-blue); white-space: nowrap; font-size: 1.05rem; }
+        .opt-word { width: 100%; border: none; outline: none; font-weight: bold; color: inherit; background: transparent; text-align: right; font-family: inherit; font-size: 1.05rem; }
 
         .correct-ans-box { margin-top: 15px; padding: 10px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; border: 1px solid #bbf7d0; text-align: right; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: space-between; }
         .correct-input { flex: 1; background: transparent; border: none; outline: none; color: #166534; font-weight: bold; text-align: right; font-family: inherit; min-width: 200px; }
@@ -1179,8 +1179,8 @@
                 let opts = ['صح', 'خطأ'];
                 if (isStudent) opts = shuffleArray(opts);
                 return `<div class="options-grid">
-                    <div class="opt-pair-row"><input type="text" class="opt-word opt" readonly value="${opts[0]}" style="text-align:center; cursor:pointer;"></div>
-                    <div class="opt-pair-row"><input type="text" class="opt-word opt" readonly value="${opts[1]}" style="text-align:center; cursor:pointer;"></div>
+                    <div class="opt-pair-row"><input type="text" class="opt-word opt" readonly value="${opts[0]}" style="text-align:center; cursor:pointer; ${isStudent ? 'pointer-events:none;' : ''}"></div>
+                    <div class="opt-pair-row"><input type="text" class="opt-word opt" readonly value="${opts[1]}" style="text-align:center; cursor:pointer; ${isStudent ? 'pointer-events:none;' : ''}"></div>
                 </div>`;
             } else {
                 let opts = data?.opts ? [...data.opts] : ['', '', '', ''];
@@ -1190,7 +1190,7 @@
                 for(let i=0; i<4; i++) {
                     h+= `
                     <div class="opt-pair-row">
-                        <span class="opt-label">${labels[i]}</span>
+                        <span class="opt-label" ${isStudent ? 'style="pointer-events:none;"' : ''}>${labels[i]}</span>
                         <input type="text" class="opt-word opt" ${isStudent ? 'readonly style="background:transparent; cursor:pointer; pointer-events:none;"' : ''} placeholder="خيار ${i+1}" value="${opts[i]||''}" oninput="saveAll()">
                     </div>`;
                 }
@@ -1358,9 +1358,8 @@
 
                 let selWord = "", isCorrect = false;
                 if (['اختر الإجابة الصحيحة', 'صح وخطأ'].includes(qType)) {
-                    const selectedOptElement = c.querySelector('.selected-opt .opt');
-                    selWord = selectedOptElement ? selectedOptElement.value.trim() : "";
-                    isCorrect = (selWord === correctKey.trim());
+                    selWord = c.querySelector('.selected-opt .opt')?.value || "";
+                    isCorrect = (selWord.trim() === correctKey.trim());
                 } else if (qType === 'سؤال مزاوجة (توصيل)' || qType === 'k_matching') {
                     let matchingAns = [];
                     c.querySelectorAll('.matching-ans-input').forEach(inp => matchingAns.push(inp.value.trim() || "0"));
