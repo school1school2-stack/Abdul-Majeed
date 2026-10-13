@@ -3,304 +3,662 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المنصة التعليمية الشاملة - المعلم</title>
+    <title>المنصة المدرسية الشاملة - أ. عبدالعزيز الفيفي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <style>
-        :root { 
-            --royal-blue: #1e3a8a; --q-red: #ef4444; --bg-page: #f8fafc; 
-            --success-green: #10b981; --k-purple: #7c3aed; --card-border: #e2e8f0;
-            --text-color: #1e293b; --card-bg: #ffffff;
-        }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-page); color: var(--text-color); margin: 0; padding: 20px; direction: rtl; box-sizing: border-box; }
-        
-        .user-header {
-            width: 100%; max-width: 1200px; margin: 0 auto 20px auto; background: var(--card-bg); border-radius: 15px; padding: 20px;
-            display: flex; justify-content: space-between; align-items: center; text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-bottom: 5px solid var(--royal-blue); gap: 15px; flex-wrap: wrap;
-        }
-        .header-right { flex: 1; text-align: right; }
-        .user-name { margin: 0; color: var(--royal-blue); font-weight: bold; font-size: 1.4rem; }
-        .school-name { margin: 0; color: #64748b; font-weight: bold; font-size: 1rem; }
-        
-        .main-tabs-nav {
-            width: 100%; max-width: 1200px; margin: 0 auto 25px auto; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
-        }
-        .tab-btn {
-            background: #cbd5e1; color: #334155; border: none; padding: 12px 25px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.05rem; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px;
-        }
-        .tab-btn.active-tab { background: var(--royal-blue); color: white; box-shadow: 0 4px 12px rgba(30,58,138,0.3); }
+    <!-- الاعتماد على سحابة Firebase aaaa-a2380 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, onSnapshot, updateDoc, query, where, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        .dashboard-section { display: none; width: 100%; max-width: 1200px; margin: 0 auto; box-sizing: border-box; }
-        .dashboard-section.active-section { display: block; }
-
-        .top-action-bar {
-            width: 100%; background: #1e293b; border-radius: 15px; padding: 14px 20px;
-            display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 25px; box-sizing: border-box; gap: 12px; flex-wrap: wrap;
-        }
-        .bar-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-        .btn { border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; font-family: inherit; font-size: 0.9rem; }
-        .btn:hover { opacity: 0.9; }
-
-        .question-card { background: var(--card-bg); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 2px solid var(--card-border); position: relative; text-align: right; box-sizing: border-box; }
-        .question-card::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: var(--k-purple); border-radius: 0 10px 10px 0; }
-        .card-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; justify-content: space-between; }
-        .q-number-badge { background: var(--k-purple); color: white; padding: 4px 15px; border-radius: 50px; font-weight: bold; font-size: 0.9rem; }
-        .type-select { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 10px; border-radius: 10px; font-weight: bold; color: var(--royal-blue); outline: none; }
-        
-        .q-text-input { width: 100%; min-height: 60px; padding: 12px; border: 2px solid #cbd5e1; border-radius: 12px; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px; outline: none; text-align: right; box-sizing: border-box; background: rgba(0,0,0,0.02); resize: none; font-family: inherit; }
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .opt-pair-row { display: flex; align-items: center; background: var(--card-bg); border: 1.5px solid #d1d5db; border-radius: 10px; padding: 12px; gap: 8px; }
-        .opt-label { font-weight: bold; color: var(--royal-blue); white-space: nowrap; }
-        .opt-word { width: 100%; border: none; outline: none; font-weight: bold; background: transparent; text-align: right; font-family: inherit; }
-
-        .correct-ans-box { margin-top: 15px; padding: 10px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; border: 1px solid #bbf7d0; display: flex; align-items: center; gap: 10px; justify-content: space-between; }
-        .correct-input { flex: 1; background: transparent; border: none; outline: none; color: #166534; font-weight: bold; text-align: right; font-family: inherit; }
-        .q-score-input { width: 65px; padding: 5px; border: 1px solid #10b981; border-radius: 6px; text-align: center; font-weight: bold; color: #166534; }
-
-        .table-box { background: white; border-radius: 20px; overflow-x: auto; border: 1px solid var(--card-border); padding: 20px; box-sizing: border-box; }
-        table { width: 100%; border-collapse: collapse; text-align: right; }
-        th { background: #f8fafc; padding: 15px; color: #64748b; border-bottom: 2px solid var(--card-border); font-size: 0.9rem; }
-        td { padding: 12px; border-bottom: 1px solid var(--card-border); font-size: 0.9rem; }
-    </style>
-</head>
-<body>
-
-    <!-- الهيدر المخصص باسم المعلم ومادته -->
-    <div class="user-header">
-        <div class="header-right">
-            <h2 class="user-name" id="headerTeacherName">أ. عبدالعزيز الفيفي</h2>
-            <p class="school-name" id="headerTeacherSubject">الكفايات اللغوية - ثانوية الأمير عبدالمجيد 😉</p>
-        </div>
-        <div>
-            <div style="background: var(--royal-blue); width: 55px; height: 55px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem;">
-                <i class="fas fa-chalkboard-teacher"></i>
-            </div>
-        </div>
-    </div>
-
-    <!-- أزرار التنقل بين الأيقونات الثلاث (المنصة الموحدة) -->
-    <div class="main-tabs-nav">
-        <button class="tab-btn active-tab" onclick="switchTeacherTab('examsTab', this)"><i class="fas fa-file-alt"></i> منصة عمل الاختبارات</button>
-        <button class="tab-btn" onclick="switchTeacherTab('dashboardTab', this)"><i class="fas fa-chart-line"></i> لوحة التحليل الذكي والدرجات</button>
-        <button class="tab-btn" onclick="switchTeacherTab('studentsTab', this)"><i class="fas fa-users"></i> إدارة الفصول والطلاب</button>
-    </div>
-
-    <!-- 1. قسم منصة عمل الاختبارات -->
-    <div id="examsTab" class="dashboard-section active-section">
-        <div class="top-action-bar">
-            <div class="bar-group">
-                <span id="current-model-label" style="color: #38bdf8; font-weight: bold;">📁 نموذج جديد</span>
-                <button class="btn" style="background: #a855f7;" onclick="saveToCloud()"><i class="fas fa-save"></i> حفظ في سحابتي ☁️</button>
-                <button class="btn" style="background: #06b6d4;" onclick="copyCurrentModelLink()"><i class="fas fa-link"></i> نسخ رابط الطلاب 🔗</button>
-            </div>
-            <div class="bar-group">
-                <button class="btn" style="background: #3b82f6;" onclick="addQuestion()"><i class="fas fa-plus"></i> سؤال جديد</button>
-            </div>
-        </div>
-        <div id="quiz-builder-content"></div>
-    </div>
-
-    <!-- 2. لوحة التحكم والتحليل الذكي -->
-    <div id="dashboardTab" class="dashboard-section">
-        <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-            <h2 style="color: var(--royal-blue); margin-top:0;"><i class="fas fa-chart-pie"></i> لوحة التحليل الذكي ودرجات الطلاب</h2>
-            <p style="color: #64748b;">متابعة إحصائيات ونتائج طلاب مادتي المرتبطة بإيميلي السحابي:</p>
-            <div id="teacherReportsContainer" style="margin-top: 20px;">جاري تحميل التقارير...</div>
-        </div>
-    </div>
-
-    <!-- 3. إدارة الفصول والطلاب -->
-    <div id="studentsTab" class="dashboard-section">
-        <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-            <h2 style="color: var(--royal-blue); margin-top:0;"><i class="fas fa-user-graduate"></i> إدارة الفصول وأسماء الطلاب</h2>
-            <p style="color: #64748b;">إضافة الفصول الدراسية وربط الطلاب بسحابة المعلم الحالي:</p>
-            <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
-                <input type="text" id="studentFullName" placeholder="اسم الطالب الثلاثي" style="flex:1; padding:12px; border:1px solid #cbd5e1; border-radius:8px; outline:none;">
-                <input type="email" id="studentSchoolEmail" placeholder="إيميل الطالب sxxxxxxx@rb.moe.gov.sa" style="flex:1; padding:12px; border:1px solid #cbd5e1; border-radius:8px; outline:none;">
-                <button class="btn" style="background: var(--success-green);" onclick="registerStudentForTeacher()"><i class="fas fa-plus-circle"></i> إضافة الطالب</button>
-            </div>
-            <div class="table-box" style="margin-top: 25px;">
-                <table id="teacherStudentsTable">
-                    <thead><tr><th>اسم الطالب</th><th>البريد الإلكتروني</th><th>الإجراء</th></tr></thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // التهيئة وقراءة بيانات المعلم من الرابط (مثلاً ?teacher=t486739@rb.moe.gov.sa&name=عبدالعزيز&subject=الكفايات)
-        const urlParams = new URLSearchParams(window.location.search);
-        const activeTeacherEmail = urlParams.get('teacher') || "t486739@rb.moe.gov.sa";
-        const activeTeacherName = urlParams.get('name') || "أ. عبدالعزيز الفيفي";
-        const activeTeacherSubject = urlParams.get('subject') || "الكفايات اللغوية";
-
-        document.getElementById('headerTeacherName').innerText = activeTeacherName;
-        document.getElementById('headerTeacherSubject').innerText = `${activeTeacherSubject} - ثانوية الأمير عبدالمجيد 😉`;
-
-        let currentOpenModelName = null;
-
-        // إعدادات فايربيس الموحدة لسحابة aaaa
         const firebaseConfig = {
             apiKey: "AIzaSyDhd5CSkNMoppGby6uKxHsQCB",
             authDomain: "aaaa-a2380.firebaseapp.com",
             projectId: "aaaa-a2380",
             storageBucket: "aaaa-a2380.firebasestorage.app",
             messagingSenderId: "593036424543",
-            appId: "1:593036424543:web:b2f8f9e8391220ab2e72ea"
+            appId: "1:593036424543:web:b2f8f9e8391220ab2e72ea",
+            measurementId: "G-2161Q2Q0JQ"
         };
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
 
-        function switchTeacherTab(tabId, btnEl) {
-            document.querySelectorAll('.dashboard-section').forEach(sec => sec.classList.remove('active-section'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active-tab'));
-            
-            document.getElementById(tabId).classList.add('active-section');
-            btnEl.classList.add('active-tab');
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-            if (tabId === 'dashboardTab') loadTeacherDashboardReports();
-            if (tabId === 'studentsTab') loadTeacherStudents();
+        window.db = db;
+        window.FB_doc = doc;
+        window.FB_setDoc = setDoc;
+        window.FB_getDoc = getDoc;
+        window.FB_collection = collection;
+        window.FB_getDocs = getDocs;
+        window.FB_deleteDoc = deleteDoc;
+        window.FB_onSnapshot = onSnapshot;
+        window.FB_updateDoc = updateDoc;
+        window.FB_query = query;
+        window.FB_where = where;
+        window.FB_addDoc = addDoc;
+        window.FB_serverTimestamp = serverTimestamp;
+    </script>
+
+    <style>
+        :root { 
+            --maroon: #800000; --gold: #d4af37; --bg: #fdfaf1; --danger: #c62828; 
+            --success: #28a745; --info: #17a2b8; --accent: #0284c7; --text-main: #1e293b;
+            --primary: #1e3a8a; --card-bg: #ffffff; --border: #e2e8f0;
+            --royal-blue: #1e3a8a; --q-red: #ef4444; --success-green: #10b981; --k-purple: #7c3aed;
+        }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; direction: rtl; color: var(--text-main); }
+        
+        .auth-card { background: white; max-width: 450px; margin: 40px auto; border-radius: 15px; padding: 35px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-top: 8px solid var(--maroon); text-align: center; }
+        .input-field { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 1rem; text-align: center; outline: none; box-sizing: border-box; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn:hover { opacity: 0.9; }
+        .btn-main { background: var(--maroon); width: 100%; padding: 12px; font-size: 1.1rem; }
+
+        .admin-panel, .teacher-dashboard, .sub-section-view, .student-exam-view { display: none; background: white; max-width: 1400px; margin: auto; border-radius: 15px; padding: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-top: 8px solid var(--maroon); }
+        .header { text-align: center; border-bottom: 2px solid var(--gold); margin-bottom: 20px; padding-bottom: 10px; }
+        .section-box { background: #f4f4f4; padding: 20px; border-radius: 10px; margin-bottom: 25px; border: 1px dashed var(--maroon); }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; text-align: right; }
+        th { background: #f8fafc; padding: 15px; color: #64748b; border-bottom: 2px solid var(--border); font-size: 0.85rem; }
+        td { border-bottom: 1px solid #eee; padding: 12px; font-size: 0.9rem; text-align: center; vertical-align: middle; }
+
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 25px; }
+        .card-option { background: #f8fafc; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; border: 2px solid var(--border); transition: 0.3s; }
+        .card-option:hover { border-color: var(--primary); background: #e0f2fe; transform: translateY(-3px); }
+
+        .top-action-bar { width: 100%; background: #1e293b; border-radius: 15px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 25px; box-sizing: border-box; gap: 12px; flex-wrap: wrap; }
+        .bar-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .styled-dropdown-wrapper { position: relative; display: inline-block; }
+        .dropdown-toggle-btn { background: #3b82f6; color: white; border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .dropdown-menu-content { display: none; position: absolute; right: 0; top: calc(100% + 8px); background: #1e293b; min-width: 220px; box-shadow: 0 10px 25px rgba(0,0,0,0.25); border-radius: 12px; z-index: 1000; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+        .dropdown-menu-content button { width: 100%; background: transparent; border: none; color: white; padding: 11px 16px; text-align: right; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .dropdown-menu-content button:hover { background: rgba(255, 255, 255, 0.1); }
+        .styled-dropdown-wrapper.active .dropdown-menu-content { display: block; }
+
+        .question-card { background: white; border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 2px solid var(--border); position: relative; text-align: right; box-sizing: border-box; }
+        .question-card::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: var(--k-purple); border-radius: 0 10px 10px 0; }
+        .card-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; justify-content: space-between; }
+        .q-number-badge { background: var(--k-purple); color: white; padding: 4px 15px; border-radius: 50px; font-weight: bold; font-size: 0.9rem; }
+        .type-select { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 10px; border-radius: 10px; font-weight: bold; cursor: pointer; color: var(--royal-blue); outline: none; }
+        
+        .q-text-input { width: 100%; min-height: 60px; padding: 12px; border: 2px solid #cbd5e1; border-radius: 12px; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px; outline: none; text-align: right; box-sizing: border-box; font-family: inherit; background: rgba(0,0,0,0.02); resize: none; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .opt-pair-row { display: flex; align-items: center; background: white; border: 1.5px solid #d1d5db; border-radius: 10px; padding: 12px; box-sizing: border-box; gap: 8px; cursor: pointer; }
+        .opt-pair-row.selected-opt { background: #e0f2fe; border-color: #0284c7; }
+        .opt-label { font-weight: bold; color: var(--royal-blue); white-space: nowrap; }
+        .opt-word { width: 100%; border: none; outline: none; font-weight: bold; background: transparent; text-align: right; font-family: inherit; }
+
+        .correct-ans-box { margin-top: 15px; padding: 10px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; border: 1px solid #bbf7d0; display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+        .correct-input { flex: 1; background: transparent; border: none; outline: none; color: #166534; font-weight: bold; text-align: right; font-family: inherit; }
+        .q-score-input { width: 65px; padding: 5px; border: 1px solid #10b981; border-radius: 6px; text-align: center; font-weight: bold; color: #166534; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. شاشة تسجيل الدخول للمعلمين والمسؤولين -->
+    <div class="auth-card" id="loginScreen">
+        <h2 style="color: var(--maroon); margin-top:0;"><i class="fas fa-school"></i> بوابة المنصة المدرسية</h2>
+        <p style="color: #666; font-size: 0.95rem;">أدخل البريد الإلكتروني لدخول لوحة التحكم:</p>
+        <input type="email" id="loginEmail" class="input-field" placeholder="t486739@rb.moe.gov.sa" value="t486739@rb.moe.gov.sa">
+        <button class="btn btn-main" onclick="verifyLogin()">دخول لوحة التحكم 🚀</button>
+        <p id="loginMsg" style="margin-top: 15px; font-weight: bold;"></p>
+    </div>
+
+    <!-- 2. واجهة الطالب التفاعلية (تفتح تلقائياً عند فتح رابط مُشارك) -->
+    <div class="student-exam-view" id="studentExamScreen">
+        <div class="header">
+            <h2 id="studentExamTitleHeader" style="color: var(--royal-blue); font-size:1.5rem; margin:0;">📄 جاري تحميل الاختبار...</h2>
+            <p id="studentExamSubHeader" style="color: #64748b; font-weight:bold; margin-top:5px;">ثانوية الأمير عبدالمجيد 😉</p>
+        </div>
+
+        <div class="auth-card" id="studentAuthCard" style="margin:0 auto 25px auto;">
+            <h3 style="color: var(--royal-blue); margin-top: 0;"><i class="fas fa-user-graduate"></i> تسجيل دخول الطالب</h3>
+            <p style="color: #64748b; font-size: 0.95rem;">أدخل بريدك الإلكتروني المدرسي المعتمد لبدء الاختبار:</p>
+            <input type="email" id="studentEmailInput" class="input-field" placeholder="sxxxxxxx@rb.moe.gov.sa">
+            <button class="btn" style="background: var(--success); width:100%; padding:12px;" onclick="verifyStudentEmail()">بدء الاختبار الآن 🚀</button>
+            <p id="studentAuthMsg" style="margin-top:15px; font-weight:bold;"></p>
+        </div>
+
+        <div id="studentQuestionsContainer" style="display:none;">
+            <div id="studentQuestionsList"></div>
+            <button class="btn" style="background: var(--success); width:100%; padding:15px; font-size:1.2rem; margin-top:20px;" onclick="submitStudentExam()">انتهيت.. اعتماد النتيجة 🎓</button>
+        </div>
+    </div>
+
+    <!-- 3. لوحة الإدارة العامة (أ. عبدالعزيز الفيفي) -->
+    <div class="admin-panel" id="adminScreen">
+        <div class="header">
+            <h2 style="color: var(--maroon);">لوحة التحكم الإدارية - أ. عبدالعزيز الفيفي 🔒</h2>
+            <p>إدارة المعلمين والطلاب العامين (سحابة aaaa)</p>
+            <button class="btn" style="background: var(--danger); margin-top:10px;" onclick="location.reload()">تسجيل خروج</button>
+        </div>
+
+        <div class="section-box">
+            <h3>👨‍🏫 إدارة المعلمين</h3>
+            <div style="margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;">
+                <input type="text" id="tName" class="input-field" placeholder="اسم المعلم" style="flex:1; margin:0;">
+                <input type="text" id="tSubject" class="input-field" placeholder="المادة" style="flex:1; margin:0;">
+                <input type="email" id="tEmail" class="input-field" placeholder="إيميل المعلم" style="flex:1; margin:0;">
+                <button class="btn" style="background: var(--success);" onclick="saveTeacher()">حفظ المعلم 🌟</button>
+            </div>
+            <table id="teachersTable" style="margin-top:20px;">
+                <thead><tr><th>اسم المعلم</th><th>المادة</th><th>البريد الإلكتروني</th><th>الإجراءات</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 4. لوحة المعلم الرئيسية -->
+    <div class="teacher-dashboard" id="teacherScreen">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); padding-bottom: 10px; margin-bottom: 20px;">
+            <div>
+                <h2 id="teacherWelcomeTitle" style="color: var(--primary); margin:0;">المعلم</h2>
+                <span id="teacherSubjectTitle" style="color: #64748b; font-weight:bold;">ثانوية الأمير عبدالمجيد 😉</span>
+            </div>
+            <button class="btn" style="background: var(--danger);" onclick="location.reload()">تسجيل خروج</button>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card-option" onclick="openTeacherTab('reports')">
+                <i class="fas fa-chart-line" style="font-size:2.5rem; color:var(--primary); margin-bottom:15px;"></i>
+                <h3>متابعة الطلاب والدرجات</h3>
+                <p>لوحة التحليل الذكي الخاصة بي ومتابعة طلاب مادتي بالتفصيل وسحب التقارير</p>
+            </div>
+            <div class="card-option" onclick="openTeacherTab('exams')">
+                <i class="fas fa-file-alt" style="font-size:2.5rem; color:var(--primary); margin-bottom:15px;"></i>
+                <h3>منصة عمل الاختبارات</h3>
+                <p>إنشاء وتشغيل وتوليد الاختبارات المتقدمة المربوطة بسحابتي الخاصة</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة المعلم الفرعية لمحتوى التبويبات -->
+    <div class="sub-section-view" id="subSectionView">
+        <button class="btn" style="background: #64748b; margin-bottom: 20px;" onclick="backToTeacherMenu()"><i class="fas fa-arrow-right"></i> عودة لقائمة المعلم الرئيسية</button>
+        <div id="subSectionContent"></div>
+    </div>
+
+<script>
+    const adminEmail = "t486739@rb.moe.gov.sa";
+    let activeTeacherEmail = "";
+    let activeTeacherName = "";
+    let activeTeacherSubject = "";
+
+    let currentOpenModelName = null;
+    let currentExamModelData = null;
+    let activeStudentEmail = "";
+    let activeStudentName = "";
+    let currentOpenExamName = "";
+
+    window.onload = async function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const examParam = urlParams.get('exam');
+        const teacherParam = urlParams.get('teacher');
+
+        // إذا احتوى الرابط على اسم اختبار 'exam' يتم فتح واجهة الطالب مباشرةً
+        if (examParam) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('studentExamScreen').style.display = 'block';
+            currentOpenExamName = examParam;
+            loadExamForStudent(teacherParam, examParam);
+            return;
         }
 
-        // أداة إنشاء الأسئلة والاختبارات
-        function addQuestion() {
-            const container = document.getElementById('quiz-builder-content');
-            const card = document.createElement('div');
-            card.className = "question-card";
-            card.innerHTML = `
-                <div class="card-meta">
-                    <span class="q-number-badge">سؤال</span>
-                    <select class="type-select">
-                        <option value="اختر الإجابة الصحيحة">اختر الإجابة الصحيحة (٤ خيارات)</option>
-                        <option value="صح وخطأ">صح وخطأ</option>
-                    </select>
-                    <i class="fas fa-times-circle" style="color:#cbd5e1; cursor:pointer; font-size:1.3rem;" onclick="this.closest('.question-card').remove()"></i>
-                </div>
-                <textarea class="q-text-input q-main" placeholder="اكتب السؤال هنا..."></textarea>
-                <div class="options-grid">
-                    <div class="opt-pair-row"><span class="opt-label">أ)</span><input type="text" class="opt-word opt" placeholder="خيار 1"></div>
-                    <div class="opt-pair-row"><span class="opt-label">ب)</span><input type="text" class="opt-word opt" placeholder="خيار 2"></div>
-                </div>
-                <div class="correct-ans-box">
-                    <input type="text" placeholder="الإجابة الصحيحة" class="correct-input ans-val">
-                    <input type="number" min="0.5" step="0.5" class="q-score-input" value="1" title="درجة السؤال">
-                </div>
-            `;
-            container.appendChild(card);
+        // إذا احتوى الرابط على إيميل المعلم، يتم تعبئته وتسجيل الدخول تلقائياً
+        if (teacherParam) {
+            document.getElementById('loginEmail').value = teacherParam;
+            verifyLogin();
         }
+    };
 
-        async function saveToCloud() {
-            if (!currentOpenModelName) {
-                currentOpenModelName = prompt("أدخل اسم النموذج للحفظ في سحابتك الخاصة (تتحفظ تحت إيميلك):");
-                if (!currentOpenModelName) return;
+    // جلب بيانات نموذج الاختبار للطالب
+    async function loadExamForStudent(tEmail, examName) {
+        document.getElementById('studentExamTitleHeader').innerText = `📄 الاختبار: ${examName}`;
+        try {
+            let docId = (tEmail ? tEmail : "default") + "_" + examName;
+            let docRef = window.FB_doc(window.db, "teacher_exam_models", docId);
+            let snap = await window.FB_getDoc(docRef);
+
+            if (!snap.exists()) {
+                const colRef = window.FB_collection(window.db, "teacher_exam_models");
+                const q = window.FB_query(colRef, window.FB_where("modelName", "==", examName));
+                const querySnap = await window.FB_getDocs(q);
+                if (!querySnap.empty) {
+                    snap = querySnap.docs[0];
+                }
             }
 
-            const questionsData = [];
-            document.querySelectorAll('#quiz-builder-content .question-card').forEach(c => {
-                const opts = Array.from(c.querySelectorAll('.opt')).map(i => i.value);
-                questionsData.push({
-                    text: c.querySelector('.q-main')?.value || "",
-                    opts: opts,
-                    ans: c.querySelector('.ans-val')?.value || "",
-                    score: parseFloat(c.querySelector('.q-score-input')?.value) || 1,
-                    qType: c.querySelector('.type-select')?.value || 'اختر الإجابة الصحيحة'
-                });
-            });
-
-            try {
-                const docId = activeTeacherEmail + "_" + currentOpenModelName;
-                await db.collection("teacher_exam_models").doc(docId).set({
-                    teacherEmail: activeTeacherEmail,
-                    teacherName: activeTeacherName,
-                    teacherSubject: activeTeacherSubject,
-                    modelName: currentOpenModelName,
-                    questions: questionsData,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                document.getElementById('current-model-label').innerText = `📁 ${currentOpenModelName}`;
-                alert(`تم حفظ نموذج "${currentOpenModelName}" بنجاح في سحابتك الخاصة! 💾`);
-            } catch(e) {
-                alert("حدث خطأ أثناء الحفظ بالسحابة.");
+            if (snap && snap.exists()) {
+                currentExamModelData = snap.data();
+                document.getElementById('studentExamSubHeader').innerText = `${currentExamModelData.teacherName || "المعلم"} | ${currentExamModelData.teacherSubject || "المادة"}`;
+            } else {
+                alert("لم يتم العثور على هذا الاختبار، يرجى التأكد من صحة الرابط.");
             }
+        } catch(e) {
+            alert("خطأ أثناء جلب بيانات الاختبار.");
         }
+    }
 
-        function copyCurrentModelLink() {
-            if (!currentOpenModelName) {
-                alert("يرجى حفظ النموذج أولاً لتوليد رابط مشاركة الطلاب!");
+    async function verifyStudentEmail() {
+        const email = document.getElementById('studentEmailInput').value.trim().toLowerCase();
+        const msg = document.getElementById('studentAuthMsg');
+        if (!email) { msg.style.color = "red"; msg.innerText = "الرجاء إدخال البريد الإلكتروني."; return; }
+
+        msg.style.color = "var(--accent)";
+        msg.innerText = "جاري التحقق من السجل المدرسي... ⏳";
+
+        try {
+            const docRef = window.FB_doc(window.db, "allowed_students", email);
+            const docSnap = await window.FB_getDoc(docRef);
+
+            if (!docSnap.exists()) {
+                msg.style.color = "red";
+                msg.innerText = "❌ البريد غير مسجل في قائمة الطلاب المصرح لهم.";
                 return;
             }
-            const shareUrl = `${window.location.origin}${window.location.pathname.replace('teacher.html', 'index.html')}?teacher=${encodeURIComponent(activeTeacherEmail)}&exam=${encodeURIComponent(currentOpenModelName)}`;
-            navigator.clipboard.writeText(shareUrl).then(() => {
-                alert("تم نسخ رابط الاختبار للطلاب بنجاح! 🔗");
-            });
-        }
 
-        // جلب تقارير ودرجات المعلم الحالي فقط
-        async function loadTeacherDashboardReports() {
-            const container = document.getElementById('teacherReportsContainer');
-            container.innerHTML = "جاري جلب التقارير والنتائج من سحابتك... ⏳";
-            try {
-                const snapshot = await db.collection("alkfaeat_results").where("teacherEmail", "==", activeTeacherEmail).get();
-                if (snapshot.empty) {
-                    container.innerHTML = "<p style='text-align:center; color:#64748b;'>لا توجد نتائج مسجلة لطلابك حتى الآن.</p>";
-                    return;
-                }
-                let html = `<table><thead><tr><th>اسم الطالب</th><th>الاختبار</th><th>الدرجة</th><th>التاريخ</th></tr></thead><tbody>`;
-                snapshot.forEach(doc => {
-                    let d = doc.data();
-                    let dateStr = d.timestamp && d.timestamp.toDate ? d.timestamp.toDate().toLocaleString('ar-SA') : 'حديث';
-                    html += `<tr><td><b>${d.name}</b></td><td>${d.model_id}</td><td style="color:var(--success-green); font-weight:bold;">${d.score} / ${d.total}</td><td>${dateStr}</td></tr>`;
+            activeStudentEmail = email;
+            activeStudentName = docSnap.data().name || "طالب";
+
+            document.getElementById('studentAuthCard').style.display = 'none';
+            document.getElementById('studentQuestionsContainer').style.display = 'block';
+
+            renderQuestionsForStudent();
+        } catch(e) {
+            msg.style.color = "red";
+            msg.innerText = "خطأ أثناء التحقق من بيانات الطالب.";
+        }
+    }
+
+    function renderQuestionsForStudent() {
+        const listDiv = document.getElementById('studentQuestionsList');
+        listDiv.innerHTML = "";
+
+        if (!currentExamModelData || !currentExamModelData.questions) return;
+
+        currentExamModelData.questions.forEach((q, idx) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "question-card";
+            
+            let optionsHtml = "";
+            if (q.qType === 'صح وخطأ') {
+                optionsHtml = `
+                    <div class="options-grid">
+                        <div class="opt-pair-row" onclick="selectStudentOpt(this)"><input type="text" class="opt-word" readonly value="صح" style="text-align:center;"></div>
+                        <div class="opt-pair-row" onclick="selectStudentOpt(this)"><input type="text" class="opt-word" readonly value="خطأ" style="text-align:center;"></div>
+                    </div>`;
+            } else if (q.opts && q.opts.length > 0) {
+                optionsHtml = '<div class="options-grid">';
+                q.opts.forEach((optText, oIdx) => {
+                    optionsHtml += `<div class="opt-pair-row" onclick="selectStudentOpt(this)"><span class="opt-label">${oIdx+1})</span><input type="text" class="opt-word" readonly value="${optText}"></div>`;
                 });
-                html += `</tbody></table>`;
-                container.innerHTML = html;
-            } catch(e) {
-                container.innerHTML = "<p style='color:red;'>خطأ في جلب البيانات.</p>";
+                optionsHtml += '</div>';
+            } else {
+                optionsHtml = `<textarea class="input-field student-text-ans" placeholder="اكتب إجابتك التحريرية هنا..."></textarea>`;
             }
+
+            qDiv.innerHTML = `
+                <div class="card-meta">
+                    <span class="q-number-badge">السؤال ${idx+1}</span>
+                </div>
+                <h3 style="margin-top:0;">${q.text}</h3>
+                ${optionsHtml}
+            `;
+            listDiv.appendChild(qDiv);
+        });
+    }
+
+    function selectStudentOpt(el) {
+        const parent = el.closest('.options-grid');
+        parent.querySelectorAll('.opt-pair-row').forEach(r => r.classList.remove('selected-opt'));
+        el.classList.add('selected-opt');
+    }
+
+    async function submitStudentExam() {
+        if (!confirm("تأكيد إرسال النتيجة واختتام الاختبار؟")) return;
+
+        let score = 0;
+        let total = 0;
+
+        const cards = document.querySelectorAll('#studentQuestionsList .question-card');
+        cards.forEach((card, idx) => {
+            const qData = currentExamModelData.questions[idx];
+            const qScore = parseFloat(qData.score) || 1;
+            total += qScore;
+
+            const selectedOpt = card.querySelector('.selected-opt .opt-word');
+            const textAns = card.querySelector('.student-text-ans');
+
+            let studentVal = "";
+            if (selectedOpt) studentVal = selectedOpt.value.trim();
+            else if (textAns) studentVal = textAns.value.trim();
+
+            if (qData.ans && studentVal.toLowerCase() === qData.ans.trim().toLowerCase()) {
+                score += qScore;
+            }
+        });
+
+        try {
+            await window.FB_addDoc(window.FB_collection(window.db, "alkfaeat_results"), {
+                name: activeStudentName,
+                email: activeStudentEmail,
+                score: score,
+                total: total,
+                model_id: currentOpenExamName,
+                teacherEmail: currentExamModelData.teacherEmail || "",
+                timestamp: window.FB_serverTimestamp()
+            });
+
+            document.getElementById('studentQuestionsContainer').innerHTML = `
+                <div style="text-align:center; padding:30px; background:#dcfce7; border-radius:12px; color:#166534;">
+                    <h2>🎉 تم إرسال إجابتك بنجاح!</h2>
+                    <p style="font-size:1.3rem;">درجتك الإجمالية: <b>${score}</b> من <b>${total}</b></p>
+                </div>
+            `;
+        } catch(e) {
+            alert("حدث خطأ أثناء حفظ النتيجة.");
+        }
+    }
+
+    // دوال المعلم والإدارة
+    async function verifyLogin() {
+        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+        const msg = document.getElementById('loginMsg');
+        if(!email) return;
+
+        try {
+            if(email === adminEmail || email.includes("admin")) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminScreen').style.display = 'block';
+                loadTeachersTable();
+                return;
+            }
+
+            let tData = { name: "معلم المادة", subject: "المادة الدراسية", email: email };
+            const docRef = window.FB_doc(window.db, "allowed_teachers", email);
+            const docSnap = await window.FB_getDoc(docRef);
+            if(docSnap.exists()) tData = docSnap.data();
+
+            activeTeacherEmail = email;
+            activeTeacherName = tData.name;
+            activeTeacherSubject = tData.subject;
+
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('teacherScreen').style.display = 'block';
+            document.getElementById('teacherWelcomeTitle').innerText = `المعلم: ${tData.name}`;
+            document.getElementById('teacherSubjectTitle').innerText = `${tData.subject} - ثانوية الأمير عبدالمجيد 😉`;
+        } catch(e) {}
+    }
+
+    // إدارة المعلمين في لوحة الإدارة العامة
+    async function saveTeacher() {
+        const name = document.getElementById('tName').value.trim();
+        const subject = document.getElementById('tSubject').value.trim();
+        const email = document.getElementById('tEmail').value.trim().toLowerCase();
+
+        if (!name || !subject || !email) {
+            alert("الرجاء تعبئة جميع بيانات المعلم.");
+            return;
         }
 
-        // إدارة الطلاب المعتمدين للمعلم
-        async function registerStudentForTeacher() {
-            const name = document.getElementById('studentFullName').value.trim();
-            const email = document.getElementById('studentEmailInput').value.trim().toLowerCase();
-            if (!name || !email) { alert("أدخل اسم الطالب وإيميله."); return; }
-            try {
-                await db.collection("allowed_students").doc(email).set({ name, email, teacherEmail: activeTeacherEmail });
-                alert("تم إضافة الطالب بنجاح!");
-                document.getElementById('studentFullName').value = '';
-                document.getElementById('studentEmailInput').value = '';
-                loadTeacherStudents();
-            } catch(e) { alert("خطأ أثناء الإضافة."); }
+        try {
+            await window.FB_setDoc(window.FB_doc(window.db, "allowed_teachers", email), {
+                name: name,
+                subject: subject,
+                email: email,
+                updatedAt: window.FB_serverTimestamp()
+            });
+            alert("تم حفظ المعلم بنجاح في السحابة! 🌟");
+            document.getElementById('tName').value = "";
+            document.getElementById('tSubject').value = "";
+            document.getElementById('tEmail').value = "";
+            loadTeachersTable();
+        } catch(e) {
+            alert("خطأ أثناء حفظ المعلم.");
+        }
+    }
+
+    async function loadTeachersTable() {
+        const tbody = document.querySelector('#teachersTable tbody');
+        if (!tbody) return;
+        tbody.innerHTML = "<tr><td colspan='4'>جاري جلب المعلمين...</td></tr>";
+        try {
+            const querySnapshot = await window.FB_getDocs(window.FB_collection(window.db, "allowed_teachers"));
+            tbody.innerHTML = "";
+            querySnapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><b>${data.name || ''}</b></td>
+                    <td>${data.subject || ''}</td>
+                    <td>${data.email || ''}</td>
+                    <td>
+                        <button class="btn" style="background:var(--danger); padding:6px 12px; font-size:0.85rem;" onclick="deleteTeacher('${docSnap.id}')">حذف</button>
+                        <a class="btn" style="background:var(--accent); padding:6px 12px; font-size:0.85rem; text-decoration:none;" href="?teacher=${encodeURIComponent(data.email)}" target="_blank">رابط المعلم 🔗</a>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch(e) {
+            tbody.innerHTML = "<tr><td colspan='4'>خطأ في جلب بيانات المعلمين.</td></tr>";
+        }
+    }
+
+    async function deleteTeacher(email) {
+        if (!confirm("هل أنت متأكد من حذف هذا المعلم؟")) return;
+        try {
+            await window.FB_deleteDoc(window.FB_doc(window.db, "allowed_teachers", email));
+            loadTeachersTable();
+        } catch(e) {
+            alert("خطأ أثناء الحذف.");
+        }
+    }
+
+    function openTeacherTab(tab) {
+        document.getElementById('teacherScreen').style.display = 'none';
+        document.getElementById('subSectionView').style.display = 'block';
+        const content = document.getElementById('subSectionContent');
+
+        if(tab === 'exams') {
+            content.innerHTML = `
+                <div class="top-action-bar">
+                    <div class="bar-group">
+                        <span id="current-model-label" style="color: #38bdf8; font-weight: bold;">📁 نموذج جديد</span>
+                        <div class="styled-dropdown-wrapper" id="mainActionsDropdown">
+                            <button type="button" class="dropdown-toggle-btn" onclick="toggleExamDropdown(event)">
+                                <i class="fas fa-bars"></i> خيارات النماذج <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="dropdown-menu-content">
+                                <button type="button" onclick="saveToCloud()"><i class="fas fa-save" style="color:#a855f7;"></i> حفظ النموذج بالسحاب ☁️</button>
+                                <button type="button" onclick="copyCurrentModelLink()"><i class="fas fa-link" style="color:#06b6d4;"></i> نسخ رابط الطلاب 🔗</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bar-group">
+                        <button class="btn" style="background: #3b82f6;" onclick="addQuestion()"><i class="fas fa-plus"></i> سؤال جديد</button>
+                    </div>
+                </div>
+
+                <div id="quiz-builder-content"></div>
+            `;
+            setTimeout(() => { addQuestion(); }, 50);
+        } else if(tab === 'reports') {
+            content.innerHTML = `
+                <h2 style="color:var(--primary);"><i class="fas fa-chart-line"></i> تقارير ونتائج طلابي</h2>
+                <div id="reports-list">جاري تحميل النتائج من سحابتك... ⏳</div>
+            `;
+            loadTeacherReports();
+        }
+    }
+
+    // جلب تقارير ودرجات المعلم الحالي من قاعدة البيانات
+    async function loadTeacherReports() {
+        const reportsList = document.getElementById('reports-list');
+        if (!reportsList) return;
+
+        try {
+            const q = window.FB_query(
+                window.FB_collection(window.db, "alkfaeat_results"),
+                window.FB_where("teacherEmail", "==", activeTeacherEmail)
+            );
+            const querySnap = await window.FB_getDocs(q);
+
+            if (querySnap.empty) {
+                reportsList.innerHTML = `
+                    <div style="text-align:center; padding:40px; background:#f8fafc; border-radius:12px; border:1px solid var(--border); margin-top:20px;">
+                        <i class="fas fa-folder-open" style="font-size:3rem; color:#94a3b8; margin-bottom:10px;"></i>
+                        <p style="font-size:1.1rem; color:#64748b; font-weight:bold;">لا توجد نتائج مسجلة لطلابك حتى الآن.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let results = [];
+            querySnap.forEach(docSnap => {
+                results.push({ id: docSnap.id, ...docSnap.data() });
+            });
+
+            let html = `
+                <div style="margin: 20px 0; display:flex; gap:15px; flex-wrap:wrap;">
+                    <div style="background:#e0f2fe; padding:15px 25px; border-radius:12px; border:1px solid #bae6fd; flex:1; text-align:center;">
+                        <h4 style="margin:0; color:#0369a1;">إجمالي الاختبارات المقدمة</h4>
+                        <p style="font-size:1.8rem; font-weight:bold; margin:5px 0 0 0; color:#0c4a6e;">${results.length}</p>
+                    </div>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم الطالب</th>
+                                <th>البريد الإلكتروني</th>
+                                <th>اسم الاختبار / النموذج</th>
+                                <th>الدرجة</th>
+                                <th>الدرجة الكلية</th>
+                                <th>وقت الإرسال</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            results.forEach(r => {
+                let timeStr = "حديث";
+                if (r.timestamp && r.timestamp.toDate) {
+                    timeStr = r.timestamp.toDate().toLocaleString('ar-SA');
+                }
+                html += `
+                    <tr>
+                        <td><b>${r.name || 'طالب'}</b></td>
+                        <td>${r.email || ''}</td>
+                        <td><span style="background:#f1f5f9; padding:4px 10px; border-radius:6px; font-weight:bold;">${r.model_id || ''}</span></td>
+                        <td><span style="color:var(--success); font-weight:bold;">${r.score}</span></td>
+                        <td><b>${r.total}</b></td>
+                        <td style="color:#64748b; font-size:0.85rem;">${timeStr}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            reportsList.innerHTML = html;
+
+        } catch(e) {
+            reportsList.innerHTML = `<p style="color:red;">حدث خطأ أثناء جلب التقارير والنتائج.</p>`;
+        }
+    }
+
+    function backToTeacherMenu() {
+        document.getElementById('subSectionView').style.display = 'none';
+        document.getElementById('teacherScreen').style.display = 'block';
+    }
+
+    function toggleExamDropdown(event) {
+        event.stopPropagation();
+        const wrapper = document.getElementById('mainActionsDropdown');
+        if(wrapper) wrapper.classList.toggle('active');
+    }
+
+    function addQuestion() {
+        const container = document.getElementById('quiz-builder-content');
+        if(!container) return;
+        const card = document.createElement('div');
+        card.className = `question-card`;
+
+        card.innerHTML = `
+            <div class="card-meta">
+                <span class="q-number-badge">سؤال</span>
+                <select class="type-select">
+                    <option value="اختر الإجابة الصحيحة">اختر الإجابة الصحيحة (٤ خيارات)</option>
+                    <option value="صح وخطأ">صح وخطأ</option>
+                </select>
+                <i class="fas fa-times-circle" style="color:#cbd5e1; cursor:pointer; font-size:1.3rem;" onclick="this.closest('.question-card').remove();"></i>
+            </div>
+            <textarea class="q-text-input q-main" placeholder="اكتب السؤال هنا..."></textarea>
+            <div class="options-grid">
+                <div class="opt-pair-row"><span class="opt-label">أ)</span><input type="text" class="opt-word opt" placeholder="خيار 1"></div>
+                <div class="opt-pair-row"><span class="opt-label">ب)</span><input type="text" class="opt-word opt" placeholder="خيار 2"></div>
+            </div>
+            <div class="correct-ans-box" style="margin-top:15px;">
+                <input type="text" placeholder="الإجابة الصحيحة المطابقة" class="correct-input ans-val">
+                <input type="number" min="0.5" step="0.5" class="q-score-input" value="1" title="درجة السؤال">
+            </div>
+        `;
+        container.appendChild(card);
+    }
+
+    async function saveToCloud() {
+        if (!currentOpenModelName) {
+            currentOpenModelName = prompt("أدخل اسم النموذج للحفظ في سحابتك الخاص بك:");
+            if (!currentOpenModelName) return;
         }
 
-        async function loadTeacherStudents() {
-            const tbody = document.querySelector('#teacherStudentsTable tbody');
-            tbody.innerHTML = "<tr><td colspan='3'>جاري التحميل...</td></tr>";
-            try {
-                const snap = await db.collection("allowed_students").where("teacherEmail", "==", activeTeacherEmail).get();
-                tbody.innerHTML = "";
-                snap.forEach(doc => {
-                    let d = doc.data();
-                    tbody.innerHTML += `<tr><td><b>${d.name}</b></td><td>${d.email}</td><td><button class="btn" style="background:#ef4444; padding:5px 10px; font-size:0.8rem;" onclick="deleteStudent('${doc.id}')">حذف</button></td></tr>`;
-                });
-            } catch(e) { tbody.innerHTML = "<tr><td colspan='3'>لا توجد بيانات.</td></tr>"; }
+        const questionsData = [];
+        document.querySelectorAll('#quiz-builder-content .question-card').forEach(c => {
+            const opts = Array.from(c.querySelectorAll('.opt')).map(i => i.value);
+            questionsData.push({
+                text: c.querySelector('.q-main')?.value || "",
+                opts: opts,
+                ans: c.querySelector('.ans-val')?.value || "",
+                score: parseFloat(c.querySelector('.q-score-input')?.value) || 1,
+                qType: c.querySelector('.type-select')?.value || 'اختر الإجابة الصحيحة'
+            });
+        });
+
+        try {
+            const docId = activeTeacherEmail + "_" + currentOpenModelName;
+            await window.FB_setDoc(window.FB_doc(window.db, "teacher_exam_models", docId), {
+                teacherEmail: activeTeacherEmail,
+                teacherName: activeTeacherName,
+                teacherSubject: activeTeacherSubject,
+                modelName: currentOpenModelName,
+                questions: questionsData,
+                updatedAt: window.FB_serverTimestamp()
+            });
+
+            document.getElementById('current-model-label').innerText = `📁 ${currentOpenModelName}`;
+            alert(`تم حفظ نموذج "${currentOpenModelName}" بنجاح في سحابتك الخاصة! 💾`);
+        } catch(e) {
+            alert("خطأ أثناء حفظ النموذج.");
+        }
+    }
+
+    function copyCurrentModelLink() {
+        if (!currentOpenModelName) {
+            alert("يرجى حفظ النموذج أولاً لتوليد رابط مشاركة الطلاب!");
+            return;
         }
 
-        async function deleteStudent(email) {
-            if (!confirm("هل أنت متأكد من حذف الطالب؟")) return;
-            await db.collection("allowed_students").doc(email).delete();
-            loadTeacherStudents();
-        }
-
-        window.onload = function() { addQuestion(); };
-    </script>
+        const shareUrl = `${window.location.origin}${window.location.pathname}?teacher=${encodeURIComponent(activeTeacherEmail)}&exam=${encodeURIComponent(currentOpenModelName)}`;
+        
+        navigator.clipboard.writeText(shareUrl).then(() => {
+            alert(`تم نسخ رابط الاختبار للنموذج "${currentOpenModelName}" بنجاح! 🔗\n\nعندما يفتح الطالب هذا الرابط سينتقل فوراً لصفحة حل الاختبار.`);
+        });
+    }
+</script>
 </body>
 </html>
