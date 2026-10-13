@@ -19,8 +19,7 @@
             --royal-blue: #1e3a8a; --q-red: #ef4444; --bg-page: #f8fafc; 
             --success-green: #10b981; --k-purple: #7c3aed; --card-border: #e2e8f0;
             --text-color: #1e293b; --card-bg: #ffffff; --accent: #0284c7;
-            --row-alt: #fffdec; --correct-bg: #dcfce7; --correct-text: #166534;
-            --wrong-bg: #fee2e2; --wrong-text: #991b1b;
+            --maroon: #6b0c22; --maroon-light: #8e1432; --gold: #d4af37;
         }
         
         body { 
@@ -31,7 +30,7 @@
         }
 
         .user-header {
-            width: 100%; max-width: 900px; background: var(--card-bg); border-radius: 15px; padding: 20px;
+            width: 100%; max-width: 950px; background: var(--card-bg); border-radius: 15px; padding: 20px;
             display: flex; justify-content: space-between; align-items: center; text-align: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-bottom: 5px solid var(--royal-blue); 
             margin-bottom: 20px; box-sizing: border-box; gap: 15px; flex-wrap: wrap;
@@ -44,46 +43,81 @@
         .logo-box { background: var(--royal-blue); width: 55px; height: 55px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; }
 
         .teacher-icon-bar {
-            width: 100%; max-width: 900px; background: #1e293b; border-radius: 18px; padding: 18px 25px;
+            width: 100%; max-width: 950px; background: #1e293b; border-radius: 18px; padding: 15px 20px;
             display: flex; justify-content: center; align-items: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            margin-bottom: 25px; box-sizing: border-box; gap: 15px; flex-wrap: wrap; z-index: 999;
+            margin-bottom: 25px; box-sizing: border-box; gap: 10px; flex-wrap: nowrap; overflow-x: auto; z-index: 999;
         }
         .icon-action-btn {
-            background: #334155; color: white; border: 2px solid rgba(255,255,255,0.1); padding: 14px 22px;
-            border-radius: 14px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; gap: 8px; font-family: inherit; font-size: 0.95rem;
-            transition: all 0.3s ease; min-width: 140px; text-align: center;
+            background: #334155; color: white; border: 2px solid rgba(255,255,255,0.1); padding: 10px 14px;
+            border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 6px; font-family: inherit; font-size: 0.85rem;
+            transition: all 0.3s ease; min-width: 110px; flex: 1; text-align: center; white-space: nowrap;
         }
-        .icon-action-btn i { font-size: 1.6rem; margin-bottom: 2px; }
+        .icon-action-btn i { font-size: 1.4rem; margin-bottom: 2px; }
         .icon-action-btn:hover { background: #3b82f6; border-color: #60a5fa; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(59,130,246,0.4); }
         .icon-action-btn.btn-students { background: #047857; }
         .icon-action-btn.btn-analytics { background: #0284c7; }
         .icon-action-btn.btn-matrix { background: #7c3aed; }
         .icon-action-btn.btn-share { background: #059669; }
+        .icon-action-btn.btn-counselor { background: #6b0c22; }
 
         .sub-action-bar {
-            width: 100%; max-width: 900px; background: #ffffff; border-radius: 15px; padding: 15px 20px;
+            width: 100%; max-width: 950px; background: #ffffff; border-radius: 15px; padding: 15px 20px;
             display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             margin-bottom: 25px; box-sizing: border-box; gap: 10px; flex-wrap: wrap; border: 1px solid var(--card-border);
         }
 
         .auth-card, .admin-card {
-            background: var(--card-bg); width: 100%; max-width: 900px; border-radius: 20px; padding: 30px;
+            background: var(--card-bg); width: 100%; max-width: 950px; border-radius: 20px; padding: 30px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; margin-bottom: 25px;
         }
         .auth-input, .styled-select-input { width: 100%; max-width: 400px; padding: 12px; border-radius: 10px; border: 2px solid #cbd5e1; margin-bottom: 15px; font-size: 1rem; outline: none; box-sizing: border-box; font-family: inherit; background: #fff; }
 
-        .container { width: 100%; max-width: 900px; padding-bottom: 120px; display: none; box-sizing: border-box; }
+        .container { width: 100%; max-width: 950px; padding-bottom: 120px; display: none; box-sizing: border-box; }
         
+        /* تنسيقات نافذة تحويل المرشد المدمجة بالكامل */
+        #counselor-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 1100px; max-height: 90vh; background: #ffffff; color: #1e293b; z-index: 2100; border-radius: 20px; padding: 30px; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,0.4); box-sizing: border-box; }
+        
+        .counselor-inner-container { background: #ffffff; padding: 15px; border-radius: 12px; }
+        .counselor-select-section { margin-bottom: 20px; background: linear-gradient(135deg, #fffcf0 0%, #fff8e1 100%); padding: 15px; border: 1px solid #fef08a; border-radius: 12px; }
+        .counselor-search-box-wrapper { position: relative; flex-grow: 1; min-width: 280px; }
+        .counselor-student-search { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1.5px solid #e2e8f0; font-size: 0.95rem; font-family: inherit; outline: none; background: white; }
+        .counselor-search-results { position: absolute; top: 105%; right: 0; left: 0; background: white; border: 1px solid #e2e8f0; border-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 2200; box-shadow: 0 10px 25px rgba(0,0,0,0.08); display: none; }
+        .counselor-search-results div { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-weight: 500; font-size: 0.9rem; text-align: right; }
+        .counselor-search-results div:hover { background-color: #fdf2f8; color: #6b0c22; font-weight: bold; }
+        
+        .counselor-history-section { background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 12px; padding: 15px; margin-bottom: 20px; display: none; }
+        .counselor-history-card { background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
+        
+        .violation-tags-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; text-align: right; }
+        .violation-tag-inline { background: #fffbeb; border: 1.5px solid #fef08a; padding: 5px 10px; border-radius: 8px; display: inline-flex; align-items: center; gap: 10px; width: fit-content; }
+        .violation-name-text { color: #854d0e; font-weight: bold; font-size: 0.85rem; }
+        .violation-count-text { color: #1d4ed8; background-color: #eff6ff; border: 1px solid #bfdbfe; padding: 2px 6px; border-radius: 6px; font-weight: bold; font-size: 0.78rem; }
+        .btn-remove-tag { background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 0.85rem; padding: 0 4px; }
+
+        textarea.notes-input, textarea.counselor-reply { width: 100%; min-height: 55px; padding: 8px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-family: inherit; font-size: 0.85rem; resize: vertical; box-sizing: border-box; }
+        textarea.counselor-reply { background-color: #f1f5f9; color: #1e293b; font-weight: bold; border-color: #cbd5e1; }
+        
+        .time-badge-referral { display: inline-flex; align-items: center; gap: 5px; background: #fff5f5; color: #991b1b; border: 1px solid #fca5a5; padding: 3px 8px; border-radius: 15px; font-size: 0.75rem; font-weight: bold; margin-top: 3px; }
+        .time-badge-reply { display: inline-flex; align-items: center; gap: 5px; background: #f0f9ff; color: #0369a1; border: 1px solid #7dd3fc; padding: 3px 8px; border-radius: 15px; font-size: 0.75rem; font-weight: bold; margin-top: 3px; }
+
+        select.violation-select, select.count-select { width: 100%; padding: 7px 10px; border-radius: 8px; border: 1.5px solid #e2e8f0; font-size: 0.8rem; outline: none; background: #fff; cursor: pointer; font-family: inherit; margin-bottom: 5px; }
+        .btn-add-violation { background: #d97706; color: white; padding: 5px 8px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; border: none; width: 100%; font-family: inherit; font-weight: bold; }
+        .btn-save-student { background: #16a34a; color: white; padding: 6px 10px; font-size: 0.78rem; border-radius: 6px; cursor: pointer; border: none; font-family: inherit; font-weight: bold; }
+        .btn-view-report { background: #0284c7; color: white; padding: 6px 10px; font-size: 0.78rem; border-radius: 6px; border: none; cursor: pointer; }
+        .btn-remove { background: #dc2626; color: white; padding: 6px 10px; font-size: 0.78rem; border-radius: 6px; border: none; cursor: pointer; }
+
+        .toast-notification { position: fixed; bottom: 25px; right: 25px; background: #0f172a; color: white; padding: 12px 20px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; z-index: 9999; transform: translateY(150%); transition: transform 0.3s ease; font-weight: bold; font-size: 0.9rem; }
+        .toast-notification.show { transform: translateY(0); }
+
         .exam-timer-banner {
-            width: 100%; max-width: 900px; background: #1e293b; color: #38bdf8; border-radius: 12px;
+            width: 100%; max-width: 950px; background: #1e293b; color: #38bdf8; border-radius: 12px;
             padding: 12px 20px; margin-bottom: 20px; display: none; justify-content: space-between; align-items: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); font-weight: bold; box-sizing: border-box; flex-wrap: wrap; gap: 10px;
         }
 
         .question-card { background: var(--card-bg); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 2px solid var(--card-border); position: relative; text-align: right; box-sizing: border-box; transition: all 0.3s ease; }
         .question-card::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: var(--k-purple); border-radius: 0 10px 10px 0; }
-        
         .question-card.unanswered-alert { border-color: var(--q-red) !important; background-color: #fff5f5 !important; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
 
         .card-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; justify-content: space-between; }
@@ -116,7 +150,6 @@
         body.student-mode .teacher-icon-bar, body.student-mode .sub-action-bar, body.student-mode .remove-btn, body.student-mode .type-select, body.student-mode .correct-ans-box, body.student-mode .admin-only { display: none !important; }
         body.student-mode .selected-opt { background: #dbeafe !important; border: 2px solid #2563eb !important; box-shadow: 0 4px 12px rgba(37,99,235,0.25); }
 
-        /* وضع الاطلاع فقط للمدير */
         body.view-only-mode .admin-only, 
         body.view-only-mode .sub-action-bar, 
         body.view-only-mode .btn-delete,
@@ -125,7 +158,7 @@
         .btn { border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; font-size: 0.9rem; white-space: nowrap; }
         .btn:hover { opacity: 0.9; }
 
-        #report-modal, #cloud-modal, #history-modal, #time-modal, #qr-modal, #student-report-modal, #students-manage-modal, #matrix-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 750px; max-height: 85%; background: #ffffff; color: #1e293b; z-index: 2000; border-radius: 20px; padding: 25px; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,0.4); box-sizing: border-box; }
+        #report-modal, #cloud-modal, #history-modal, #time-modal, #qr-modal, #student-report-modal, #students-manage-modal, #matrix-modal, #single-counselor-report-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 750px; max-height: 85%; background: #ffffff; color: #1e293b; z-index: 2000; border-radius: 20px; padding: 25px; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,0.4); box-sizing: border-box; }
         .report-table { width: 100%; border-collapse: collapse; margin-top: 15px; display: block; overflow-x: auto; }
         .report-table th, .report-table td { padding: 10px; border: 1px solid #e2e8f0; text-align: center; font-size: 0.9rem; }
         .cloud-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid #e2e8f0; gap: 10px; flex-wrap: wrap; }
@@ -140,7 +173,6 @@
         .model-dropdown { flex: 1; padding: 14px 20px; border-radius: 12px; border: 1px solid #cbd5e1; background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%); font-size: 1.15rem; font-weight: 900; color: var(--text-color); outline: none; cursor: pointer; }
         .live-clock-badge { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #86efac; padding: 10px 18px; border-radius: 12px; font-weight: bold; color: #166534; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
         
-        /* ترويسة المدير الاحترافية والمرتبة */
         .header-analytics { 
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); 
             padding: 25px 35px; 
@@ -205,6 +237,11 @@
         root.style.setProperty('--card-border', selectedTheme.border);
     </script>
 
+    <div class="toast-notification" id="toast">
+        <i class="fa-solid fa-circle-check" style="color: #4ade80; font-size: 1.2rem;"></i>
+        <span id="toastMsg">تمت العملية بنجاح</span>
+    </div>
+
     <div id="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1999;" onclick="closeModals()"></div>
     
     <div class="admin-card" id="admin-management-card" style="display: none;">
@@ -223,6 +260,73 @@
         </div>
         <h3 style="color: var(--royal-blue); font-size: 1.05rem;"><i class="fas fa-list"></i> قائمة المعلمين المعتمدين:</h3>
         <div style="overflow-x: auto;"><table class="teachers-table"><thead><tr><th>#</th><th>اسم المعلم</th><th>الإيميل</th><th>المادة</th><th>الإجراءات</th></tr></thead><tbody id="teachers-table-body"><tr><td colspan="5">جاري التحميل...</td></tr></tbody></table></div>
+    </div>
+
+    <!-- نافذة إشعار تحويل المرشد الطلابي المدمجة بالكامل -->
+    <div id="counselor-modal">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 45px; height: 45px; background: linear-gradient(135deg, var(--maroon), var(--maroon-light)); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h2 style="margin: 0; color: var(--maroon); font-size: 1.3rem;">إشعار تحويل طلاب للمرشد الطلابي</h2>
+                    <small style="color: #64748b; font-weight: bold;">نظام متابعة السلوك والمخالفات</small>
+                </div>
+            </div>
+            <button class="btn" style="background: #64748b; padding: 6px 14px;" onclick="closeCounselorModal()"><i class="fas fa-times"></i> إغلاق</button>
+        </div>
+
+        <div class="counselor-inner-container">
+            <!-- قسم البحث عن الطالب -->
+            <div class="counselor-search-section counselor-select-section" id="counselorControlSection">
+                <label style="font-weight: bold; color: var(--maroon); display: block; margin-bottom: 8px;"><i class="fa-solid fa-magnifying-glass"></i> ابحث عن اسم الطالب واختاره لإضافته للقائمة:</label>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <div class="counselor-search-box-wrapper" style="position:relative; flex-grow:1;">
+                        <input type="text" id="counselorSearchInput" class="counselor-student-search" placeholder="اكتب اسم الطالب هنا..." oninput="filterCounselorStudents()" onfocus="filterCounselorStudents()">
+                        <div id="counselorSearchResults" class="counselor-search-results"></div>
+                    </div>
+                    <button class="btn" style="background: var(--maroon);" onclick="addCounselorSelectedStudent()"><i class="fa-solid fa-plus"></i> إضافة للقائمة</button>
+                </div>
+            </div>
+
+            <!-- أرشيف التقارير للطالب -->
+            <div class="counselor-history-section" id="counselorStudentHistorySection">
+                <h3 id="counselorHistoryTitle" style="color: #0369a1; margin-top: 0; border-bottom: 1px solid #e0f2fe; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 1rem;">
+                    <span><i class="fa-solid fa-folder-open"></i> سجل تقارير الطالب السابقة</span>
+                    <button class="btn" style="background: #64748b; padding: 2px 8px; font-size: 0.75rem;" onclick="document.getElementById('counselorStudentHistorySection').style.display='none'">إخفاء</button>
+                </h3>
+                <div id="counselorHistoryContent">جاري البحث...</div>
+            </div>
+
+            <!-- جدول الإحالات -->
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">#</th>
+                            <th style="width: 20%;">اسم الطالب وتاريخ التحويل</th>
+                            <th style="width: 25%;">اختيار مخالفة وإضافتها</th>
+                            <th style="width: 22%;">قائمة المخالفات المسجلة</th>
+                            <th style="width: 18%;">ملاحظات وسلوكيات</th>
+                            <th style="width: 10%;">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="counselorTableBody">
+                        <!-- تُضاف بيانات التحويل هنا ديناميكياً -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة معاينة تقرير مفرد للمرشد -->
+    <div id="single-counselor-report-modal">
+        <h3 style="color: var(--maroon); margin-top: 0; border-bottom: 2px solid var(--gold); padding-bottom: 10px;"><i class="fa-solid fa-file-lines"></i> تفاصيل التقرير</h3>
+        <div id="singleCounselorReportContent" style="line-height: 1.8; font-size: 0.95rem; margin-bottom: 20px;"></div>
+        <div style="display: flex; justify-content: flex-end;">
+            <button class="btn" style="background: #64748b;" onclick="closeSingleCounselorReportModal()">إغلاق</button>
+        </div>
     </div>
 
     <div id="students-manage-modal">
@@ -283,16 +387,18 @@
 
     <!-- عناصر واجهة المعلم الخاصة -->
     <div class="user-header teacher-only" id="main-header">
-        <div class="header-right"><h2 class="user-name" id="header-teacher-name">أ / مساعد السعدان</h2></div>
+        <div class="header-right"><h2 class="user-name" id="header-teacher-name">أ / عبدالعزيز الفيفي</h2></div>
         <div class="header-center"><div class="logo-box"><i class="fas fa-award"></i></div></div>
         <div class="header-left"><p class="school-name" id="header-teacher-subject">الكفايات اللغوية</p></div>
     </div>
 
+    <!-- شريط الأيقونات العلوي (مكتمل وموزع بسطر واحد متناسق تماماً) -->
     <div class="teacher-icon-bar teacher-only admin-only" id="teacher-icon-bar">
-        <button class="icon-action-btn btn-students" onclick="openStudentsManagementModal()"><i class="fas fa-users-cog"></i><span>إدارة الطلاب والفصول</span></button>
-        <button class="icon-action-btn btn-analytics" onclick="openFullAnalyticsPage()"><i class="fas fa-chart-line"></i><span>لوحة التحليل الذكي</span></button>
-        <button class="icon-action-btn btn-share" onclick="shareTeacherDashboardForManager()"><i class="fas fa-share-alt"></i><span>مشاركة اللوحة للمدير</span></button>
-        <button class="icon-action-btn btn-matrix" onclick="openMatrixModal()"><i class="fas fa-file-code"></i><span>مصفوفة الاختبارات</span></button>
+        <button class="icon-action-btn btn-students" onclick="openStudentsManagementModal()"><i class="fas fa-users-cog"></i><span>إدارة الطلاب</span></button>
+        <button class="icon-action-btn btn-analytics" onclick="openFullAnalyticsPage()"><i class="fas fa-chart-line"></i><span>التحليل الذكي</span></button>
+        <button class="icon-action-btn btn-counselor" onclick="openCounselorModal()"><i class="fas fa-user-shield"></i><span>تحويل المرشد</span></button>
+        <button class="icon-action-btn btn-share" onclick="shareTeacherDashboardForManager()"><i class="fas fa-share-alt"></i><span>مشاركة اللوحة</span></button>
+        <button class="icon-action-btn btn-matrix" onclick="openMatrixModal()"><i class="fas fa-file-code"></i><span>مصفوفة الأسئلة</span></button>
     </div>
 
     <div class="sub-action-bar teacher-only admin-only">
@@ -322,17 +428,16 @@
             <button class="btn" style="background:#64748b;" id="return-home-btn" onclick="closeAnalyticsPage()"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button>
         </div>
 
-        <!-- الترويسة المرتبة والموزعة بشكل احترافي للمدير -->
         <div class="header-analytics">
             <div class="manager-header-box">
                 <div class="manager-header-row">
                     <div class="teacher-info-group">
-                        <h1 id="main-title" style="margin:0; color:var(--royal-blue); font-size:1.45rem; font-weight:800;">أ / مساعد السعدان</h1>
+                        <h1 id="main-title" style="margin:0; color:var(--royal-blue); font-size:1.45rem; font-weight:800;">أ / عبدالعزيز الفيفي</h1>
                         <span style="background: #e0f2fe; color: #0369a1; padding: 4px 12px; border-radius: 8px; font-size: 0.95rem; font-weight: bold;" id="sub-title">الكفايات اللغوية</span>
                     </div>
                     <div class="manager-info-group">
                         <span>المدير:</span>
-                        <span style="color: #7c3aed; font-weight: 900; background: #f3e8ff; padding: 5px 12px; border-radius: 8px;" id="manager-title-tag">د / عبدالله بن ظافر الشهري</span>
+                        <span style="color: #7c3aed; font-weight: 900; background: #f3e8ff; padding: 5px 12px; border-radius: 8px;" id="manager-title-tag">إدارة المدرسة</span>
                     </div>
                 </div>
             </div>
@@ -376,11 +481,11 @@
                         <th>اسم الطالب</th>
                         <th>الدرجة</th>
                         <th>استخرج</th>
-                        <th>وصل</th>
+                        <th>إكمال</th>
                         <th>صح وخطأ</th>
-                        <th>اختر</th>
+                        <th>أعرب</th>
                         <th>صحح</th>
-                        <th>اذكر</th>
+                        <th>مثل</th>
                         <th>النموذج</th>
                         <th class="no-print col-actions">إجراء</th>
                     </tr>
@@ -435,7 +540,7 @@
         let examTimerInterval = null;
 
         let currentTeacherEmail = "aaaa@moe.gov.sa";
-        let currentTeacherName = "أ / مساعد السعدان";
+        let currentTeacherName = "أ / عبدالعزيز الفيفي";
         let currentTeacherSubject = "الكفايات اللغوية";
 
         let chartA = null, chartB = null;
@@ -463,6 +568,330 @@
 
         const fsDb = firebase.firestore();
         const rtdb = firebase.database();
+
+        // برمجيات نظام تحويل المرشد الطلابي
+        let allStudentsNamesList = [];
+        let counselorSelectedStudentName = "";
+
+        function openCounselorModal() {
+            document.getElementById('counselor-modal').style.display = 'block';
+            document.getElementById('modal-overlay').style.display = 'block';
+            loadCounselorStudentsList();
+            listenToCounselorReferrals();
+        }
+
+        function closeCounselorModal() {
+            document.getElementById('counselor-modal').style.display = 'none';
+            document.getElementById('modal-overlay').style.display = 'none';
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            document.getElementById("toastMsg").textContent = message;
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 3000);
+        }
+
+        function formatTimestamp(timestamp) {
+            if (!timestamp) return 'تاريخ غير محدد';
+            let date;
+            if (timestamp.toDate) {
+                date = timestamp.toDate();
+            } else if (timestamp instanceof Date) {
+                date = timestamp;
+            } else {
+                date = new Date(timestamp);
+            }
+            return date.toLocaleString('ar-SA', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true });
+        }
+
+        function generateFormattedViolationsHTML(violationsArray) {
+            if (!violationsArray || violationsArray.length === 0) {
+                return '<span style="color: #94a3b8; font-size: 0.8rem; font-style: italic;">لا توجد مخالفات مسجلة</span>';
+            }
+            let html = '<div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">';
+            violationsArray.forEach(item => {
+                const parts = item.split(':');
+                const vName = parts[0] ? parts[0].trim() : item;
+                const vCount = parts[1] ? parts[1].trim() : '';
+                html += `
+                    <div class="violation-tag-inline">
+                        <span class="violation-name-text">• ${vName}</span>
+                        ${vCount ? `<span class="violation-count-text">${vCount}</span>` : ''}
+                    </div>
+                `;
+            });
+            html += '</div>';
+            return html;
+        }
+
+        function loadCounselorStudentsList() {
+            fsDb.collection("allowed_students").orderBy("name").get().then((snapshot) => {
+                allStudentsNamesList = [];
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.name) allStudentsNamesList.push(data.name);
+                });
+            });
+        }
+
+        function filterCounselorStudents() {
+            const query = document.getElementById("counselorSearchInput").value.trim().toLowerCase();
+            const resultsContainer = document.getElementById("counselorSearchResults");
+            resultsContainer.innerHTML = "";
+            if (!query) { resultsContainer.style.display = "none"; return; }
+
+            const filtered = allStudentsNamesList.filter(name => name.toLowerCase().includes(query));
+            if (filtered.length === 0) {
+                resultsContainer.innerHTML = '<div style="color: #888;">لا توجد نتائج مطابقة</div>';
+            } else {
+                filtered.forEach(name => {
+                    const div = document.createElement("div");
+                    div.textContent = name;
+                    div.onclick = function() {
+                        document.getElementById("counselorSearchInput").value = name;
+                        counselorSelectedStudentName = name;
+                        resultsContainer.style.display = "none";
+                        fetchCounselorStudentHistory(name);
+                    };
+                    resultsContainer.appendChild(div);
+                });
+            }
+            resultsContainer.style.display = "block";
+        }
+
+        async function fetchCounselorStudentHistory(studentName) {
+            const historySection = document.getElementById("counselorStudentHistorySection");
+            const historyTitle = document.getElementById("counselorHistoryTitle").querySelector("span");
+            const historyContent = document.getElementById("counselorHistoryContent");
+
+            historyTitle.innerHTML = `<i class="fa-solid fa-folder-open"></i> سجل تقارير الطالب: ${studentName}`;
+            historyContent.innerHTML = "جاري البحث في الأرشيف...";
+            historySection.style.display = "block";
+
+            try {
+                const snapshot = await fsDb.collection("referral_list").where("name", "==", studentName).get();
+                if (snapshot.empty) {
+                    historyContent.innerHTML = "<p style='color: #666; margin: 0;'>لا توجد تقارير سابقة مسجلة لهذا الطالب في السحابة.</p>";
+                    return;
+                }
+                let html = "";
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const createdTimeStr = formatTimestamp(data.createdAt);
+                    const currentViolations = data.violations || [];
+                    const violationsHTML = generateFormattedViolationsHTML(currentViolations);
+                    html += `
+                        <div class="counselor-history-card">
+                            <div style="font-size: 0.82rem; margin-bottom: 4px;"><span class="time-badge-referral"><i class="fa-solid fa-calendar-check"></i> ${createdTimeStr}</span></div>
+                            <div style="font-size: 0.85rem; margin-bottom: 4px;"><strong>المخالفات:</strong> ${violationsHTML}</div>
+                            <div style="font-size: 0.85rem;"><strong>ملاحظات:</strong> ${data.notes || 'لا توجد'} | <strong>رد المرشد:</strong> ${data.reply || 'لم يتم الرد بعد'}</div>
+                        </div>
+                    `;
+                });
+                historyContent.innerHTML = html;
+            } catch (error) {
+                historyContent.innerHTML = "<p style='color: red;'>حدث خطأ أثناء جلب الأرشيف.</p>";
+            }
+        }
+
+        async function addCounselorSelectedStudent() {
+            const inputVal = document.getElementById("counselorSearchInput").value.trim();
+            const studentName = counselorSelectedStudentName || inputVal;
+            if (!studentName) return alert("يرجى اختيار أو كتابة اسم الطالب أولاً");
+
+            const studentId = "student_" + Date.now();
+            try {
+                await fsDb.collection("referral_list").doc(studentId).set({
+                    name: studentName,
+                    violations: [],
+                    notes: "",
+                    reply: "لم يتم الرد بعد",
+                    isArchived: false,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                document.getElementById("counselorSearchInput").value = "";
+                counselorSelectedStudentName = "";
+                document.getElementById("counselorStudentHistorySection").style.display = "none";
+                showToast(`تم إدراج الطالب (${studentName}) للقائمة بنجاح!`);
+            } catch (e) {
+                alert("حدث خطأ أثناء الإضافة.");
+            }
+        }
+
+        const countOptionsMap = {
+            "عدم إحضار الواجبات": [{ value: "واجب 1", text: "واجب 1" }, { value: "واجب 2", text: "واجب 2" }, { value: "واجب 3", text: "واجب 3" }],
+            "عدم إحضار البحث": [{ value: "1. لم يقدم البحث", text: "1. لم يقدم البحث" }, { value: "2. البحث غير مكتمل", text: "2. البحث غير مكتمل" }],
+            "كثرة النوم": [{ value: "1. نوم خفيف", text: "1. نوم خفيف" }, { value: "2. نوم متكرر", text: "2. نوم متكرر" }],
+            "ضعف المشاركة": [{ value: "1. مشاركة ضعيفة", text: "1. مشاركة ضعيفة" }, { value: "2. عدم مشاركة مطلقاً", text: "2. عدم مشاركة مطلقاً" }]
+        };
+
+        function onTypeSelectChange(id) {
+            const typeSelect = document.getElementById(`type_select_${id}`);
+            const countSelect = document.getElementById(`count_select_${id}`);
+            const selectedType = typeSelect.value;
+            countSelect.innerHTML = '<option value="">-- اختر العدد --</option>';
+            if (countOptionsMap[selectedType]) {
+                countOptionsMap[selectedType].forEach(opt => {
+                    const optionEl = document.createElement("option");
+                    optionEl.value = opt.value;
+                    optionEl.textContent = opt.text;
+                    countSelect.appendChild(optionEl);
+                });
+            }
+        }
+
+        async function addViolationToStudent(id) {
+            const typeSelect = document.getElementById(`type_select_${id}`);
+            const countSelect = document.getElementById(`count_select_${id}`);
+            const typeVal = typeSelect.value;
+            const countVal = countSelect.value;
+            if (!typeVal || !countVal) return alert("يرجى اختيار نوع المخالفة والعدد!");
+
+            const violationString = `${typeVal}: ${countVal}`;
+            const docRef = fsDb.collection("referral_list").doc(id);
+            const doc = await docRef.get();
+            if (doc.exists) {
+                const currentArray = doc.data().violations || [];
+                currentArray.push(violationString);
+                await docRef.update({ violations: currentArray });
+                typeSelect.value = "";
+                countSelect.innerHTML = '<option value="">-- اختر العدد --</option>';
+                showToast("تمت إضافة المخالفة بنجاح!");
+            }
+        }
+
+        async function removeViolationFromStudent(id, indexToRemove) {
+            const docRef = fsDb.collection("referral_list").doc(id);
+            const doc = await docRef.get();
+            if (doc.exists) {
+                let currentArray = doc.data().violations || [];
+                currentArray.splice(indexToRemove, 1);
+                await docRef.update({ violations: currentArray });
+                showToast("تم حذف المخالفة!");
+            }
+        }
+
+        function renderStudentViolationTags(id, violationsArray) {
+            const container = document.getElementById(`violation_tags_${id}`);
+            if (!container) return;
+            container.innerHTML = "";
+            if (!violationsArray || violationsArray.length === 0) {
+                container.innerHTML = '<span style="color: #94a3b8; font-size: 0.78rem; font-style: italic;">لا توجد مخالفات</span>';
+                return;
+            }
+            violationsArray.forEach((vItem, index) => {
+                const parts = vItem.split(':');
+                const vName = parts[0] ? parts[0].trim() : vItem;
+                const vCount = parts[1] ? parts[1].trim() : '';
+                const tag = document.createElement("div");
+                tag.className = "violation-tag-inline";
+                tag.innerHTML = `
+                    <span class="violation-name-text">• ${vName}</span>
+                    ${vCount ? `<span class="violation-count-text">${vCount}</span>` : ''}
+                    <button class="btn-remove-tag" onclick="removeViolationFromStudent('${id}',${index})" title="حذف"><i class="fa-solid fa-xmark"></i></button>
+                `;
+                container.appendChild(tag);
+            });
+        }
+
+        async function updateCloudField(id, field, value) {
+            await fsDb.collection("referral_list").doc(id).update({ [field]: value });
+        }
+
+        async function saveSingleCounselorStudent(id, studentName) {
+            try {
+                await fsDb.collection("referral_list").doc(id).update({ isArchived: true });
+                showToast(`تم أرشفة تقرير الطالب (${studentName}) بنجاح!`);
+            } catch (error) {
+                alert("حدث خطأ أثناء الحفظ.");
+            }
+        }
+
+        async function deleteCounselorStudent(id) {
+            if (confirm("إزالة هذا الطالب من القائمة؟")) {
+                await fsDb.collection("referral_list").doc(id).delete();
+                showToast("تم الحذف بنجاح!");
+            }
+        }
+
+        function openSingleCounselorReport(name, dateStr, violationsInput, notes, reply) {
+            let violationsArr = [];
+            if (typeof violationsInput === 'string') {
+                try { violationsArr = JSON.parse(violationsInput); } catch(e) { violationsArr = [violationsInput]; }
+            } else if (Array.isArray(violationsInput)) {
+                violationsArr = violationsInput;
+            }
+            const formattedViolations = generateFormattedViolationsHTML(violationsArr);
+            const content = `
+                <p><strong>اسم الطالب:</strong> ${name}</p>
+                <p><strong>تاريخ الإحالة:</strong> <span class="time-badge-referral">${dateStr}</span></p>
+                <div style="margin-bottom: 10px;"><strong>المخالفات:</strong><br>${formattedViolations}</div>
+                <p><strong>ملاحظات المعلم:</strong> ${notes || 'لا توجد'}</p>
+                <p><strong>رد المرشد:</strong> ${reply || 'لم يتم الرد'}</p>
+            `;
+            document.getElementById('singleCounselorReportContent').innerHTML = content;
+            document.getElementById('single-counselor-report-modal').style.display = 'flex';
+            document.getElementById('modal-overlay').style.display = 'block';
+        }
+
+        function closeSingleCounselorReportModal() {
+            document.getElementById('single-counselor-report-modal').style.display = 'none';
+        }
+
+        function listenToCounselorReferrals() {
+            fsDb.collection("referral_list").onSnapshot(snapshot => {
+                const tbody = document.getElementById("counselorTableBody");
+                if (!tbody) return;
+                tbody.innerHTML = "";
+                let count = 0;
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const id = doc.id;
+                    if (data.isArchived === true) return;
+                    count++;
+
+                    const currentViolations = data.violations || [];
+                    const createdTimeStr = formatTimestamp(data.createdAt);
+                    const studentDisplayName = data.name || "اسم الطالب";
+
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${count}</td>
+                        <td style="text-align: right; font-weight: bold;">
+                            ${studentDisplayName}<br>
+                            <span class="time-badge-referral"><i class="fa-solid fa-calendar-check"></i> ${createdTimeStr}</span>
+                        </td>
+                        <td>
+                            <select id="type_select_${id}" class="violation-select" onchange="onTypeSelectChange('${id}')">
+                                <option value="">-- اختر المخالفة --</option>
+                                <option value="عدم إحضار الواجبات">عدم إحضار الواجبات</option>
+                                <option value="عدم إحضار البحث">عدم إحضار البحث</option>
+                                <option value="كثرة النوم">كثرة النوم</option>
+                                <option value="ضعف المشاركة">ضعف المشاركة</option>
+                            </select>
+                            <select id="count_select_${id}" class="count-select">
+                                <option value="">-- العدد --</option>
+                            </select>
+                            <button class="btn-add-violation" onclick="addViolationToStudent('${id}')"><i class="fa-solid fa-circle-plus"></i> إضافة</button>
+                        </td>
+                        <td><div id="violation_tags_${id}" class="violation-tags-list"></div></td>
+                        <td>
+                            <textarea class="notes-input" placeholder="ملاحظات المعلم..." onblur="updateCloudField('${id}', 'notes', this.value)">${data.notes || ''}</textarea>
+                        </td>
+                        <td style="display: flex; gap: 4px; justify-content: center; align-items: center; padding-top: 15px;">
+                            <button class="btn-save-student" onclick="saveSingleCounselorStudent('${id}', '${studentDisplayName}')" title="أرشفة"><i class="fa-solid fa-floppy-disk"></i></button>
+                            <button class="btn-view-report" onclick="openSingleCounselorReport('${studentDisplayName}', '${createdTimeStr}', \`${JSON.stringify(currentViolations).replace(/"/g, '&quot;')}\`, \`${data.notes || 'لا توجد'}\`, \`${data.reply || 'لم يتم الرد بعد'}\`)" title="معاينة"><i class="fa-solid fa-eye"></i></button>
+                            <button class="btn-remove" onclick="deleteCounselorStudent('${id}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                    renderStudentViolationTags(id, currentViolations);
+                });
+            });
+        }
+        // نهاية برمجيات نظام تحويل المرشد
 
         function updateLiveClock() {
             const now = new Date();
@@ -657,7 +1086,7 @@
             chartA = new Chart(ctx1, {
                 type: 'bar',
                 data: {
-                    labels: ['استخرج', 'وصل', 'صح وخطأ', 'اختر', 'صحح', 'اذكر'],
+                    labels: ['استخرج', 'إكمال', 'صح وخطأ', 'أعرب', 'صحح', 'مثل'],
                     datasets: [{ label: 'متوسط الأداء', data: skills, backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'], borderRadius: 8 }]
                 },
                 options: { maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } } }, plugins: { legend: { display: false } } }
@@ -1130,7 +1559,7 @@
                             <div class="matching-error-msg" style="color: #ef4444; font-size: 0.88rem; font-weight: bold; margin-top: 10px; display: none;"></div>
                         </div>
                         <div class="matching-column-box right-box">
-                            <div style="font-weight:bold; color:var(--royal-blue); margin-bottom:8px; font-size:0.9rem;">الإجابات (العمود الثاني): مدعمة بـ (<span class="right-count-badge">${rightOpts.length}</span> إجابات متاحة)</div>
+                            <div style="font-weight:bold; color:var(--royal-blue); margin-bottom:8px; font-size:0.9rem;">الإجابات (العمود الثاني): (<span class="right-count-badge">${rightOpts.length}</span> إجابات)</div>
                             <div class="matching-right-list">${rightRows}</div>
                         </div>
                     </div>
@@ -1407,9 +1836,7 @@
                         <i class="fas fa-file-alt"></i> استعراض إجاباتك وتقريدك 📋
                     </button>
                 `;
-                
                 showStudentReport(details, totalScore, totalPossibleScore);
-
             } catch (err) { alert("حدث خطأ أثناء الإرسال."); }
         }
 
@@ -1487,7 +1914,7 @@
         }
 
         function closeModals() { 
-            document.querySelectorAll('#report-modal, #cloud-modal, #history-modal, #time-modal, #qr-modal, #student-report-modal, #students-manage-modal, #analytics-modal, #matrix-modal, #review-modal-ana').forEach(m => m.style.display = 'none');
+            document.querySelectorAll('#report-modal, #cloud-modal, #history-modal, #time-modal, #qr-modal, #student-report-modal, #students-manage-modal, #analytics-modal, #matrix-modal, #review-modal-ana, #counselor-modal, #single-counselor-report-modal').forEach(m => m.style.display = 'none');
             document.getElementById('modal-overlay').style.display = 'none'; 
         }
 
@@ -1506,9 +1933,7 @@
                 document.getElementById('newTeacherEmail').value = "";
                 document.getElementById('newTeacherSubject').value = "";
                 loadTeachersRegistry();
-            } catch (e) {
-                alert("حدث خطأ أثناء حفظ المعلم.");
-            }
+            } catch (e) { alert("حدث خطأ أثناء حفظ المعلم."); }
         }
 
         function loadTeachersRegistry() {
@@ -1519,17 +1944,12 @@
             rtdb.ref('teachers_registry').once('value', snapshot => {
                 tbody.innerHTML = "";
                 const data = snapshot.val();
-                if (!data) { 
-                    tbody.innerHTML = `<tr><td colspan="5" style="color:#64748b;">لا يوجد معلمون مسجلون حالياً.</td></tr>`; 
-                    return; 
-                }
+                if (!data) { tbody.innerHTML = `<tr><td colspan="5" style="color:#64748b;">لا يوجد معلمون مسجلون حالياً.</td></tr>`; return; }
                 let i = 1;
                 Object.keys(data).forEach(k => {
                     let t = data[k];
-                    tbody.innerHTML += `<tr><td>${i++}</td><td><b>${t.name}</b></td><td>${t.email}</td><td>${t.subject}</td><td><button class="btn" style="background:#10b981; padding:4px 8px;" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=${t.email}').then(()=>alert('تم النسخ'))">رابط المعلم</button> <button class="btn" style="background:#0284c7; padding:4px 8px;" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=${t.email}&view=true').then(()=>alert('تم نسخ رابط المدير'))">رابط المدير</button></td></tr>`;
+                    tbody.innerHTML += `<tr><td>${i++}</td><td><b>${t.name}</b></td><td>${t.email}</td><td>${t.subject}</td><td><button class="btn" style="background:#10b981; padding:4px 8px;" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=${t.email}').then(()=>alert('تم النسخ'))">رابط المعلم</button></td></tr>`;
                 });
-            }).catch(error => {
-                tbody.innerHTML = `<tr><td colspan="5" style="color:var(--q-red);">تعذر تحميل قائمة المعلمين. تأكد من تفعيل Realtime Database.</td></tr>`;
             });
         }
 
@@ -1537,13 +1957,10 @@
             const teacherEmailParam = urlParams.get('teacher');
             const examId = urlParams.get('exam');
 
-            if (isViewOnly) {
-                document.body.classList.add('view-only-mode');
-            }
+            if (isViewOnly) document.body.classList.add('view-only-mode');
 
             if (teacherEmailParam) {
                 document.getElementById('admin-management-card').style.display = 'none';
-                
                 if (!isViewOnly) {
                     document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'flex');
                 } else {
@@ -1563,11 +1980,8 @@
                         
                         const mainTitle = document.getElementById('main-title');
                         const subTitle = document.getElementById('sub-title');
-                        const managerTag = document.getElementById('manager-title-tag');
-
                         if (mainTitle) mainTitle.innerText = currentTeacherName;
                         if (subTitle) subTitle.innerText = currentTeacherSubject;
-                        if (managerTag) managerTag.innerHTML = `د / عبدالله بن ظافر الشهري`;
                     }
 
                     if (isViewOnly) {
