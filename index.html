@@ -1032,6 +1032,10 @@
                     let keyVal = keys[idx] || (idx + 1);
                     let scoreVal = subScores[idx] !== undefined ? subScores[idx] : 1;
                     let sVal = studentAns[idx] || '';
+
+                    // حظر وإزالة أي ترقيم ببدء النص مثل "(1" أو "1)"
+                    let cleanItemText = item.replace(/^\s*\(?\d+[\)\.-]?\s*/, '');
+
                     leftRows += `
                         <div class="matching-row-item">
                             ${!isStudent ? `
@@ -1040,7 +1044,7 @@
                                 <input type="text" class="matching-ans-key-field key-input" value="${keyVal}" placeholder="رقم الإجابة" oninput="updateMatchingTotalScore(this); saveAll();">
                             ` : `
                                 <input type="text" class="matching-ans-input" data-left-idx="${idx}" oninput="validateMatchingStudentInput(this, ${rightOpts.length})" value="${sVal}" style="width:50px; text-align:center; padding:6px; border:1px solid #cbd5e1; border-radius:6px; font-weight:bold;" maxlength="1">
-                                <span style="flex:1;">${idx+1})${item}</span>
+                                <span style="flex:1;">${cleanItemText}</span>
                             `}
                         </div>`;
                 });
