@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- مكتبات Firebase الإصدار 8 المتوافقة مع النظام الموحد -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -245,7 +246,6 @@
         <button class="btn" style="background:#64748b; width:100%; margin-top:20px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق السجل</button>
     </div>
 
-    <!-- نافذة تقرير الطالب المفصلة لاستعراض الإجابات -->
     <div id="report-modal">
         <h2 style="text-align: center; color: var(--royal-blue); font-size:1.3rem;" id="report-modal-title">تقرير أداء الطالب 🎯</h2>
         <div id="score-summary" style="text-align: center; font-size: 1.2rem; font-weight: bold; margin: 15px 0;"></div>
@@ -407,17 +407,27 @@
         let selectedModel = 'all';
         let currentFilteredQuery = '';
         let currentUnsubscribe = null;
-        let lastSubmittedDetails = null; // لتخزين تفاصيل إجابات الطالب الحالية
+        let lastSubmittedDetails = null;
 
         const urlParams = new URLSearchParams(window.location.search);
         const isViewOnly = urlParams.has('view');
 
-        const firebaseConfig = { apiKey: "AIzaSyAVrIim7aXjg0hGrMk0qVrXT8geRIpHoBk", authDomain: "youy-apps.firebaseapp.com", databaseURL: "https://youy-apps-default-rtdb.firebaseio.com", projectId: "youy-apps" };
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        // إعدادات السحابة الجديدة الموحدة (aaaa-a2380) من الصورة المرفقة
+        const firebaseConfig = {
+            apiKey: "AizaSyDhd5CSKnMoppGby6uKxHsQCtSg55gS8ns",
+            authDomain: "aaaa-a2380.firebaseapp.com",
+            projectId: "aaaa-a2380",
+            storageBucket: "aaaa-a2380.appspot.com",
+            messagingSenderId: "593036424543",
+            appId: "1:593036424543:web:b2f8f9e8391220ab2e72ea"
+        };
 
-        const firestoreConfig = { apiKey: "AIzaSyBkCO7FDQXd89YDf843J4_AtvEFvzzt-R0", authDomain: "aztlg-494c3.firebaseapp.com", projectId: "aztlg-494c3", storageBucket: "aztlg-494c3.firebasestorage.app", messagingSenderId: "597051893949", appId: "1:597051893949:web:de5554ac900317a92b2fd4" };
-        const secondaryApp = firebase.apps.length > 1 ? firebase.apps[1] : firebase.initializeApp(firestoreConfig, "secondary");
-        const fsDb = secondaryApp.firestore();
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        // تهيئة قواعد البيانات (Firestore و Realtime Database باستخدام السحابة الموحدة)
+        const fsDb = firebase.firestore();
         const rtdb = firebase.database();
 
         function updateLiveClock() {
@@ -639,7 +649,6 @@
 
         function closeModalAna(id) { document.getElementById(id).style.display = 'none'; }
 
-        // دالة عرض تقرير الطالب المفصل للطالب نفسه بعد الاعتماد
         function showStudentReport(answersArray, score, total) {
             document.getElementById('report-modal-title').innerText = "تقرير أداء الطالب وتفاصيل الإجابات 🎯";
             document.getElementById('score-summary').innerText = `النتيجة الإجمالية: ${score} من ${total}`;
@@ -714,6 +723,7 @@
             } catch (e) { alert("حدث خطأ أثناء رفع القائمة."); }
         }
 
+        let allGlobalStudentsCache = [];
         async function loadGlobalStudentsCache() {
             allGlobalStudentsCache = [];
             try {
@@ -1267,7 +1277,7 @@
                 details.push({ qText: qTxt, qType: qType, studentAns: selWord, correctAns: correctKey, maxScore: questionMaxScore, earnedScore: earned, isCorrect: isCorrect });
             });
 
-            lastSubmittedDetails = details; // حفظ التفاصيل محلياً للعرض الفوري
+            lastSubmittedDetails = details;
             const examId = new URLSearchParams(window.location.search).get('exam') || "اختبار عام";
             try {
                 await fsDb.collection("alkfaeat_results").add({
@@ -1282,7 +1292,6 @@
                 });
                 document.getElementById('examTimerBanner').style.display = 'none';
                 
-                // تحديث أزرار منطقة الطالب لتعرض زر استعراض النتيجة والإجابات بشكل تفاعلي مبسط (بدون إحصائيات معقدة كما طلبت)
                 document.getElementById('student-actions').innerHTML = `
                     <div style="background:#dcfce7; color:#166534; padding:20px; border-radius:12px; font-weight:bold; border:1px solid #bbf7d0; width:100%; text-align:center; font-size: 1.1rem; margin-bottom: 15px;">
                         🎉 تم إرسال واعتماد النتيجة بنجاح!<br>
@@ -1293,7 +1302,6 @@
                     </button>
                 `;
                 
-                // فتح التقرير تلقائياً فور الاعتماد
                 showStudentReport(details, totalScore, totalPossibleScore);
 
             } catch (err) { alert("حدث خطأ أثناء الإرسال."); }
@@ -1368,7 +1376,7 @@
 
             let modelPackage = { teacher: currentTeacherName, email: currentTeacherEmail, data: dataToSave, startTime: currentExamStartTime, endTime: currentExamEndTime };
             await rtdb.ref(getTeacherCloudPath() + '/models/' + currentOpenModelName).set(modelPackage);
-            alert(`تم الحفظ بنجاح في سحابة aaaa! 💾`);
+            alert(`تم الحفظ بنجاح في السحابة الموحدة aaaa-a2380! 💾`);
         }
 
         function closeModals() { 
