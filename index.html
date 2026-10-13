@@ -116,7 +116,7 @@
         body.student-mode .teacher-icon-bar, body.student-mode .sub-action-bar, body.student-mode .remove-btn, body.student-mode .type-select, body.student-mode .correct-ans-box, body.student-mode .admin-only { display: none !important; }
         body.student-mode .selected-opt { background: #dbeafe !important; border: 2px solid #2563eb !important; box-shadow: 0 4px 12px rgba(37,99,235,0.25); }
 
-        /* نمط وضع الاطلاع فقط للمدير/المشرف */
+        /* وضع الاطلاع فقط للمدير د / عبدالله بن ظافر الشهري */
         body.view-only-mode .admin-only, 
         body.view-only-mode .sub-action-bar, 
         body.view-only-mode .btn-delete,
@@ -266,7 +266,7 @@
         <button class="btn" style="background:#64748b; width:100%; margin-top:10px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق التقرير</button>
     </div>
 
-    <!-- عناصر واجهة المعلم الخاّصة (تختفي في وضع المشرف تلقائياً) -->
+    <!-- عناصر واجهة المعلم الخاصة -->
     <div class="user-header teacher-only" id="main-header">
         <div class="header-right"><h2 class="user-name" id="header-teacher-name">أ. عبدالعزيز الفيفي</h2></div>
         <div class="header-center"><div class="logo-box"><i class="fas fa-award"></i></div></div>
@@ -276,7 +276,7 @@
     <div class="teacher-icon-bar teacher-only admin-only" id="teacher-icon-bar">
         <button class="icon-action-btn btn-students" onclick="openStudentsManagementModal()"><i class="fas fa-users-cog"></i><span>إدارة الطلاب والفصول</span></button>
         <button class="icon-action-btn btn-analytics" onclick="openFullAnalyticsPage()"><i class="fas fa-chart-line"></i><span>لوحة التحليل الذكي</span></button>
-        <button class="icon-action-btn btn-share" onclick="shareTeacherDashboardForManager()"><i class="fas fa-share-alt"></i><span>مشاركة اللوحة للمدير</span></button>
+        <button class="icon-action-btn btn-share" onclick="shareTeacherDashboardForManager()"><i class="fas fa-share-alt"></i><span>مشاركة اللوحة لمدير المدرسة</span></button>
         <button class="icon-action-btn btn-matrix" onclick="openMatrixModal()"><i class="fas fa-file-code"></i><span>مصفوفة الاختبارات</span></button>
     </div>
 
@@ -313,7 +313,7 @@
                 <span style="font-size: 1.4rem; color: #0284c7; font-weight: bold; margin-top: 4px; display: block;" id="sub-title">الكفايات اللغوية</span>
             </div>
             <div class="action-buttons no-print" id="action-area">
-                <button class="btn admin-only" style="background:#059669;" onclick="shareTeacherDashboardForManager()"><i class="fas fa-share-alt"></i> مشاركة اللوحة للمدير</button>
+                <button class="btn admin-only" style="background:#059669;" onclick="shareTeacherDashboardForManager()"><i class="fas fa-share-alt"></i> مشاركة اللوحة لمدير المدرسة</button>
             </div>
         </div>
 
@@ -471,9 +471,9 @@
         function shareTeacherDashboardForManager() {
             const shareUrl = window.location.origin + window.location.pathname + "?teacher=" + encodeURIComponent(currentTeacherEmail) + "&view=true";
             navigator.clipboard.writeText(shareUrl).then(() => {
-                alert("تم نسخ رابط لوحة المتابعة المخصص للإدارة والمدير بنجاح! 🔗\n(يمكن للمدير الآن الاطلاع فقط على نتائج وأعمال معلم المادة دون إمكانية للتعديل).");
+                alert("تم نسخ رابط لوحة المتابعة المخصص لمدير المدرسة (د / عبدالله بن ظافر الشهري) بنجاح! 🔗\n(يمكن للمدير الآن الاطلاع فقط على نتائج وأعمال المعلم وطلاب المادة دون تعديل).");
             }).catch(() => {
-                prompt("نسخ رابط مشاركة لوحة المعلم للمدير والاطلاع فقط:", shareUrl);
+                prompt("نسخ رابط مشاركة لوحة المعلم لمدير المدرسة:", shareUrl);
             });
         }
 
@@ -1057,7 +1057,6 @@
                     let scoreVal = subScores[idx] !== undefined ? subScores[idx] : 1;
                     let sVal = studentAns[idx] || '';
 
-                    // حظر وإزالة أي ترقيم ببدء النص مثل "(1" أو "1)"
                     let cleanItemText = item.replace(/^\s*\(?\d+[\)\.-]?\s*/, '');
 
                     leftRows += `
@@ -1423,7 +1422,7 @@
         }
 
         function copyCurrentModelLink() {
-            if (!currentOpenModelName) { alert("حفظ النموذج أولاً!"); return; }
+            if (!currentOpenModelName) { alert("احفظ النموذج أولاً!"); return; }
             const shareUrl = window.location.origin + window.location.pathname + "?exam=" + encodeURIComponent(currentOpenModelName) + "&teacher=" + encodeURIComponent(currentTeacherEmail);
             navigator.clipboard.writeText(shareUrl).then(() => alert("تم نسخ رابط الطلاب بنجاح! 🔗"));
         }
@@ -1503,7 +1502,7 @@
                 let i = 1;
                 Object.keys(data).forEach(k => {
                     let t = data[k];
-                    tbody.innerHTML += `<tr><td>${i++}</td><td><b>${t.name}</b></td><td>${t.email}</td><td>${t.subject}</td><td><button class="btn" style="background:#10b981; padding:4px 8px;" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=${t.email}').then(()=>alert('تم النسخ'))">رابط المعلم</button> <button class="btn" style="background:#0284c7; padding:4px 8px;" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=${t.email}&view=true').then(()=>alert('تم نسخ رابط الاطلاع للمدير'))">رابط المدير</button></td></tr>`;
+                    tbody.innerHTML += `<tr><td>${i++}</td><td><b>${t.name}</b></td><td>${t.email}</td><td>${t.subject}</td><td><button class="btn" style="background:#10b981; padding:4px 8px;" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=${t.email}').then(()=>alert('تم النسخ'))">رابط المعلم</button> <button class="btn" style="background:#0284c7; padding:4px 8px;" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=${t.email}&view=true').then(()=>alert('تم نسخ رابط الاطلاع للمدير د / عبدالله بن ظافر الشهري'))">رابط المدير</button></td></tr>`;
                 });
             }).catch(error => {
                 tbody.innerHTML = `<tr><td colspan="5" style="color:var(--q-red);">تعذر تحميل قائمة المعلمين. تأكد من تفعيل Realtime Database.</td></tr>`;
@@ -1541,13 +1540,13 @@
                         const mainTitle = document.getElementById('main-title');
                         if (mainTitle) {
                             if (isViewOnly) {
-                                mainTitle.innerHTML = `👁️ لوحة الاطلاع ومتابعة أداء الطلاب - أ / ${currentTeacherName}`;
+                                mainTitle.innerHTML = `👁️ لوحة إشراف واطلاع مدير المدرسة (د / عبدالله بن ظافر الشهري) - متابعة أداء أ / ${currentTeacherName}`;
                             } else {
                                 mainTitle.innerHTML = `📊 منصة أ / ${currentTeacherName} ( التحليل الذكي )`;
                             }
                         }
                         const subTitle = document.getElementById('sub-title');
-                        if (subTitle) subTitle.innerText = `${currentTeacherSubject} - [وضع الاطلاع مخصص للقيادة والمدير]`;
+                        if (subTitle) subTitle.innerText = `${currentTeacherSubject} - [مخصص للاطلاع والمتابعة الإدارية]`;
                     }
 
                     if (isViewOnly) {
