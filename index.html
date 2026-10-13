@@ -111,7 +111,6 @@
         body.student-mode .teacher-icon-bar, body.student-mode .sub-action-bar, body.student-mode .remove-btn, body.student-mode .type-select, body.student-mode .correct-ans-box, body.student-mode .admin-only { display: none !important; }
         body.student-mode .selected-opt { background: rgba(59, 130, 246, 0.2) !important; border: 2px solid var(--royal-blue) !important; }
 
-        /* نافذة منبثقة للتحليل الذكي أو مصفوفة الاختبارات */
         .modal-fullscreen { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 1050px; max-height: 90%; background: #ffffff; color: #1e293b; z-index: 2000; border-radius: 20px; padding: 25px; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,0.4); box-sizing: border-box; }
         .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .stat-card { background: #f8fafc; padding: 15px; border-radius: 15px; text-align: center; border: 1px solid var(--card-border); }
@@ -174,7 +173,7 @@
         </div>
     </div>
 
-    <!-- نافذة إدارة الطلاب والفصول (الأيقونة الأولى في الشريط) -->
+    <!-- نافذة إدارة الطلاب والفصول (الأيقونة الأولى) -->
     <div id="students-manage-modal">
         <h2 style="text-align: center; color: var(--royal-blue); margin-top:0; font-size:1.3rem;"><i class="fas fa-user-graduate"></i> إدارة الطلاب والفصول (إضافة عامة)</h2>
         <p style="text-align: center; color: #64748b; font-size: 0.9rem;">أضف طلابك هنا ليكونوا معتمدين في منصتك السحابية الخاصة:</p>
@@ -194,7 +193,7 @@
         <button class="btn" style="background:#64748b; width:100%; margin-top:20px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق</button>
     </div>
 
-    <!-- نافذة منبثقة لـ لوحة التحليل الذكي (الأيقونة الثانية) -->
+    <!-- نافذة لوحة التحليل الذكي (الأيقونة الثانية) -->
     <div class="modal-fullscreen" id="analytics-modal">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
             <h3 style="margin: 0; color: var(--royal-blue);"><i class="fas fa-chart-line"></i> لوحة التحليل الذكي ومتابعة الطلاب</h3>
@@ -232,15 +231,15 @@
         <button class="btn" style="background:#64748b; width:100%; margin-top:20px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق لوحة التحليل</button>
     </div>
 
-    <!-- نافذة منبثقة لـ مصفوفة الاختبارات والكود (الأيقونة الثالثة) -->
+    <!-- نافذة مصفوفة الاختبارات والكود (الأيقونة الثالثة) -->
     <div id="matrix-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:95%; max-width:850px; background:#fff; z-index:2000; border-radius:20px; padding:25px; box-shadow:0 0 40px rgba(0,0,0,0.3); box-sizing:border-box;">
         <h2 style="color:var(--royal-blue); margin-top:0;"><i class="fas fa-file-code"></i> مصفوفة الأسئلة البرمجية</h2>
-        <p style="color:#64748b; font-size:0.9rem;">تستطيع من هنا الاطلاع على مصفوفة الاختبار الحالية وتعديلها أو توليد الأسئلة:</p>
+        <p style="color:#64748b; font-size:0.9rem;">ألصق مصفوفة الأسئلة البرمجية هنا لتوليدها وتوزيعها تلقائياً:</p>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <label style="font-weight: bold; color: #0284c7; font-size:0.95rem;">كود المصفوفة:</label>
             <button class="btn" style="background:#10b981; padding:6px 12px; font-size:0.8rem;" onclick="copyArrayCode()"><i class="fas fa-copy"></i> نسخ المصفوفة</button>
         </div>
-        <textarea id="arrayInputText" class="auth-input" style="width:100%; height:200px; font-family:monospace; font-size:0.85rem; direction:ltr; text-align:left; resize:none; max-width:100%;" placeholder="[ { t: '...', q: '...', ... } ]"></textarea>
+        <textarea id="arrayInputText" class="auth-input" style="width:100%; height:220px; font-family:monospace; font-size:0.85rem; direction:ltr; text-align:left; resize:none; max-width:100%;" placeholder="[ { t: '...', q: '...', ... } ]"></textarea>
         <button class="btn" style="background:#0284c7; width:100%; justify-content:center; margin-top:10px;" onclick="importArrayQuestions()"><i class="fas fa-magic"></i> توليد وتوزيع الأسئلة تلقائياً</button>
         <button class="btn" style="background:#64748b; width:100%; margin-top:15px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق</button>
     </div>
@@ -433,7 +432,28 @@
             return `teachers_data/${safeKey}`;
         }
 
-        // --- الأيقونة الأولى: إدارة الطلاب والفصول ---
+        function saveAll() {
+            const dataToSave = [];
+            document.querySelectorAll('.question-card').forEach(c => {
+                const qType = c.querySelector('.type-select')?.value;
+                let qData = {
+                    t: qType,
+                    q: c.querySelector('.q-main')?.value || "",
+                    ans: c.querySelector('.ans-val')?.value || "",
+                    score: parseFloat(c.querySelector('.q-score-input')?.value) || 1,
+                };
+                if (qType === 'سؤال مزاوجة (توصيل)') {
+                    qData.opts = Array.from(c.querySelectorAll('.opt-left')).map(i => i.value);
+                    qData.rightOpts = Array.from(c.querySelectorAll('.opt-right')).map(i => i.value);
+                } else {
+                    qData.opts = Array.from(c.querySelectorAll('.opt')).map(i => i.value);
+                }
+                dataToSave.push(qData);
+            });
+            localStorage.setItem('fifi_final_v_secured_' + currentTeacherEmail, JSON.stringify(dataToSave));
+        }
+
+        // --- 1. إدارة الطلاب والفصول ---
         function openStudentsManagementModal() {
             loadRegisteredStudents();
             document.getElementById('students-manage-modal').style.display = 'block';
@@ -506,7 +526,7 @@
             }
         }
 
-        // --- الأيقونة الثانية: لوحة التحليل الذكي ---
+        // --- 2. لوحة التحليل الذكي ---
         function openAnalyticsModal() {
             document.getElementById('analytics-modal').style.display = 'block';
             document.getElementById('modal-overlay').style.display = 'block';
@@ -696,7 +716,7 @@
             document.getElementById('modal-overlay').style.display = 'block';
         }
 
-        // --- الأيقونة الثالثة: مصفوفة الاختبارات والكود ---
+        // --- 3. مصفوفة الاختبارات والكود (معالجة ذكية ومقاومة للأخطاء) ---
         function openMatrixModal() {
             generateCurrentArrayCodeText();
             document.getElementById('matrix-modal').style.display = 'block';
@@ -707,7 +727,6 @@
             const arrayItems = [];
             document.querySelectorAll('.question-card').forEach(c => {
                 const qType = c.querySelector('.type-select')?.value || 'اختر الإجابة الصحيحة';
-                let opts = Array.from(c.querySelectorAll('.opt')).map(i => i.value);
                 let qText = c.querySelector('.q-main')?.value || "";
                 let qTextArea = c.querySelector('.estieab-box')?.innerText || "";
                 let ans = c.querySelector('.ans-val')?.value || "";
@@ -715,7 +734,13 @@
 
                 let itemObj = { t: qType, q: qText, ans: ans, score: score };
                 if (qTextArea) itemObj.text_area = qTextArea;
-                if (opts.length > 0) itemObj.opts = opts;
+
+                if (qType === 'سؤال مزاوجة (توصيل)') {
+                    itemObj.opts = Array.from(c.querySelectorAll('.opt-left')).map(i => i.value);
+                    itemObj.rightOpts = Array.from(c.querySelectorAll('.opt-right')).map(i => i.value);
+                } else {
+                    itemObj.opts = Array.from(c.querySelectorAll('.opt')).map(i => i.value);
+                }
                 arrayItems.push(itemObj);
             });
             document.getElementById('arrayInputText').value = "const rawQuizData = " + JSON.stringify(arrayItems, null, 2) + ";";
@@ -725,18 +750,30 @@
             let rawData = document.getElementById('arrayInputText').value.trim();
             if (!rawData) { alert("الرجاء لصق مصفوفة الأسئلة أولاً!"); return; }
             try {
-                let cleanText = rawData.replace(/\/\/.*/g, '').replace(/^\s*(const|let|var)\s+[\w]+\s*=\s*/, '').trim();
+                // تنظيف كامل للنصوص من المسافات المخفية والأحرف الخاصة لضمان النجاح الفوري
+                let cleanText = rawData.replace(/\u00A0/g, ' ').replace(/\/\/.*/g, '').replace(/^\s*(const|let|var)\s+[\w]+\s*=\s*/, '').trim();
                 let start = cleanText.indexOf('['), end = cleanText.lastIndexOf(']');
                 let arr = eval('(' + cleanText.substring(start, end + 1) + ')');
                 if (!Array.isArray(arr)) throw new Error();
+                
                 document.getElementById('quiz-content').innerHTML = '';
                 arr.forEach(item => {
-                    addQuestion({ text: item.q || "", text_area: item.text_area || "", opts: item.opts || [], ans: item.ans || "", qType: item.t || "اختر الإجابة الصحيحة", score: item.score || 1 });
+                    addQuestion({ 
+                        text: item.q || "", 
+                        text_area: item.text_area || "", 
+                        opts: item.opts || [], 
+                        rightOpts: item.rightOpts || [], 
+                        ans: item.ans || "", 
+                        qType: item.t || "اختر الإجابة الصحيحة", 
+                        score: item.score || 1 
+                    });
                 });
                 saveAll();
-                alert(`تم استيراد ${arr.length} سؤالاً بنجاح!`);
+                alert(`تم استيراد ${arr.length} سؤالاً بنجاح! 🌟`);
                 closeModals();
-            } catch (e) { alert("خطأ في قراءة المصفوفة البرمجية."); }
+            } catch (e) { 
+                alert("خطأ في قراءة المصفوفة البرمجية. تأكد من صحة التنسيق."); 
+            }
         }
 
         function copyArrayCode() {
@@ -836,8 +873,8 @@
                 </div>
                 <div class="ans-grid-area">${renderOptionsByType(selectedType, data, isStudent)}</div>
                 <div class="correct-ans-box admin-only" style="display:flex;">
-                    <input type="text" placeholder="${selectedType.includes('مزاوجة') ? 'مفتاح الإجابة (مثال: 2 1 3)' : 'الإجابة الصحيحة'}" class="correct-input ans-val" value="${correctAnsVal}" oninput="saveAll()">
-                    <div style="display:${selectedType.includes('مزاوجة') ? 'none' : 'flex'}; align-items:center; gap:5px; white-space:nowrap;">
+                    <input type="text" placeholder="${selectedType.includes('مزاوجة') ? 'مفتاح الإجابة (مثال: 4 2 5 1)' : 'الإجابة الصحيحة'}" class="correct-input ans-val" value="${correctAnsVal}" oninput="saveAll()">
+                    <div style="display:flex; align-items:center; gap:5px; white-space:nowrap;">
                         <span style="font-size:0.85rem; font-weight:bold; color:#166534;">درجة السؤال:</span>
                         <input type="number" min="0.5" step="0.5" class="q-score-input" value="${qScoreVal}" oninput="saveAll()">
                     </div>
@@ -882,15 +919,20 @@
                 let leftOpts = data?.opts || data?.matchA || ['', ''];
                 let rightOpts = data?.rightOpts || data?.matchB || ['', ''];
                 let studentAns = data?.studentAns || {};
+                
                 let leftHtml = `<div class="matching-box"><h4 style="margin:0 0 10px; color:var(--royal-blue); font-size:1rem;">الفقرات:</h4>`;
                 leftOpts.forEach((item, idx) => {
                     let sVal = studentAns[idx] || '';
                     leftHtml += `<div class="matching-row">${!isStudent ? `<input type="text" class="opt opt-left" value="${item}" placeholder="فقرة ${idx+1}" oninput="saveAll()" style="padding:6px; border:1px solid #cbd5e1; border-radius:6px; flex:1;">` : `<span style="flex:1;">${idx+1})${item}</span>`}<input type="text" class="matching-ans-input" data-left-idx="${idx}" ${isStudent ? 'oninput="validateMatchingInput(this, ' + rightOpts.length + ')"' : 'disabled placeholder="رقم"'} value="${sVal}" style="width:50px; text-align:center; padding:6px; border:1px solid #cbd5e1; border-radius:6px; font-weight:bold;" maxlength="2"></div>`;
                 });
+                leftHtml += `</div>`;
+
                 let rightHtml = `<div class="matching-box"><h4 style="margin:0 0 10px; color:var(--royal-blue); font-size:1rem;">الإجابات:</h4>`;
                 rightOpts.forEach((item, idx) => {
                     rightHtml += `<div class="matching-row"><span style="font-weight:bold; color:#0284c7;">${idx+1}.</span>${!isStudent ? `<input type="text" class="opt opt-right" value="${item}" placeholder="إجابة ${idx+1}" oninput="saveAll()" style="padding:6px; border:1px solid #cbd5e1; border-radius:6px; flex:1;">` : `<span style="flex:1;">${item}</span>`}</div>`;
                 });
+                rightHtml += `</div>`;
+
                 return `<div class="matching-container">${leftHtml}</div><div class="matching-container">${rightHtml}</div>`;
             } else if (['عرّف', 'اذكر', 'صحح الخطأ', 'استخرج من النص', 'أكمل/أعرب/مثل'].includes(type)) {
                 return `<div><label style="display:block; font-weight:bold; color:#0284c7; margin-bottom:5px;">إجابة الطالب:</label><textarea class="student-answer-textarea" ${isStudent ? '' : 'disabled placeholder="مربع إجابة الطالب..."'}></textarea></div>`;
@@ -985,6 +1027,11 @@
                 if (['اختر الإجابة الصحيحة', 'صح وخطأ'].includes(qType)) {
                     selWord = c.querySelector('.selected-opt .opt')?.value || "";
                     isCorrect = (selWord.trim() === correctKey.trim());
+                } else if (qType === 'سؤال مزاوجة (توصيل)' || qType === 'k_matching') {
+                    let matchingAns = [];
+                    c.querySelectorAll('.matching-ans-input').forEach(inp => matchingAns.push(inp.value.trim() || "0"));
+                    selWord = matchingAns.join(' ');
+                    isCorrect = (selWord === correctKey);
                 } else {
                     selWord = c.querySelector('.student-answer-textarea')?.value.trim() || "";
                     isCorrect = (selWord.toLowerCase() === correctKey.toLowerCase() && correctKey !== "");
@@ -1091,13 +1138,20 @@
             
             const dataToSave = [];
             document.querySelectorAll('.question-card').forEach(c => {
-                dataToSave.push({
-                    t: c.querySelector('.type-select')?.value,
+                const qType = c.querySelector('.type-select')?.value;
+                let qData = {
+                    t: qType,
                     q: c.querySelector('.q-main')?.value || "",
                     ans: c.querySelector('.ans-val')?.value || "",
                     score: parseFloat(c.querySelector('.q-score-input')?.value) || 1,
-                    opts: Array.from(c.querySelectorAll('.opt')).map(i => i.value)
-                });
+                };
+                if (qType === 'سؤال مزاوجة (توصيل)') {
+                    qData.opts = Array.from(c.querySelectorAll('.opt-left')).map(i => i.value);
+                    qData.rightOpts = Array.from(c.querySelectorAll('.opt-right')).map(i => i.value);
+                } else {
+                    qData.opts = Array.from(c.querySelectorAll('.opt')).map(i => i.value);
+                }
+                dataToSave.push(qData);
             });
 
             let modelPackage = { teacher: currentTeacherName, email: currentTeacherEmail, data: dataToSave, startTime: currentExamStartTime, endTime: currentExamEndTime };
