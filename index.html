@@ -154,9 +154,18 @@
 
     <div id="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1999;" onclick="closeModals()"></div>
     
-    <!-- لوحة المشرف لإدارة المعلمين -->
+    <!-- لوحة المشرف لإدارة المعلمين وإضافة الطلاب دفعة واحدة -->
     <div class="admin-card" id="admin-management-card" style="display: none;">
-        <h2 style="color: var(--royal-blue); margin-top: 0; text-align: center;"><i class="fas fa-users-cog"></i> لوحة المشرف - إدارة المعلمين السحابية</h2>
+        <h2 style="color: var(--royal-blue); margin-top: 0; text-align: center;"><i class="fas fa-users-cog"></i> لوحة المشرف العامة</h2>
+        
+        <!-- قسم إضافة الطلاب العامة دفعة واحدة -->
+        <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 2px dashed #0284c7; margin-bottom: 25px;">
+            <h3 style="margin-top: 0; color: #0284c7; font-size: 1.1rem;"><i class="fas fa-file-upload"></i> إضافة الطلاب دفعة واحدة لجميع المعلمين:</h3>
+            <p style="color: #64748b; font-size: 0.85rem;">الصق أسماء الطلاب وإيميلاتهم بحيث يكون كل (اسم طالب) في سطر و(إيميله) في السطر التالي، أو افصل بينهما بفاصلة:</p>
+            <textarea id="bulkStudentsInput" class="auth-input" style="width:100%; height:150px; font-family:inherit; resize:none; max-width:100%; direction:ltr; text-align:right;" placeholder="محمد أحمد&#10;s123456@rb.moe.gov.sa&#10;خالد العتيبي&#10;s654321@rb.moe.gov.sa"></textarea>
+            <button class="btn" style="background: var(--success-green); width: 100%; justify-content: center;" onclick="uploadBulkStudents()"><i class="fas fa-cloud-upload-alt"></i> اعتماد وحفظ الطلاب في القائمة العامة</button>
+        </div>
+
         <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
             <h3 style="margin-top: 0; color: #0284c7; font-size: 1.05rem;"><i class="fas fa-user-plus"></i> إضافة معلم جديد للنظام:</h3>
             <input type="text" id="newTeacherName" class="auth-input" placeholder="اسم المعلم (مثال: أ. عبدالعزيز الفيفي)" style="max-width:100%;">
@@ -173,17 +182,22 @@
         </div>
     </div>
 
-    <!-- نافذة إدارة الطلاب والفصول (الأيقونة الأولى) -->
+    <!-- نافذة إدارة الطلاب والفصول للمعلم (مع خاصية البحث والإضافة السريعة من القائمة العامة) -->
     <div id="students-manage-modal">
-        <h2 style="text-align: center; color: var(--royal-blue); margin-top:0; font-size:1.3rem;"><i class="fas fa-user-graduate"></i> إدارة الطلاب والفصول (إضافة عامة)</h2>
-        <p style="text-align: center; color: #64748b; font-size: 0.9rem;">أضف طلابك هنا ليكونوا معتمدين في منصتك السحابية الخاصة:</p>
+        <h2 style="text-align: center; color: var(--royal-blue); margin-top:0; font-size:1.3rem;"><i class="fas fa-user-graduate"></i> إدارة الطلاب والفصول</h2>
+        <p style="text-align: center; color: #64748b; font-size: 0.9rem;">ابحث عن الطالب المضاف من قِبل المشرف وأضفه لفصلك:</p>
+        
         <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
-            <input type="text" id="regStudentName" class="auth-input" placeholder="اسم الطالب الكامل" style="max-width:100%; margin-bottom:10px;">
-            <input type="email" id="regStudentEmail" class="auth-input" placeholder="إيميل منصة مدرستي (sxxxxxxx@rb.moe.gov.sa)" style="max-width:100%; margin-bottom:10px; direction:ltr; text-align:right;">
+            <input type="text" id="globalStudentSearch" class="auth-input" placeholder="🔍 ابحث بالاسم أو الإيميل..." style="max-width:100%; margin-bottom:10px;" oninput="filterGlobalStudentsList(this.value)">
+            <div id="global-students-suggestions" style="max-height: 150px; overflow-y: auto; background: white; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 10px; display: none;"></div>
+            
+            <input type="text" id="selectedStudentName" class="auth-input" placeholder="اسم الطالب المختار" style="max-width:100%; margin-bottom:10px;" readonly>
+            <input type="email" id="selectedStudentEmail" class="auth-input" placeholder="إيميل الطالب" style="max-width:100%; margin-bottom:10px; direction:ltr; text-align:right;" readonly>
             <input type="text" id="regStudentClass" class="auth-input" placeholder="الفصل (مثال: أول ثانوي / 1)" style="max-width:100%; margin-bottom:10px;">
-            <button class="btn" style="background: var(--success-green); width: 100%; justify-content: center;" onclick="registerNewStudent()"><i class="fas fa-user-plus"></i> إضافة وحفظ الطالب</button>
+            <button class="btn" style="background: var(--success-green); width: 100%; justify-content: center;" onclick="addStudentToTeacherClass()"><i class="fas fa-user-plus"></i> إضافة الطالب إلى فصولي</button>
         </div>
-        <h3 style="color: var(--royal-blue); font-size: 1.05rem;"><i class="fas fa-users"></i> الطلاب المسجلين في فصولك:</h3>
+
+        <h3 style="color: var(--royal-blue); font-size: 1.05rem;"><i class="fas fa-users"></i> طلابك المسجلين حالياً:</h3>
         <div style="overflow-x: auto; max-height: 250px;">
             <table class="teachers-table">
                 <thead><tr><th>اسم الطالب</th><th>الإيميل</th><th>الفصل</th><th>حذف</th></tr></thead>
@@ -193,7 +207,7 @@
         <button class="btn" style="background:#64748b; width:100%; margin-top:20px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق</button>
     </div>
 
-    <!-- نافذة لوحة التحليل الذكي (الأيقونة الثانية) -->
+    <!-- نافذة لوحة التحليل الذكي -->
     <div class="modal-fullscreen" id="analytics-modal">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
             <h3 style="margin: 0; color: var(--royal-blue);"><i class="fas fa-chart-line"></i> لوحة التحليل الذكي ومتابعة الطلاب</h3>
@@ -231,7 +245,7 @@
         <button class="btn" style="background:#64748b; width:100%; margin-top:20px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق لوحة التحليل</button>
     </div>
 
-    <!-- نافذة مصفوفة الاختبارات والكود (الأيقونة الثالثة) -->
+    <!-- نافذة مصفوفة الاختبارات والكود -->
     <div id="matrix-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:95%; max-width:850px; background:#fff; z-index:2000; border-radius:20px; padding:25px; box-shadow:0 0 40px rgba(0,0,0,0.3); box-sizing:border-box;">
         <h2 style="color:var(--royal-blue); margin-top:0;"><i class="fas fa-file-code"></i> مصفوفة الأسئلة البرمجية</h2>
         <p style="color:#64748b; font-size:0.9rem;">ألصق مصفوفة الأسئلة البرمجية هنا لتوليدها وتوزيعها تلقائياً:</p>
@@ -393,6 +407,7 @@
         let globalResultsSnapshot = [];
         let analyticsSelectedModel = 'all';
         let currentSearchQuery = '';
+        let allGlobalStudentsCache = [];
 
         const firebaseConfig = {
             apiKey: "AIzaSyAVrIim7aXjg0hGrMk0qVrXT8geRIpHoBk",
@@ -453,20 +468,90 @@
             localStorage.setItem('fifi_final_v_secured_' + currentTeacherEmail, JSON.stringify(dataToSave));
         }
 
-        // --- 1. إدارة الطلاب والفصول ---
+        // --- إضافة الطلاب دفعة واحدة من لوحة المشرف ---
+        async function uploadBulkStudents() {
+            const rawText = document.getElementById('bulkStudentsInput').value.trim();
+            if (!rawText) { alert("الرجاء لصق قائمة الطلاب أولاً!"); return; }
+
+            const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l);
+            let count = 0;
+
+            try {
+                for (let i = 0; i < lines.length; i++) {
+                    let line1 = lines[i];
+                    let line2 = lines[i+1] || "";
+
+                    let name = "", email = "";
+                    if (line1.includes('@')) { email = line1; name = line2; i++; }
+                    else if (line2.includes('@')) { name = line1; email = line2; i++; }
+                    else if (line1.includes(',')) {
+                        let parts = line1.split(',');
+                        name = parts[0].trim();
+                        email = parts[1].trim();
+                    }
+
+                    if (name && email && email.includes('@')) {
+                        await fsDb.collection("all_global_students").doc(email.toLowerCase()).set({
+                            name: name,
+                            email: email.toLowerCase(),
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        count++;
+                    }
+                }
+                alert(`تم رفع واعتماد (${count}) طالباً بنجاح في القائمة العامة لجميع المعلمين! 🌟`);
+                document.getElementById('bulkStudentsInput').value = "";
+                loadGlobalStudentsCache();
+            } catch (e) {
+                alert("حدث خطأ أثناء رفع القائمة.");
+            }
+        }
+
+        async function loadGlobalStudentsCache() {
+            allGlobalStudentsCache = [];
+            try {
+                const snap = await fsDb.collection("all_global_students").get();
+                snap.forEach(doc => allGlobalStudentsCache.push(doc.data()));
+            } catch(e) {}
+        }
+
+        // --- إدارة الطلاب والفصول للمعلم مع البحث والاختيار السريع ---
         function openStudentsManagementModal() {
             loadRegisteredStudents();
+            loadGlobalStudentsCache();
             document.getElementById('students-manage-modal').style.display = 'block';
             document.getElementById('modal-overlay').style.display = 'block';
         }
 
-        async function registerNewStudent() {
-            const name = document.getElementById('regStudentName').value.trim();
-            const email = document.getElementById('regStudentEmail').value.trim().toLowerCase();
+        function filterGlobalStudentsList(query) {
+            const sugBox = document.getElementById('global-students-suggestions');
+            if (!query.trim()) { sugBox.style.display = 'none'; return; }
+
+            const matched = allGlobalStudentsCache.filter(st => st.name.toLowerCase().includes(query.toLowerCase()) || st.email.toLowerCase().includes(query.toLowerCase()));
+            if (matched.length === 0) { sugBox.style.display = 'none'; return; }
+
+            let html = "";
+            matched.forEach(st => {
+                html += `<div style="padding:8px 12px; cursor:pointer; border-bottom:1px solid #f1f5f9;" onclick="selectGlobalStudent('${st.name}', '${st.email}')"><b>${st.name}</b> (${st.email})</div>`;
+            });
+            sugBox.innerHTML = html;
+            sugBox.style.display = 'block';
+        }
+
+        function selectGlobalStudent(name, email) {
+            document.getElementById('selectedStudentName').value = name;
+            document.getElementById('selectedStudentEmail').value = email;
+            document.getElementById('globalStudentSearch').value = name;
+            document.getElementById('global-students-suggestions').style.display = 'none';
+        }
+
+        async function addStudentToTeacherClass() {
+            const name = document.getElementById('selectedStudentName').value.trim();
+            const email = document.getElementById('selectedStudentEmail').value.trim().toLowerCase();
             const className = document.getElementById('regStudentClass').value.trim();
 
-            if (!name || !email || !className || !email.includes('@')) {
-                alert("الرجاء تعبئة كافة بيانات الطالب وإدخال إيميل مدرستي صحيح.");
+            if (!name || !email || !className) {
+                alert("الرجاء اختيار الطالب من القائمة وإدخال الفصل.");
                 return;
             }
 
@@ -478,13 +563,14 @@
                     teacher_email: currentTeacherEmail,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                alert(`تم تسجيل الطالب (${name}) بنجاح ضمن فصولك! 🎓`);
-                document.getElementById('regStudentName').value = "";
-                document.getElementById('regStudentEmail').value = "";
+                alert(`تم ربط الطالب (${name}) بفصلك بنجاح! 🎓`);
+                document.getElementById('selectedStudentName').value = "";
+                document.getElementById('selectedStudentEmail').value = "";
+                document.getElementById('globalStudentSearch').value = "";
                 document.getElementById('regStudentClass').value = "";
                 loadRegisteredStudents();
             } catch (e) {
-                alert("حدث خطأ أثناء حفظ الطالب.");
+                alert("حدث خطأ أثناء حفظ الطالب في فصلك.");
             }
         }
 
@@ -496,7 +582,7 @@
             try {
                 const snap = await fsDb.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).get();
                 if (snap.empty) {
-                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا يوجد طلاب مسجلين حالياً.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا يوجد طلاب مسجلين في فصولك حالياً.</td></tr>`;
                     return;
                 }
                 tbody.innerHTML = "";
@@ -526,7 +612,7 @@
             }
         }
 
-        // --- 2. لوحة التحليل الذكي ---
+        // --- لوحة التحليل الذكي ---
         function openAnalyticsModal() {
             document.getElementById('analytics-modal').style.display = 'block';
             document.getElementById('modal-overlay').style.display = 'block';
@@ -716,7 +802,7 @@
             document.getElementById('modal-overlay').style.display = 'block';
         }
 
-        // --- 3. مصفوفة الاختبارات والكود (معالجة ذكية ومقاومة للأخطاء) ---
+        // --- مصفوفة الاختبارات والكود ---
         function openMatrixModal() {
             generateCurrentArrayCodeText();
             document.getElementById('matrix-modal').style.display = 'block';
@@ -750,7 +836,6 @@
             let rawData = document.getElementById('arrayInputText').value.trim();
             if (!rawData) { alert("الرجاء لصق مصفوفة الأسئلة أولاً!"); return; }
             try {
-                // تنظيف كامل للنصوص من المسافات المخفية والأحرف الخاصة لضمان النجاح الفوري
                 let cleanText = rawData.replace(/\u00A0/g, ' ').replace(/\/\/.*/g, '').replace(/^\s*(const|let|var)\s+[\w]+\s*=\s*/, '').trim();
                 let start = cleanText.indexOf('['), end = cleanText.lastIndexOf(']');
                 let arr = eval('(' + cleanText.substring(start, end + 1) + ')');
@@ -1213,6 +1298,7 @@
             } else {
                 document.getElementById('admin-management-card').style.display = 'block';
                 loadTeachersRegistry();
+                loadGlobalStudentsCache();
                 proceedInit(examId);
             }
         }
