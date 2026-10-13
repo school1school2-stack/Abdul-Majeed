@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- مكتبات Firebase الإصدار 8 المتوافقة مع النظام الموحد -->
+    <!-- مكتبات Firebase الإصدار 8 -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -30,7 +30,7 @@
         }
 
         .user-header {
-            width: 100%; max-width: 950px; background: var(--card-bg); border-radius: 15px; padding: 20px;
+            width: 100%; max-width: 1000px; background: var(--card-bg); border-radius: 15px; padding: 20px;
             display: flex; justify-content: space-between; align-items: center; text-align: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-bottom: 5px solid var(--royal-blue); 
             margin-bottom: 20px; box-sizing: border-box; gap: 15px; flex-wrap: wrap;
@@ -43,17 +43,17 @@
         .logo-box { background: var(--royal-blue); width: 55px; height: 55px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; }
 
         .teacher-icon-bar {
-            width: 100%; max-width: 950px; background: #1e293b; border-radius: 18px; padding: 15px 20px;
+            width: 100%; max-width: 1000px; background: #1e293b; border-radius: 18px; padding: 15px 20px;
             display: flex; justify-content: center; align-items: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            margin-bottom: 25px; box-sizing: border-box; gap: 10px; flex-wrap: nowrap; overflow-x: auto; z-index: 999;
+            margin-bottom: 25px; box-sizing: border-box; gap: 8px; flex-wrap: nowrap; overflow-x: auto; z-index: 999;
         }
         .icon-action-btn {
-            background: #334155; color: white; border: 2px solid rgba(255,255,255,0.1); padding: 10px 14px;
+            background: #334155; color: white; border: 2px solid rgba(255,255,255,0.1); padding: 10px 12px;
             border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; gap: 6px; font-family: inherit; font-size: 0.85rem;
-            transition: all 0.3s ease; min-width: 110px; flex: 1; text-align: center; white-space: nowrap;
+            align-items: center; justify-content: center; gap: 5px; font-family: inherit; font-size: 0.8rem;
+            transition: all 0.3s ease; min-width: 100px; flex: 1; text-align: center; white-space: nowrap;
         }
-        .icon-action-btn i { font-size: 1.4rem; margin-bottom: 2px; }
+        .icon-action-btn i { font-size: 1.3rem; margin-bottom: 2px; }
         .icon-action-btn:hover { background: #3b82f6; border-color: #60a5fa; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(59,130,246,0.4); }
         .icon-action-btn.btn-students { background: #047857; }
         .icon-action-btn.btn-analytics { background: #0284c7; }
@@ -62,32 +62,31 @@
         .icon-action-btn.btn-counselor { background: #6b0c22; }
 
         .sub-action-bar {
-            width: 100%; max-width: 950px; background: #ffffff; border-radius: 15px; padding: 15px 20px;
+            width: 100%; max-width: 1000px; background: #ffffff; border-radius: 15px; padding: 15px 20px;
             display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             margin-bottom: 25px; box-sizing: border-box; gap: 10px; flex-wrap: wrap; border: 1px solid var(--card-border);
         }
 
         .auth-card, .admin-card {
-            background: var(--card-bg); width: 100%; max-width: 950px; border-radius: 20px; padding: 30px;
+            background: var(--card-bg); width: 100%; max-width: 1000px; border-radius: 20px; padding: 30px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; margin-bottom: 25px;
         }
-        .auth-input, .styled-select-input { width: 100%; max-width: 400px; padding: 12px; border-radius: 10px; border: 2px solid #cbd5e1; margin-bottom: 15px; font-size: 1rem; outline: none; box-sizing: border-box; font-family: inherit; background: #fff; }
+        .auth-input { width: 100%; max-width: 400px; padding: 12px; border-radius: 10px; border: 2px solid #cbd5e1; margin-bottom: 15px; font-size: 1rem; outline: none; box-sizing: border-box; font-family: inherit; background: #fff; }
 
-        .container { width: 100%; max-width: 950px; padding-bottom: 120px; display: none; box-sizing: border-box; }
+        .container { width: 100%; max-width: 1000px; padding-bottom: 120px; display: none; box-sizing: border-box; }
         
-        /* تنسيقات نافذة تحويل المرشد المدمجة بالكامل */
-        #counselor-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 1100px; max-height: 90vh; background: #ffffff; color: #1e293b; z-index: 2100; border-radius: 20px; padding: 30px; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,0.4); box-sizing: border-box; }
+        /* تصميم نافذة تحويل المرشد المدمجة بالبرمجية الكاملة */
+        #counselor-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 96%; max-width: 1100px; max-height: 90vh; background: #ffffff; color: #1e293b; z-index: 2100; border-radius: 20px; padding: 25px; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,0.4); box-sizing: border-box; }
         
-        .counselor-inner-container { background: #ffffff; padding: 15px; border-radius: 12px; }
-        .counselor-select-section { margin-bottom: 20px; background: linear-gradient(135deg, #fffcf0 0%, #fff8e1 100%); padding: 15px; border: 1px solid #fef08a; border-radius: 12px; }
+        .counselor-select-section { margin-bottom: 20px; background: linear-gradient(135deg, #fffcf0 0%, #fff8e1 100%); padding: 18px; border: 1px solid #fef08a; border-radius: 14px; }
         .counselor-search-box-wrapper { position: relative; flex-grow: 1; min-width: 280px; }
-        .counselor-student-search { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1.5px solid #e2e8f0; font-size: 0.95rem; font-family: inherit; outline: none; background: white; }
-        .counselor-search-results { position: absolute; top: 105%; right: 0; left: 0; background: white; border: 1px solid #e2e8f0; border-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 2200; box-shadow: 0 10px 25px rgba(0,0,0,0.08); display: none; }
+        .counselor-student-search { width: 100%; padding: 11px 15px; border-radius: 10px; border: 1.5px solid #cbd5e1; font-size: 0.95rem; font-family: inherit; outline: none; background: white; }
+        .counselor-search-results { position: absolute; top: 105%; right: 0; left: 0; background: white; border: 1px solid #cbd5e1; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 2200; box-shadow: 0 10px 25px rgba(0,0,0,0.08); display: none; }
         .counselor-search-results div { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-weight: 500; font-size: 0.9rem; text-align: right; }
         .counselor-search-results div:hover { background-color: #fdf2f8; color: #6b0c22; font-weight: bold; }
         
-        .counselor-history-section { background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 12px; padding: 15px; margin-bottom: 20px; display: none; }
-        .counselor-history-card { background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
+        .counselor-history-section { background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 15px; margin-bottom: 20px; display: none; }
+        .counselor-history-card { background: white; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
         
         .violation-tags-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; text-align: right; }
         .violation-tag-inline { background: #fffbeb; border: 1.5px solid #fef08a; padding: 5px 10px; border-radius: 8px; display: inline-flex; align-items: center; gap: 10px; width: fit-content; }
@@ -95,13 +94,13 @@
         .violation-count-text { color: #1d4ed8; background-color: #eff6ff; border: 1px solid #bfdbfe; padding: 2px 6px; border-radius: 6px; font-weight: bold; font-size: 0.78rem; }
         .btn-remove-tag { background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 0.85rem; padding: 0 4px; }
 
-        textarea.notes-input, textarea.counselor-reply { width: 100%; min-height: 55px; padding: 8px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-family: inherit; font-size: 0.85rem; resize: vertical; box-sizing: border-box; }
+        textarea.notes-input, textarea.counselor-reply { width: 100%; min-height: 55px; padding: 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 0.85rem; resize: vertical; box-sizing: border-box; }
         textarea.counselor-reply { background-color: #f1f5f9; color: #1e293b; font-weight: bold; border-color: #cbd5e1; }
         
         .time-badge-referral { display: inline-flex; align-items: center; gap: 5px; background: #fff5f5; color: #991b1b; border: 1px solid #fca5a5; padding: 3px 8px; border-radius: 15px; font-size: 0.75rem; font-weight: bold; margin-top: 3px; }
         .time-badge-reply { display: inline-flex; align-items: center; gap: 5px; background: #f0f9ff; color: #0369a1; border: 1px solid #7dd3fc; padding: 3px 8px; border-radius: 15px; font-size: 0.75rem; font-weight: bold; margin-top: 3px; }
 
-        select.violation-select, select.count-select { width: 100%; padding: 7px 10px; border-radius: 8px; border: 1.5px solid #e2e8f0; font-size: 0.8rem; outline: none; background: #fff; cursor: pointer; font-family: inherit; margin-bottom: 5px; }
+        select.violation-select, select.count-select { width: 100%; padding: 7px 10px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-size: 0.8rem; outline: none; background: #fff; cursor: pointer; font-family: inherit; margin-bottom: 5px; }
         .btn-add-violation { background: #d97706; color: white; padding: 5px 8px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; border: none; width: 100%; font-family: inherit; font-weight: bold; }
         .btn-save-student { background: #16a34a; color: white; padding: 6px 10px; font-size: 0.78rem; border-radius: 6px; cursor: pointer; border: none; font-family: inherit; font-weight: bold; }
         .btn-view-report { background: #0284c7; color: white; padding: 6px 10px; font-size: 0.78rem; border-radius: 6px; border: none; cursor: pointer; }
@@ -111,7 +110,7 @@
         .toast-notification.show { transform: translateY(0); }
 
         .exam-timer-banner {
-            width: 100%; max-width: 950px; background: #1e293b; color: #38bdf8; border-radius: 12px;
+            width: 100%; max-width: 1000px; background: #1e293b; color: #38bdf8; border-radius: 12px;
             padding: 12px 20px; margin-bottom: 20px; display: none; justify-content: space-between; align-items: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); font-weight: bold; box-sizing: border-box; flex-wrap: wrap; gap: 10px;
         }
@@ -262,7 +261,7 @@
         <div style="overflow-x: auto;"><table class="teachers-table"><thead><tr><th>#</th><th>اسم المعلم</th><th>الإيميل</th><th>المادة</th><th>الإجراءات</th></tr></thead><tbody id="teachers-table-body"><tr><td colspan="5">جاري التحميل...</td></tr></tbody></table></div>
     </div>
 
-    <!-- نافذة إشعار تحويل المرشد الطلابي المدمجة بالكامل -->
+    <!-- نافذة إشعار تحويل المرشد الطلابي البرمجية الكاملة والمربوطة بجدول المعلم -->
     <div id="counselor-modal">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -271,16 +270,16 @@
                 </div>
                 <div>
                     <h2 style="margin: 0; color: var(--maroon); font-size: 1.3rem;">إشعار تحويل طلاب للمرشد الطلابي</h2>
-                    <small style="color: #64748b; font-weight: bold;">نظام متابعة السلوك والمخالفات</small>
+                    <small style="color: #64748b; font-weight: bold;">أ/ عبدالعزيز الفيفي - الكفايات اللغوية</small>
                 </div>
             </div>
             <button class="btn" style="background: #64748b; padding: 6px 14px;" onclick="closeCounselorModal()"><i class="fas fa-times"></i> إغلاق</button>
         </div>
 
         <div class="counselor-inner-container">
-            <!-- قسم البحث عن الطالب -->
-            <div class="counselor-search-section counselor-select-section" id="counselorControlSection">
-                <label style="font-weight: bold; color: var(--maroon); display: block; margin-bottom: 8px;"><i class="fa-solid fa-magnifying-glass"></i> ابحث عن اسم الطالب واختاره لإضافته للقائمة:</label>
+            <!-- قسم البحث واختيار الطالب المربوط بطلاب المعلم المسجلين -->
+            <div class="counselor-select-section" id="counselorControlSection">
+                <label style="font-weight: bold; color: var(--maroon); display: block; margin-bottom: 8px;"><i class="fa-solid fa-magnifying-glass"></i> ابحث عن اسم الطالب من فصولك واختاره لإضافته للقائمة:</label>
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                     <div class="counselor-search-box-wrapper" style="position:relative; flex-grow:1;">
                         <input type="text" id="counselorSearchInput" class="counselor-student-search" placeholder="اكتب اسم الطالب هنا..." oninput="filterCounselorStudents()" onfocus="filterCounselorStudents()">
@@ -290,7 +289,7 @@
                 </div>
             </div>
 
-            <!-- أرشيف التقارير للطالب -->
+            <!-- أرشيف تقارير الطالب -->
             <div class="counselor-history-section" id="counselorStudentHistorySection">
                 <h3 id="counselorHistoryTitle" style="color: #0369a1; margin-top: 0; border-bottom: 1px solid #e0f2fe; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 1rem;">
                     <span><i class="fa-solid fa-folder-open"></i> سجل تقارير الطالب السابقة</span>
@@ -299,7 +298,7 @@
                 <div id="counselorHistoryContent">جاري البحث...</div>
             </div>
 
-            <!-- جدول الإحالات -->
+            <!-- جدول المخالفات المتعددة والإحالات -->
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
@@ -308,7 +307,7 @@
                             <th style="width: 20%;">اسم الطالب وتاريخ التحويل</th>
                             <th style="width: 25%;">اختيار مخالفة وإضافتها</th>
                             <th style="width: 22%;">قائمة المخالفات المسجلة</th>
-                            <th style="width: 18%;">ملاحظات وسلوكيات</th>
+                            <th style="width: 18%;">ملاحظات وسلوكيات المعلم</th>
                             <th style="width: 10%;">الإجراءات</th>
                         </tr>
                     </thead>
@@ -320,7 +319,7 @@
         </div>
     </div>
 
-    <!-- نافذة معاينة تقرير مفرد للمرشد -->
+    <!-- نافذة معاينة تقرير مفرد -->
     <div id="single-counselor-report-modal">
         <h3 style="color: var(--maroon); margin-top: 0; border-bottom: 2px solid var(--gold); padding-bottom: 10px;"><i class="fa-solid fa-file-lines"></i> تفاصيل التقرير</h3>
         <div id="singleCounselorReportContent" style="line-height: 1.8; font-size: 0.95rem; margin-bottom: 20px;"></div>
@@ -385,7 +384,7 @@
         <button class="btn" style="background:#64748b; width:100%; margin-top:10px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق التقرير</button>
     </div>
 
-    <!-- عناصر واجهة المعلم الخاصة -->
+    <!-- واجهة المعلم الخاصة -->
     <div class="user-header teacher-only" id="main-header">
         <div class="header-right"><h2 class="user-name" id="header-teacher-name">أ / عبدالعزيز الفيفي</h2></div>
         <div class="header-center"><div class="logo-box"><i class="fas fa-award"></i></div></div>
@@ -569,14 +568,16 @@
         const fsDb = firebase.firestore();
         const rtdb = firebase.database();
 
-        // برمجيات نظام تحويل المرشد الطلابي
-        let allStudentsNamesList = [];
+        // ----------------------------------------------------
+        // البرمجية الكاملة والمدمجة لنظام تحويل المرشد الطلابي
+        // ----------------------------------------------------
+        let teacherRegisteredStudentsNames = [];
         let counselorSelectedStudentName = "";
 
         function openCounselorModal() {
             document.getElementById('counselor-modal').style.display = 'block';
             document.getElementById('modal-overlay').style.display = 'block';
-            loadCounselorStudentsList();
+            loadTeacherRegisteredStudentsForCounselor();
             listenToCounselorReferrals();
         }
 
@@ -625,12 +626,22 @@
             return html;
         }
 
-        function loadCounselorStudentsList() {
-            fsDb.collection("allowed_students").orderBy("name").get().then((snapshot) => {
-                allStudentsNamesList = [];
+        // جلب طلاب المعلم المسجلين فقط (المربوطين بفصوله) لتظهر نتائج البحث متوافقة
+        function loadTeacherRegisteredStudentsForCounselor() {
+            fsDb.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).get().then((snapshot) => {
+                teacherRegisteredStudentsNames = [];
                 snapshot.forEach((doc) => {
                     const data = doc.data();
-                    if (data.name) allStudentsNamesList.push(data.name);
+                    if (data.name) teacherRegisteredStudentsNames.push(data.name);
+                });
+            }).catch(() => {
+                // بديل احتياطي في حال عدم التوفر
+                fsDb.collection("allowed_students").get().then((snapshot) => {
+                    teacherRegisteredStudentsNames = [];
+                    snapshot.forEach((doc) => {
+                        const data = doc.data();
+                        if (data.name) teacherRegisteredStudentsNames.push(data.name);
+                    });
                 });
             });
         }
@@ -641,9 +652,9 @@
             resultsContainer.innerHTML = "";
             if (!query) { resultsContainer.style.display = "none"; return; }
 
-            const filtered = allStudentsNamesList.filter(name => name.toLowerCase().includes(query));
+            const filtered = teacherRegisteredStudentsNames.filter(name => name.toLowerCase().includes(query));
             if (filtered.length === 0) {
-                resultsContainer.innerHTML = '<div style="color: #888;">لا توجد نتائج مطابقة</div>';
+                resultsContainer.innerHTML = '<div style="color: #888;">لا توجد نتائج مطابقة في طلابك المسجلين</div>';
             } else {
                 filtered.forEach(name => {
                     const div = document.createElement("div");
@@ -704,6 +715,7 @@
             try {
                 await fsDb.collection("referral_list").doc(studentId).set({
                     name: studentName,
+                    teacher_email: currentTeacherEmail,
                     violations: [],
                     notes: "",
                     reply: "لم يتم الرد بعد",
@@ -891,7 +903,7 @@
                 });
             });
         }
-        // نهاية برمجيات نظام تحويل المرشد
+        // ----------------------------------------------------
 
         function updateLiveClock() {
             const now = new Date();
