@@ -103,16 +103,17 @@
         .matching-num-badge { font-weight: bold; color: #0284c7; width: 25px; text-align: center; font-size: 1.05rem; }
 
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .opt-pair-row { display: flex; align-items: center; background: var(--card-bg); border: 1.5px solid #d1d5db; border-radius: 10px; padding: 12px; cursor: pointer; gap: 8px; transition: 0.2s; }
+        .opt-pair-row { display: flex; align-items: center; background: var(--card-bg); border: 1.5px solid #d1d5db; border-radius: 10px; padding: 12px; cursor: pointer; gap: 8px; transition: 0.2s; user-select: none; }
+        .opt-pair-row:hover { border-color: var(--royal-blue); background: #f8fafc; }
         .opt-label { font-weight: bold; color: var(--royal-blue); white-space: nowrap; font-size: 1.05rem; }
-        .opt-word { width: 100%; border: none; outline: none; font-weight: bold; color: inherit; background: transparent; text-align: right; font-family: inherit; font-size: 1.05rem; cursor: pointer; }
+        .opt-word { width: 100%; border: none; outline: none; font-weight: bold; color: inherit; background: transparent; text-align: right; font-family: inherit; font-size: 1.05rem; pointer-events: none; }
 
         .correct-ans-box { margin-top: 15px; padding: 10px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; border: 1px solid #bbf7d0; text-align: right; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: space-between; }
         .correct-input { flex: 1; background: transparent; border: none; outline: none; color: #166534; font-weight: bold; text-align: right; font-family: inherit; min-width: 200px; }
         .q-score-input { width: 65px; padding: 5px; border: 1px solid #10b981; border-radius: 6px; text-align: center; font-weight: bold; color: #166534; }
 
         body.student-mode .teacher-icon-bar, body.student-mode .sub-action-bar, body.student-mode .remove-btn, body.student-mode .type-select, body.student-mode .correct-ans-box, body.student-mode .admin-only { display: none !important; }
-        body.student-mode .selected-opt { background: rgba(59, 130, 246, 0.2) !important; border: 2px solid var(--royal-blue) !important; }
+        body.student-mode .selected-opt { background: rgba(59, 130, 246, 0.2) !important; border: 2px solid var(--royal-blue) !important; box-shadow: 0 4px 12px rgba(59,130,246,0.25); }
 
         .modal-fullscreen { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 1050px; max-height: 90%; background: #ffffff; color: #1e293b; z-index: 2000; border-radius: 20px; padding: 25px; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,0.4); box-sizing: border-box; }
         .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
@@ -140,7 +141,6 @@
         .teachers-table th, .teachers-table td { padding: 10px; border: 1px solid #e2e8f0; text-align: center; font-size: 0.9rem; }
         .teachers-table th { background: #f1f5f9; color: var(--royal-blue); }
 
-        /* تمديد تنسيقات التحليل الذكي المستقلة بالكامل عند فتحها */
         .analytics-fullscreen-page { display: none; width: 100%; max-width: 1400px; margin: auto; box-sizing: border-box; }
         .model-nav { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 25px; padding: 15px 20px; background: #ffffff; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); flex-wrap: wrap; border-top: 3px solid var(--accent); }
         .model-select-wrapper { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 300px; }
@@ -1065,16 +1065,16 @@
 
         function bindOptionClickEvents(card, isStudent) {
             card.querySelectorAll('.opt-pair-row').forEach(row => {
-                row.onclick = () => {
+                row.onclick = (e) => {
                     const examId = new URLSearchParams(window.location.search).get('exam');
                     if (examId && localStorage.getItem('submitted_' + examId) === 'true') return;
                     
                     card.querySelectorAll('.opt-pair-row').forEach(r => r.classList.remove('selected-opt'));
                     row.classList.add('selected-opt');
                     
-                    const inputRadio = row.querySelector('input');
-                    if (inputRadio) {
-                        inputRadio.checked = true;
+                    const radioInput = row.querySelector('input[type="radio"]');
+                    if (radioInput) {
+                        radioInput.checked = true;
                     }
                 };
             });
@@ -1185,16 +1185,28 @@
                 let opts = ['صح', 'خطأ'];
                 if (isStudent) opts = shuffleArray(opts);
                 return `<div class="options-grid">
-                    <div class="opt-pair-row"><input type="text" class="opt-word opt" readonly value="${opts[0]}" style="text-align:center;"></div>
-                    <div class="opt-pair-row"><input type="text" class="opt-word opt" readonly value="${opts[1]}" style="text-align:center;"></div>
+                    <div class="opt-pair-row">
+                        <input type="radio" name="q_opt_${Math.random()}" style="display:none;" value="${opts[0]}">
+                        <input type="text" class="opt-word opt" readonly value="${opts[0]}" style="text-align:center; cursor:pointer;">
+                    </div>
+                    <div class="opt-pair-row">
+                        <input type="radio" name="q_opt_${Math.random()}" style="display:none;" value="${opts[1]}">
+                        <input type="text" class="opt-word opt" readonly value="${opts[1]}" style="text-align:center; cursor:pointer;">
+                    </div>
                 </div>`;
             } else {
                 let opts = data?.opts ? [...data.opts] : ['', '', '', ''];
                 const labels = ['أ) ', 'ب) ', 'ج) ', 'د) '];
                 if (isStudent) opts = shuffleArray(opts);
+                let randName = 'q_opt_' + Math.random().toString(36).substring(2, 9);
                 let h = '<div class="options-grid">';
                 for(let i=0; i<4; i++) {
-                    h+=`<div class="opt-pair-row"><span class="opt-label">${labels[i]}</span><input type="text" class="opt-word opt" ${isStudent ? 'readonly style="background:transparent; cursor:pointer;"' : ''} placeholder="خيار ${i+1}" value="${opts[i]||''}" oninput="saveAll()"></div>`;
+                    h+= `
+                    <div class="opt-pair-row">
+                        <span class="opt-label">${labels[i]}</span>
+                        <input type="radio" name="${randName}" style="display:none;" value="${opts[i]||''}">
+                        <input type="text" class="opt-word opt" ${isStudent ? 'readonly style="background:transparent; cursor:pointer; pointer-events:none;"' : ''} placeholder="خيار ${i+1}" value="${opts[i]||''}" oninput="saveAll()">
+                    </div>`;
                 }
                 return h + '</div>';
             }
