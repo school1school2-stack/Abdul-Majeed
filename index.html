@@ -1029,7 +1029,6 @@
             `;
             container.appendChild(card);
             
-            // تفعيل التفاعل والنقر على خيارات الاختيار من متعدد وصح وخطأ للطالب
             bindOptionClickEvents(card, isStudent);
 
             card.querySelectorAll('textarea').forEach(ta => autoResizeTextarea(ta));
@@ -1359,8 +1358,9 @@
 
                 let selWord = "", isCorrect = false;
                 if (['اختر الإجابة الصحيحة', 'صح وخطأ'].includes(qType)) {
-                    selWord = c.querySelector('.selected-opt .opt')?.value || "";
-                    isCorrect = (selWord.trim() === correctKey.trim());
+                    const selectedOptElement = c.querySelector('.selected-opt .opt');
+                    selWord = selectedOptElement ? selectedOptElement.value.trim() : "";
+                    isCorrect = (selWord === correctKey.trim());
                 } else if (qType === 'سؤال مزاوجة (توصيل)' || qType === 'k_matching') {
                     let matchingAns = [];
                     c.querySelectorAll('.matching-ans-input').forEach(inp => matchingAns.push(inp.value.trim() || "0"));
