@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة المعلمين - إدارة سحابية مستقلة</title>
+    <title>منصة المعلمين - النسخة المعتمدة بمعزل سحابي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
@@ -19,9 +18,8 @@
         .card { width: 100%; max-width: 850px; background: var(--card-bg); border-radius: 15px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; box-sizing: border-box; }
         .btn { border: none; padding: 10px 16px; border-radius: 12px; font-weight: bold; cursor: pointer; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; font-family: inherit; }
         .btn:hover { opacity: 0.9; transform: translateY(-1px); }
-        .auth-input, .styled-select-input { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #cbd5e1; margin-bottom: 12px; font-size: 1rem; outline: none; box-sizing: border-box; font-family: inherit; }
+        .auth-input { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #cbd5e1; margin-bottom: 12px; font-size: 1rem; outline: none; box-sizing: border-box; font-family: inherit; }
         
-        /* القائمة المنسدلة للخيارات لكل معلم */
         .styled-dropdown-wrapper { position: relative; display: inline-block; }
         .dropdown-toggle-btn { background: #3b82f6; color: white; border: none; padding: 8px 14px; border-radius: 10px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; }
         .dropdown-menu-content { display: none; position: absolute; left: 0; top: calc(100% + 5px); background: #1e293b; min-width: 170px; box-shadow: 0 10px 25px rgba(0,0,0,0.25); border-radius: 10px; z-index: 1000; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
@@ -36,9 +34,9 @@
 </head>
 <body>
 
-    <!-- نافذة تسجيل دخول المعلم أو لوحة الإدارة -->
+    <!-- لوحة المشرف العامة لإدارة المعلمين -->
     <div class="card" id="admin-control-panel">
-        <h2 style="color: var(--royal-blue); margin-top: 0; text-align: center;"><i class="fas fa-chalkboard-teacher"></i> لوحة إدارة المعلمين والسحابة المستقلة</h2>
+        <h2 style="color: var(--royal-blue); margin-top: 0; text-align: center;"><i class="fas fa-chalkboard-teacher"></i> لوحة تحكم المشرف (إدارة المعلمين)</h2>
         
         <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
             <h3 style="margin-top: 0; color: #0284c7; font-size: 1.1rem;"><i class="fas fa-user-plus"></i> إضافة معلم جديد للنظام:</h3>
@@ -67,25 +65,31 @@
         </div>
     </div>
 
-    <!-- واجهة المعلم الخاصة بنماذجه ونتائجه -->
+    <!-- واجهة المعلم المستقلة (تظهر تلقائياً عندما يدخل المعلم برابطه الخاص أو يضغط فتح) -->
     <div class="card" id="teacher-workspace" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--royal-blue); padding-bottom: 10px; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--royal-blue); padding-bottom: 10px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
             <div>
                 <h2 id="current-teacher-title" style="margin: 0; color: var(--royal-blue); font-size: 1.2rem;">لوحة المعلم</h2>
                 <p id="current-teacher-sub" style="margin: 0; color: #64748b; font-size: 0.9rem;"></p>
             </div>
-            <button class="btn" style="background: #64748b;" onclick="returnToAdminPanel()"><i class="fas fa-arrow-right"></i> عودة للوحة الإدارة</button>
+            <button class="btn" id="return-admin-btn" style="background: #64748b; display: none;" onclick="returnToAdminPanel()"><i class="fas fa-arrow-right"></i> عودة للوحة المشرف</button>
         </div>
+        
         <div>
-            <h4 style="color: #0284c7;"><i class="fas fa-folder-open"></i> نماذج واختبارات هذا المعلم فقط:</h4>
+            <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
+                <h4 style="margin-top: 0; color: var(--royal-blue);"><i class="fas fa-plus-circle"></i> إضافة نموذج / اختبار جديد لهذا المعلم:</h4>
+                <input type="text" id="modelNameInput" class="auth-input" placeholder="اسم النموذج أو الاختبار (مثال: اختبار الوحدة الأولى)">
+                <button class="btn" style="background: var(--success-green);" onclick="saveTeacherModel()"><i class="fas fa-save"></i> حفظ في مجلدي السحابي</button>
+            </div>
+
+            <h4 style="color: #0284c7;"><i class="fas fa-folder-open"></i> النماذج والاختبارات الخاصة بهذا المعلم فقط:</h4>
             <div id="teacher-models-list" style="background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                <p style="color: #64748b; text-align: center;">لا توجد نماذج محفوظة لهذا المعلم حتى الآن. كل معلم يحفظ بياناته في مجلد السحابة الخاص بإيميله حصرياً دون تداخل.</p>
+                <p style="color: #64748b; text-align: center;">جاري تحميل النماذج...</p>
             </div>
         </div>
     </div>
 
     <script>
-        // إعدادات الاتصال بقاعدة بيانات فايربيس
         const firebaseConfig = {
             apiKey: "AIzaSyAVrIim7aXjg0hGrMk0qVrXT8geRIpHoBk",
             authDomain: "youy-apps.firebaseapp.com",
@@ -95,9 +99,8 @@
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const rtdb = firebase.database();
 
-        let activeTeacherEmail = "";
+        let currentActiveEmail = "";
 
-        // إغلاق القوائم المنسدلة عند النقر في أي مكان خارجها
         window.addEventListener('click', function() {
             document.querySelectorAll('.styled-dropdown-wrapper').forEach(w => w.classList.remove('active'));
         });
@@ -111,15 +114,16 @@
             wrapper.classList.toggle('active');
         }
 
-        // جلب وعرض المعلمين من السحابة
+        // تحميل قائمة المعلمين للمشرف
         function loadTeachers() {
             rtdb.ref('teachers').on('value', snapshot => {
                 const tbody = document.getElementById('teachers-table-body');
+                if (!tbody) return;
                 tbody.innerHTML = "";
                 const data = snapshot.val();
 
                 if (!data) {
-                    tbody.innerHTML = `<tr><td colspan="5" style="color: #64748b;">لا يوجد معلمون مسجلون حالياً. أضف معلماً من النموذج أعلاه.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="5" style="color: #64748b;">لا يوجد معلمون مسجلون حالياً.</td></tr>`;
                     return;
                 }
 
@@ -140,7 +144,6 @@
                                 </button>
                                 <div class="dropdown-menu-content">
                                     <button type="button" onclick="openTeacherWorkspace('${teacher.email}', '${teacher.name}', '${teacher.subject}')"><i class="fas fa-folder-open" style="color:#10b981;"></i> فتح حسابه</button>
-                                    <button type="button" onclick="editTeacher('${encodedKey}', '${teacher.name}', '${teacher.email}', '${teacher.subject}')"><i class="fas fa-edit" style="color:#fbbf24;"></i> تعديل</button>
                                     <button type="button" onclick="shareTeacherLink('${teacher.email}')"><i class="fas fa-share-alt" style="color:#06b6d4;"></i> مشاركة الرابط</button>
                                     <button type="button" onclick="deleteTeacher('${encodedKey}')"><i class="fas fa-trash" style="color:#ef4444;"></i> حذف</button>
                                 </div>
@@ -152,7 +155,7 @@
             });
         }
 
-        // إضافة معلم جديد مع تخزين بياناته في السحابة
+        // إضافة معلم جديد للسحابة
         async function addNewTeacher() {
             const name = document.getElementById('newTeacherName').value.trim();
             const email = document.getElementById('newTeacherEmail').value.trim().toLowerCase();
@@ -163,7 +166,6 @@
                 return;
             }
 
-            // استخدام البريد الإلكتروني (مبدلاً النقاط ليتوافق مع مفاتيح فايربيس) كمعرف فريد لمنع الاختلاط
             const safeEmailKey = email.replace(/\./g, '_');
 
             try {
@@ -183,53 +185,42 @@
             }
         }
 
-        // حذف معلم
         async function deleteTeacher(encodedKey) {
-            if (confirm("⚠️ هل أنت متأكد من حذف هذا المعلم نهائياً من النظام؟")) {
+            if (confirm("⚠️ هل أنت متأكد من حذف هذا المعلم نهائياً؟")) {
                 try {
                     await rtdb.ref('teachers/' + encodedKey).remove();
-                    alert("تم حذف المعلم بنجاح.");
+                    alert("تم الحذف بنجاح.");
                 } catch(e) {
                     alert("حدث خطأ أثناء الحذف.");
                 }
             }
         }
 
-        // تعديل بيانات المعلم
-        async function editTeacher(encodedKey, oldName, oldEmail, oldSubject) {
-            const newName = prompt("تعديل اسم المعلم:", oldName);
-            if (newName === null) return;
-            const newSubject = prompt("تعديل المادة الدراسية:", oldSubject);
-            if (newSubject === null) return;
-
-            try {
-                await rtdb.ref('teachers/' + encodedKey).update({
-                    name: newName.trim(),
-                    subject: newSubject.trim()
-                });
-                alert("تم تحديث بيانات المعلم بنجاح!");
-            } catch(e) {
-                alert("حدث خطأ أثناء التحديث.");
-            }
-        }
-
-        // مشاركة رابط خاص بالمعلم
+        // توليد رابط مخصص لكل معلم يحتوي على الإيميل
         function shareTeacherLink(email) {
             const shareUrl = window.location.origin + window.location.pathname + "?teacher=" + encodeURIComponent(email);
             navigator.clipboard.writeText(shareUrl).then(() => {
-                alert(`تم نسخ رابط المعلم (${email}) بنجاح! 🔗`);
+                alert(`تم نسخ رابط المعلم الخاص بنجاح! 🔗\n${shareUrl}`);
             });
         }
 
-        // فتح حساب المعلم وعزل مجلده السحابي
-        function openTeacherWorkspace(email, name, subject) {
-            activeTeacherEmail = email;
+        // فتح واجهة المعلم وعزل مجلده السحابي
+        function openTeacherWorkspace(email, name, subject, showReturnBtn = true) {
+            currentActiveEmail = email;
             document.getElementById('admin-control-panel').style.display = 'none';
             document.getElementById('teacher-workspace').style.display = 'block';
+            if (showReturnBtn) {
+                document.getElementById('return-admin-btn').style.display = 'inline-flex';
+            }
+
             document.getElementById('current-teacher-title').innerText = `المعلم: ${name}`;
             document.getElementById('current-teacher-sub').innerText = `المادة: ${subject} | البريد: ${email} (مجلد سحابي مستقل)`;
 
-            // جلب النماذج الخاصة بهذا المعلم فقط من السحابة تحت مجلد إيميله
+            loadTeacherModels(email);
+        }
+
+        // تحميل نماذج المعلم المخصصة من مجلده السحابي فقط
+        function loadTeacherModels(email) {
             const safeEmailKey = email.replace(/\./g, '_');
             rtdb.ref(`teacher_models/${safeEmailKey}`).on('value', snapshot => {
                 const listDiv = document.getElementById('teacher-models-list');
@@ -237,7 +228,7 @@
                 const models = snapshot.val();
 
                 if (!models) {
-                    listDiv.innerHTML = `<p style="color: #64748b; text-align: center; margin: 0;">لا توجد نماذج مسجلة لهذا المعلم حتى الآن في مجلده السحابي.</p>`;
+                    listDiv.innerHTML = `<p style="color: #64748b; text-align: center; margin: 0;">لا توجد نماذج مسجلة لهذا المعلم حتى الآن في مجلده السحابي المستقل.</p>`;
                     return;
                 }
 
@@ -246,21 +237,58 @@
                     item.style.cssText = "display: flex; justify-content: space-between; align-items: center; background: white; padding: 10px 15px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e2e8f0;";
                     item.innerHTML = `
                         <span style="font-weight: bold; color: var(--royal-blue);">${modelName}</span>
-                        <span style="font-size: 0.85rem; color: #64748b;">مخزن في سحابة الإيميل حصرياً</span>
+                        <span style="font-size: 0.85rem; color: #10b981; font-weight: bold;"><i class="fas fa-cloud"></i> مخزن في سحابة الإيميل حصرياً</span>
                     `;
                     listDiv.appendChild(item);
                 });
             });
         }
 
-        function returnToAdminPanel() {
-            document.getElementById('teacher-workspace').style.display = 'none';
-            document.getElementById('admin-control-panel').style.display = 'block';
-            activeTeacherEmail = "";
+        // حفظ نموذج جديد في مجلند المعلم السحابي الخاص
+        async function saveTeacherModel() {
+            const modelName = document.getElementById('modelNameInput').value.trim();
+            if (!modelName) {
+                alert("الرجاء إدخال اسم النموذج أولاً.");
+                return;
+            }
+
+            const safeEmailKey = currentActiveEmail.replace(/\./g, '_');
+            try {
+                await rtdb.ref(`teacher_models/${safeEmailKey}/${modelName}`).set({
+                    createdAt: new Date().toLocaleString()
+                });
+                alert(`تم حفظ نموذج "${modelName}" في مجلدك السحابي بنجاح! 💾`);
+                document.getElementById('modelNameInput').value = "";
+            } catch(e) {
+                alert("حدث خطأ أثناء الحفظ.");
+            }
         }
 
+        function returnToAdminPanel() {
+            window.location.href = window.location.pathname; // العودة للوحة المشرف الرئيسية بدون بارامتر المعلم
+        }
+
+        // فحص الرابط عند الفتح: إذا كان الرابط يحتوي على إيميل المعلم، يتم فتح صفحته ومجلة السحابي مباشرة
         window.onload = function() {
-            loadTeachers();
+            const urlParams = new URLSearchParams(window.location.search);
+            const teacherEmailParam = urlParams.get('teacher');
+
+            if (teacherEmailParam) {
+                // إذا دخل المعلم من رابطه الخاص، نبحث عن بياناته في قاعدة البيانات ونفتح صفحته حصرياً
+                const safeKey = teacherEmailParam.trim().toLowerCase().replace(/\./g, '_');
+                rtdb.ref('teachers/' + safeKey).once('value', snapshot => {
+                    if (snapshot.exists()) {
+                        const tData = snapshot.val();
+                        openTeacherWorkspace(tData.email, tData.name, tData.subject, false); // إخفاء زر العودة للمشرف
+                    } else {
+                        alert("عذراً، هذا الرابط غير صحيح أو تم حذف حساب المعلم.");
+                        window.location.href = window.location.pathname;
+                    }
+                });
+            } else {
+                // إذا كان المستخدم هو المشرف
+                loadTeachers();
+            }
         };
     </script>
 </body>
