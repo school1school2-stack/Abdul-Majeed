@@ -412,16 +412,14 @@
         const urlParams = new URLSearchParams(window.location.search);
         const isViewOnly = urlParams.has('view');
 
-        // إعدادات السحابة الجديدة المُحدثة من المشروع (msad-e258c)
+        // إعدادات السحابة الصحيحة (aaaa-a2380) متوافقة مع الإصدار الثامن
         const firebaseConfig = {
-            apiKey: "AIzaSyDGftCpMowkhQlNAGh_o7dI...",
-            authDomain: "msad-e258c.firebaseapp.com",
-            databaseURL: "https://msad-e258c-default-rtdb.firebaseio.com",
-            projectId: "msad-e258c",
-            storageBucket: "msad-e258c.appspot.com",
-            messagingSenderId: "680278639571",
-            appId: "1:680278639571:web:4e337e1751ebe9d9e92526",
-            measurementId: "G-5Z9VMLZ82P"
+            apiKey: "AIzaSyDhd5CSkNMoppGby6uKxHsQCBPmi6xxO58",
+            authDomain: "aaaa-a2380.firebaseapp.com",
+            projectId: "aaaa-a2380",
+            storageBucket: "aaaa-a2380.firebasestorage.app",
+            messagingSenderId: "593036424543",
+            appId: "1:593036424543:web:b2f8f9e8391220ab2e72ea"
         };
 
         if (!firebase.apps.length) {
@@ -1378,7 +1376,7 @@
 
             let modelPackage = { teacher: currentTeacherName, email: currentTeacherEmail, data: dataToSave, startTime: currentExamStartTime, endTime: currentExamEndTime };
             await rtdb.ref(getTeacherCloudPath() + '/models/' + currentOpenModelName).set(modelPackage);
-            alert(`تم الحفظ بنجاح في السحابة الجديدة msad-e258c! 💾`);
+            alert(`تم الحفظ بنجاح في السحابة aaaa-a2380! 💾`);
         }
 
         function closeModals() { 
