@@ -378,9 +378,9 @@
                         <th>استخرج</th>
                         <th>إكمال</th>
                         <th>صح وخطأ</th>
-                        <th>أعرب</th>
+                        <th>اختر</th>
                         <th>صحح</th>
-                        <th>مثل</th>
+                        <th>اذكر</th>
                         <th>النموذج</th>
                         <th class="no-print col-actions">إجراء</th>
                     </tr>
@@ -657,7 +657,7 @@
             chartA = new Chart(ctx1, {
                 type: 'bar',
                 data: {
-                    labels: ['استخرج', 'إكمال', 'صح وخطأ', 'أعرب', 'صحح', 'مثل'],
+                    labels: ['استخرج', 'إكمال', 'صح وخطأ', 'اختر', 'صحح', 'اذكر'],
                     datasets: [{ label: 'متوسط الأداء', data: skills, backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'], borderRadius: 8 }]
                 },
                 options: { maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } } }, plugins: { legend: { display: false } } }
