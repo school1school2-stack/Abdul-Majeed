@@ -26,7 +26,6 @@
             --row-alt: #fffdec; --correct-bg: #dcfce7; --correct-text: #166534;
             --wrong-bg: #fee2e2; --wrong-text: #991b1b;
             
-            /* متغيرات كود المرشد */
             --maroon: #6b0c22;
             --maroon-light: #8e1432;
             --gold: #d4af37;
@@ -103,7 +102,6 @@
 
         .question-card { background: var(--card-bg); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 2px solid var(--card-border); position: relative; text-align: right; box-sizing: border-box; transition: all 0.3s ease; }
         .question-card::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: var(--k-purple); border-radius: 0 10px 10px 0; }
-        
         .question-card.unanswered-alert { border-color: var(--q-red) !important; background-color: #fff5f5 !important; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
 
         .card-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; justify-content: space-between; }
@@ -152,64 +150,12 @@
         .teachers-table th, .teachers-table td { padding: 10px; border: 1px solid #e2e8f0; text-align: center; font-size: 0.9rem; }
         .teachers-table th { background: #f1f5f9; color: var(--royal-blue); }
 
-        /* تنسيقات كروت الفصول الدراسية */
-        .classes-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-            margin-bottom: 25px;
-        }
-
-        .class-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-            border: 2px solid #cbd5e1;
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .class-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--royal-blue);
-            box-shadow: 0 10px 20px rgba(30, 58, 138, 0.12);
-            background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
-        }
-
-        .class-card .class-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--royal-blue);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-        }
-
-        .class-card .class-name {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: var(--royal-blue);
-        }
-
-        .class-card .class-count {
-            background: #dbeafe;
-            color: #1e40af;
-            font-size: 0.85rem;
-            font-weight: bold;
-            padding: 4px 12px;
-            border-radius: 20px;
-        }
+        .classes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; margin-bottom: 25px; }
+        .class-card { background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%); border: 2px solid #cbd5e1; border-radius: 16px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+        .class-card:hover { transform: translateY(-5px); border-color: var(--royal-blue); box-shadow: 0 10px 20px rgba(30, 58, 138, 0.12); background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%); }
+        .class-card .class-icon { width: 50px; height: 50px; background: var(--royal-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+        .class-card .class-name { font-size: 1.1rem; font-weight: 800; color: var(--royal-blue); }
+        .class-card .class-count { background: #dbeafe; color: #1e40af; font-size: 0.85rem; font-weight: bold; padding: 4px 12px; border-radius: 20px; }
 
         .analytics-fullscreen-page { display: none; width: 100%; max-width: 1400px; margin: auto; box-sizing: border-box; }
         .model-nav { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 25px; padding: 15px 20px; background: #ffffff; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); flex-wrap: wrap; border-top: 3px solid var(--accent); }
@@ -218,16 +164,7 @@
         .model-dropdown { flex: 1; padding: 14px 20px; border-radius: 12px; border: 1px solid #cbd5e1; background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%); font-size: 1.15rem; font-weight: 900; color: var(--text-color); outline: none; cursor: pointer; }
         .live-clock-badge { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #86efac; padding: 10px 18px; border-radius: 12px; font-weight: bold; color: #166534; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
         
-        .header-analytics { 
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); 
-            padding: 25px 35px; 
-            border-radius: 20px; 
-            margin-bottom: 30px; 
-            border-right: 6px solid var(--accent);
-            border-top: 1px solid #e2e8f0; border-left: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.04); 
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;
-        }
+        .header-analytics { background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); padding: 25px 35px; border-radius: 20px; margin-bottom: 30px; border-right: 6px solid var(--accent); border-top: 1px solid #e2e8f0; border-left: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.04); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
         .manager-header-box { display: flex; flex-direction: column; gap: 8px; width: 100%; }
         .manager-header-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; }
         .teacher-info-group { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
@@ -267,386 +204,48 @@
         .ans-wrong { background: var(--wrong-bg); color: var(--wrong-text); border-color: #fecaca; }
         .close-btn-ana { background: var(--text-color); color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; margin-top: 15px; }
 
-        /* تنسيق القائمة المنسدلة للإجراءات في جدول المشرف */
-        .table-action-select {
-            background-color: #f1f5f9;
-            color: var(--royal-blue);
-            border: 1px solid #cbd5e1;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-family: 'Tajawal', sans-serif;
-            font-weight: bold;
-            font-size: 0.85rem;
-            cursor: pointer;
-            outline: none;
-            transition: all 0.2s ease;
-        }
-        .table-action-select:hover {
-            background-color: #e2e8f0;
-            border-color: var(--royal-blue);
-        }
+        .table-action-select { background-color: #f1f5f9; color: var(--royal-blue); border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 8px; font-family: 'Tajawal', sans-serif; font-weight: bold; font-size: 0.85rem; cursor: pointer; outline: none; transition: all 0.2s ease; }
+        .table-action-select:hover { background-color: #e2e8f0; border-color: var(--royal-blue); }
 
-        /* ==================== تنسيقات كود المرشد بالكامل ==================== */
-        .counselor-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            padding: 35px;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .counselor-container::before {
-            content: '';
-            position: absolute;
-            top: 0; right: 0; left: 0;
-            height: 6px;
-            background: linear-gradient(90deg, var(--maroon), var(--gold), var(--maroon));
-        }
-
-        .header-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 20px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .header-title-box {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .header-icon {
-            width: 55px;
-            height: 55px;
-            background: linear-gradient(135deg, var(--maroon), var(--maroon-light));
-            color: white;
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: 0 4px 12px rgba(107, 12, 34, 0.25);
-        }
-
-        .header-info h2 {
-            margin: 0;
-            color: var(--maroon);
-            font-size: 1.6rem;
-            font-weight: 800;
-        }
-
-        .header-badge {
-            background: #f1f5f9;
-            padding: 10px 18px;
-            border-radius: var(--radius-md);
-            border-right: 4px solid var(--gold);
-            font-size: 0.9rem;
-        }
-
-        .select-section {
-            margin-bottom: 25px;
-            background: linear-gradient(135deg, #fffcf0 0%, #fff8e1 100%);
-            padding: 20px;
-            border: 1px solid #fef08a;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .select-section label {
-            font-weight: 700;
-            color: var(--maroon);
-            display: block;
-            margin-bottom: 10px;
-            font-size: 1rem;
-        }
-
-        .search-container {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .search-box-wrapper {
-            position: relative;
-            flex-grow: 1;
-            min-width: 280px;
-        }
-
-        input[type="text"].student-search {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: var(--radius-sm);
-            border: 1.5px solid var(--border);
-            font-size: 0.95rem;
-            font-family: inherit;
-            outline: none;
-            background: white;
-        }
-
-        input[type="text"].student-search:focus {
-            border-color: var(--maroon);
-            box-shadow: 0 0 0 4px rgba(107, 12, 34, 0.1);
-        }
-
-        .search-results {
-            position: absolute;
-            top: 105%;
-            right: 0;
-            left: 0;
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            max-height: 220px;
-            overflow-y: auto;
-            z-index: 1000;
-            box-shadow: var(--shadow-md);
-            display: none;
-        }
-
-        .search-results div {
-            padding: 12px 16px;
-            cursor: pointer;
-            border-bottom: 1px solid #f1f5f9;
-            font-weight: 500;
-        }
-
-        .search-results div:hover {
-            background-color: #fdf2f8;
-            color: var(--maroon);
-            font-weight: 700;
-            padding-right: 22px;
-        }
-
-        select.violation-select, select.count-select {
-            width: 100%;
-            padding: 9px 12px;
-            border-radius: var(--radius-sm);
-            border: 1.5px solid var(--border);
-            font-size: 0.85rem;
-            outline: none;
-            background-color: #fff;
-            cursor: pointer;
-            font-family: inherit;
-            margin-bottom: 6px;
-        }
-
-        select.violation-select:focus, select.count-select:focus {
-            border-color: var(--maroon);
-        }
-
-        .history-section {
-            background: #f0f9ff;
-            border: 1.5px solid #bae6fd;
-            border-radius: var(--radius-md);
-            padding: 20px;
-            margin-bottom: 25px;
-            display: none;
-        }
-
-        .history-section h3 {
-            color: #0369a1;
-            margin-top: 0;
-            border-bottom: 1px solid #e0f2fe;
-            padding-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1.1rem;
-        }
-
-        .history-card {
-            background: white;
-            padding: 18px;
-            border-radius: var(--radius-sm);
-            border: 1px solid #e2e8f0;
-            margin-bottom: 12px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .referral-table-styled {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 20px;
-            border-radius: var(--radius-md);
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
-
-        .referral-table-styled th, .referral-table-styled td {
-            padding: 12px;
-            text-align: center;
-            font-size: 0.9rem;
-            vertical-align: middle;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .referral-table-styled th {
-            background-color: var(--maroon);
-            color: white;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-        }
-
-        .referral-table-styled tr:last-child td {
-            border-bottom: none;
-        }
-
-        .referral-table-styled tr:nth-child(even) {
-            background-color: #f8fafc;
-        }
-
-        .violation-tags-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-top: 4px;
-            text-align: right;
-        }
-
-        .violation-tag-inline {
-            background: #fffbeb;
-            border: 1.5px solid #fef08a;
-            padding: 6px 12px;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            width: fit-content;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        }
-
-        .violation-name-text {
-            color: #854d0e;
-            font-weight: 800;
-            font-size: 0.88rem;
-        }
-
-        .violation-count-text {
-            color: #1d4ed8;
-            background-color: #eff6ff;
-            border: 1px solid #bfdbfe;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-weight: 800;
-            font-size: 0.8rem;
-        }
-
-        .btn-remove-tag {
-            background: transparent;
-            border: none;
-            color: #ef4444;
-            cursor: pointer;
-            font-size: 0.9rem;
-            padding: 0 4px;
-            margin-right: 6px;
-        }
-
-        textarea.notes-input, textarea.counselor-reply {
-            width: 100%;
-            min-height: 60px;
-            padding: 8px 12px;
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-family: inherit;
-            font-size: 0.85rem;
-            resize: vertical;
-            margin-bottom: 4px;
-        }
-
-        textarea.counselor-reply {
-            background-color: #f1f5f9;
-            color: #1e293b;
-            font-weight: 600;
-            border-color: #cbd5e1;
-        }
-
-        .time-badge-referral {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: linear-gradient(135deg, #fff5f5 0%, #ffe3e3 100%);
-            color: #991b1b;
-            border: 1px solid #fca5a5;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            box-shadow: 0 2px 4px rgba(220, 38, 38, 0.08);
-            margin-top: 4px;
-        }
-
-        .time-badge-reply {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            color: #0369a1;
-            border: 1px solid #7dd3fc;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            box-shadow: 0 2px 4px rgba(2, 132, 199, 0.08);
-            margin-top: 4px;
-        }
-
-        .actions-dropdown-container {
-            margin-top: 30px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 12px;
-        }
-
-        select.main-actions-select {
-            background: linear-gradient(135deg, var(--maroon), var(--maroon-light));
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: var(--radius-md);
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.95rem;
-            font-weight: 800;
-            cursor: pointer;
-            outline: none;
-            box-shadow: 0 4px 15px rgba(107, 12, 34, 0.3);
-            text-align: center;
-            min-width: 260px;
-        }
-
-        select.main-actions-select option {
-            background-color: white;
-            color: var(--text-main);
-            font-weight: 700;
-            padding: 10px;
-            text-align: right;
-        }
-
-        select.action-dropdown {
-            padding: 6px 12px;
-            border-radius: 8px;
-            border: 1.5px solid var(--maroon);
-            background-color: #fff;
-            color: var(--maroon);
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            outline: none;
-        }
-
+        .counselor-container { max-width: 1200px; margin: 0 auto; background: var(--card-bg); padding: 35px; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); position: relative; overflow: hidden; }
+        .counselor-container::before { content: ''; position: absolute; top: 0; right: 0; left: 0; height: 6px; background: linear-gradient(90deg, var(--maroon), var(--gold), var(--maroon)); }
+        .header-info { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px; margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
+        .header-title-box { display: flex; align-items: center; gap: 15px; }
+        .header-icon { width: 55px; height: 55px; background: linear-gradient(135deg, var(--maroon), var(--maroon-light)); color: white; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 4px 12px rgba(107, 12, 34, 0.25); }
+        .header-info h2 { margin: 0; color: var(--maroon); font-size: 1.6rem; font-weight: 800; }
+        .header-badge { background: #f1f5f9; padding: 10px 18px; border-radius: var(--radius-md); border-right: 4px solid var(--gold); font-size: 0.9rem; }
+        .select-section { margin-bottom: 25px; background: linear-gradient(135deg, #fffcf0 0%, #fff8e1 100%); padding: 20px; border: 1px solid #fef08a; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }
+        .select-section label { font-weight: 700; color: var(--maroon); display: block; margin-bottom: 10px; font-size: 1rem; }
+        .search-container { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .search-box-wrapper { position: relative; flex-grow: 1; min-width: 280px; }
+        input[type="text"].student-search { width: 100%; padding: 12px 16px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); font-size: 0.95rem; font-family: inherit; outline: none; background: white; }
+        input[type="text"].student-search:focus { border-color: var(--maroon); box-shadow: 0 0 0 4px rgba(107, 12, 34, 0.1); }
+        .search-results { position: absolute; top: 105%; right: 0; left: 0; background: white; border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 220px; overflow-y: auto; z-index: 1000; box-shadow: var(--shadow-md); display: none; }
+        .search-results div { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-weight: 500; }
+        .search-results div:hover { background-color: #fdf2f8; color: var(--maroon); font-weight: 700; padding-right: 22px; }
+        select.violation-select, select.count-select { width: 100%; padding: 9px 12px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); font-size: 0.85rem; outline: none; background-color: #fff; cursor: pointer; font-family: inherit; margin-bottom: 6px; }
+        select.violation-select:focus, select.count-select:focus { border-color: var(--maroon); }
+        .history-section { background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: var(--radius-md); padding: 20px; margin-bottom: 25px; display: none; }
+        .history-section h3 { color: #0369a1; margin-top: 0; border-bottom: 1px solid #e0f2fe; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; }
+        .history-card { background: white; padding: 18px; border-radius: var(--radius-sm); border: 1px solid #e2e8f0; margin-bottom: 12px; box-shadow: var(--shadow-sm); }
+        .referral-table-styled { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 20px; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border); }
+        .referral-table-styled th, .referral-table-styled td { padding: 12px; text-align: center; font-size: 0.9rem; vertical-align: middle; border-bottom: 1px solid var(--border); }
+        .referral-table-styled th { background-color: var(--maroon); color: white; font-weight: 700; letter-spacing: 0.3px; }
+        .referral-table-styled tr:last-child td { border-bottom: none; }
+        .referral-table-styled tr:nth-child(even) { background-color: #f8fafc; }
+        .violation-tags-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; text-align: right; }
+        .violation-tag-inline { background: #fffbeb; border: 1.5px solid #fef08a; padding: 6px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 12px; width: fit-content; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .violation-name-text { color: #854d0e; font-weight: 800; font-size: 0.88rem; }
+        .violation-count-text { color: #1d4ed8; background-color: #eff6ff; border: 1px solid #bfdbfe; padding: 2px 8px; border-radius: 6px; font-weight: 800; font-size: 0.8rem; }
+        .btn-remove-tag { background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 0.9rem; padding: 0 4px; margin-right: 6px; }
+        textarea.notes-input, textarea.counselor-reply { width: 100%; min-height: 60px; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.85rem; resize: vertical; margin-bottom: 4px; }
+        textarea.counselor-reply { background-color: #f1f5f9; color: #1e293b; font-weight: 600; border-color: #cbd5e1; }
+        .time-badge-referral { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #fff5f5 0%, #ffe3e3 100%); color: #991b1b; border: 1px solid #fca5a5; padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; box-shadow: 0 2px 4px rgba(220, 38, 38, 0.08); margin-top: 4px; }
+        .time-badge-reply { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); color: #0369a1; border: 1px solid #7dd3fc; padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.08); margin-top: 4px; }
+        .actions-dropdown-container { margin-top: 30px; display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
+        select.main-actions-select { background: linear-gradient(135deg, var(--maroon), var(--maroon-light)); color: white; border: none; padding: 12px 20px; border-radius: var(--radius-md); font-family: 'Tajawal', sans-serif; font-size: 0.95rem; font-weight: 800; cursor: pointer; outline: none; box-shadow: 0 4px 15px rgba(107, 12, 34, 0.3); text-align: center; min-width: 260px; }
+        select.main-actions-select option { background-color: white; color: var(--text-main); font-weight: 700; padding: 10px; text-align: right; }
+        select.action-dropdown { padding: 6px 12px; border-radius: 8px; border: 1.5px solid var(--maroon); background-color: #fff; color: var(--maroon); font-family: 'Tajawal', sans-serif; font-size: 0.85rem; font-weight: 700; cursor: pointer; outline: none; }
         .btn-add-violation { background: #d97706; color: white; padding: 6px 10px; font-size: 0.78rem; border-radius: 6px; cursor: pointer; border: none; width: 100%; margin-top: 4px; font-family: inherit; font-weight: 700; }
         .btn-save-student { background: #16a34a; color: white; padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; cursor: pointer; border: none; font-family: inherit; font-weight: 700; }
         .btn-share-student { background: #7c3aed; color: white; padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; cursor: pointer; border: none; font-family: inherit; font-weight: 700; }
@@ -655,54 +254,13 @@
         .btn-remove { background: #dc2626; color: white; padding: 6px 10px; font-size: 0.8rem; border-radius: 6px; border: none; cursor: pointer; }
         .btn-close { background: #64748b; color: white; }
 
-        .toast-notification {
-            position: fixed;
-            bottom: 25px; right: 25px;
-            background: #0f172a;
-            color: white;
-            padding: 14px 24px;
-            border-radius: var(--radius-md);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 9999;
-            transform: translateY(150%);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            font-weight: 600;
-        }
-
-        .toast-notification.show {
-            transform: translateY(0);
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            padding: 20px;
-        }
-
-        .modal-content-counselor {
-            background: white;
-            border-radius: var(--radius-lg);
-            max-width: 900px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 30px;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-        }
+        .toast-notification { position: fixed; bottom: 25px; right: 25px; background: #0f172a; color: white; padding: 14px 24px; border-radius: var(--radius-md); box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px; z-index: 9999; transform: translateY(150%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-weight: 600; }
+        .toast-notification.show { transform: translateY(0); }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+        .modal-content-counselor { background: white; border-radius: var(--radius-lg); max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 30px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
 
         @media print {
-            .select-section, .history-section, .actions-dropdown-container, .btn-remove, .btn-save-student, .btn-share-student, .btn-save-reply, .btn-add-violation, .btn-remove-tag, .action-dropdown, .no-print, .modal-overlay, .toast-notification {
-                display: none !important;
-            }
+            .select-section, .history-section, .actions-dropdown-container, .btn-remove, .btn-save-student, .btn-share-student, .btn-save-reply, .btn-add-violation, .btn-remove-tag, .action-dropdown, .no-print, .modal-overlay, .toast-notification { display: none !important; }
             body { background: white; padding: 0; }
             .counselor-container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
         }
@@ -763,16 +321,13 @@
         </div>
     </div>
 
-    <!-- نافذة إدارة الطلاب والفصول المحدثة بدعم أيقونات الفصول التفاعلية -->
+    <!-- نافذة إدارة الطلاب والفصول -->
     <div id="students-manage-modal">
         <h2 style="text-align: center; color: var(--royal-blue); margin-top:0; font-size:1.3rem;"><i class="fas fa-school"></i> إدارة الفصول والطلاب</h2>
         
-        <!-- قسم تصفح الفصول كأيقونات -->
         <div id="classes-icons-view">
             <h3 style="color: var(--royal-blue); font-size: 1.05rem; margin-bottom: 10px;"><i class="fas fa-chalkboard"></i> الفصول الدراسية (اضغط على أي فصل لاستعراض طلابه):</h3>
-            <div id="classesGrid" class="classes-grid">
-                <!-- يتم توليد أيقونات الفصول ديناميكياً هنا -->
-            </div>
+            <div id="classesGrid" class="classes-grid"></div>
         </div>
 
         <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
@@ -785,7 +340,6 @@
             <button class="btn" style="background: var(--success-green); width: 100%; justify-content: center;" onclick="addStudentToTeacherClass()"><i class="fas fa-user-plus"></i> إضافة الطالب للفصل</button>
         </div>
 
-        <!-- جدول يعرض طلاب الفصل المختار مع زر العودة -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 10px;">
             <h3 style="color: var(--royal-blue); font-size: 1.05rem; margin:0;" id="students-list-title"><i class="fas fa-users"></i> الطلاب المسجلون:</h3>
             <button id="show-all-classes-btn" class="btn" style="background: #3b82f6; padding: 5px 12px; font-size: 0.8rem; display: none;" onclick="showAllStudentsInTable()"><i class="fas fa-globe"></i> عرض جميع الفصول</button>
@@ -851,14 +405,11 @@
         <button class="btn" style="background:#64748b; width:100%; margin-top:10px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق التقرير</button>
     </div>
 
-    <!-- نافذة تحويل للمرشد الطلابي المدمجة الكاملة -->
     <div id="counselor-modal">
         <div class="counselor-container" id="pdfContent">
             <div class="header-info">
                 <div class="header-title-box">
-                    <div class="header-icon">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                    </div>
+                    <div class="header-icon"><i class="fa-solid fa-graduation-cap"></i></div>
                     <div>
                         <h2>إشعار تحويل طلاب للمرشد الطلابي</h2>
                         <small style="color: var(--text-muted); font-weight: 600;">المملكة العربية السعودية - وزارة التعليم</small>
@@ -870,7 +421,6 @@
                 </div>
             </div>
 
-            <!-- قسم البحث واختيار الطالب -->
             <div class="select-section no-print" id="controlSection">
                 <label for="searchInput"><i class="fa-solid fa-magnifying-glass"></i> ابحث عن اسم الطالب واختاره لإضافته للقائمة:</label>
                 <div class="search-container">
@@ -882,7 +432,6 @@
                 </div>
             </div>
 
-            <!-- قسم أرشيف التقارير السابقة للطالب -->
             <div class="history-section no-print" id="studentHistorySection">
                 <h3 id="historyTitle">
                     <span><i class="fa-solid fa-folder-open"></i> سجل تقارير الطالب السابقة</span>
@@ -891,7 +440,6 @@
                 <div id="historyContent">جاري البحث...</div>
             </div>
 
-            <!-- جدول المخالفات المتعددة -->
             <table id="referralTable" class="referral-table-styled">
                 <thead>
                     <tr>
@@ -903,9 +451,7 @@
                         <th class="no-print" style="width: 13%;">الإجراءات</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody">
-                    <!-- يُضاف الطلاب النشطون هنا -->
-                </tbody>
+                <tbody id="tableBody"></tbody>
             </table>
 
             <div style="margin-top: 45px; display: flex; justify-content: space-between; font-weight: 700; border-top: 1px dashed var(--border); padding-top: 20px;">
@@ -913,7 +459,6 @@
                 <div>توقيع معلم المادة: <span id="signatureTeacherName">أ / خالد محمد علي</span></div>
             </div>
 
-            <!-- قائمة الخيارات المنفذة للتحكم الموحد -->
             <div class="actions-dropdown-container no-print">
                 <select class="main-actions-select" onchange="executeMainAction(this)">
                     <option value="">⚙️ قائمة الإجراءات والتحكم الرئيسية...</option>
@@ -929,7 +474,6 @@
         <button class="btn" style="background:#64748b; width:100%; margin-top:20px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق النافذة</button>
     </div>
 
-    <!-- النوافذ المنبثقة الخاصة بخصائص المرشد -->
     <div class="toast-notification" id="toast">
         <i class="fa-solid fa-circle-check" style="color: #4ade80; font-size: 1.2rem;"></i>
         <span id="toastMsg">تمت العملية بنجاح</span>
@@ -969,17 +513,14 @@
         <div class="modal-content-counselor" style="max-width: 500px;">
             <h3 style="color: var(--maroon); margin-top: 0; border-bottom: 2px solid var(--gold); padding-bottom: 10px;"><i class="fas fa-pen-to-square"></i> تعديل بيانات التقرير</h3>
             <input type="hidden" id="editDocId">
-            
             <div style="margin-bottom: 12px;">
                 <label style="display: block; font-weight: bold; margin-bottom: 4px;">اسم الطالب:</label>
                 <input type="text" id="editStudentName" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
             </div>
-
             <div style="margin-bottom: 15px;">
                 <label style="display: block; font-weight: bold; margin-bottom: 4px;">ملاحظات وسلوكيات المعلم:</label>
                 <textarea id="editNotes" style="width: 100%; min-height: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;"></textarea>
             </div>
-
             <div style="display: flex; justify-content: flex-end; gap: 10px;">
                 <button class="btn btn-add" style="background: var(--maroon);" onclick="saveEditedReport()"><i class="fa-solid fa-floppy-disk"></i> حفظ التعديل</button>
                 <button class="btn btn-close" onclick="closeEditReportModal()">إلغاء</button>
@@ -987,19 +528,17 @@
         </div>
     </div>
 
-    <!-- عناصر واجهة المعلم الخاصة -->
     <div class="user-header teacher-only" id="main-header" style="display: none;">
         <div class="header-right"><h2 class="user-name" id="header-teacher-name">أ / خالد محمد علي</h2></div>
         <div class="header-center"><div class="logo-box"><i class="fas fa-award"></i></div></div>
         <div class="header-left"><p class="school-name" id="header-teacher-subject">الكفايات اللغوية</p></div>
     </div>
 
+    <!-- تم حذف أيقونة مشاركة المدير هنا بناءً على طلبك -->
     <div class="teacher-icon-bar teacher-only admin-only" id="teacher-icon-bar" style="display: none;">
         <button class="icon-action-btn btn-students" onclick="openStudentsManagementModal()"><i class="fas fa-users-cog"></i><span>إدارة الطلاب والفصول</span></button>
         <button class="icon-action-btn btn-analytics" onclick="openFullAnalyticsPage()"><i class="fas fa-chart-line"></i><span>لوحة التحليل الذكي</span></button>
-        <button class="icon-action-btn btn-share" onclick="shareTeacherDashboardForManager()"><i class="fas fa-share-alt"></i><span>مشاركة اللوحة للمدير</span></button>
         <button class="icon-action-btn btn-matrix" onclick="openMatrixModal()"><i class="fas fa-file-code"></i><span>مصفوفة الاختبارات</span></button>
-        <!-- أيقونة جديد: تحويل للمرشد -->
         <button class="icon-action-btn btn-counselor" onclick="openCounselorModal()"><i class="fas fa-user-shield"></i><span>تحويل للمرشد</span></button>
     </div>
 
@@ -1043,8 +582,10 @@
                     </div>
                 </div>
             </div>
-            <div class="action-buttons no-print" id="action-area" style="width:100%; display:flex; justify-content:flex-end; margin-top:5px;">
-                <button class="btn admin-only" style="background:#059669;" onclick="shareTeacherDashboardForManager()"><i class="fas fa-share-alt"></i> مشاركة اللوحة للمدير</button>
+            <!-- زر المشاركة المحدث داخل لوحة التحليل ليتيح الخيارين: اللوحة كاملة أو نموذج واحد -->
+            <div class="action-buttons no-print" id="action-area" style="width:100%; display:flex; justify-content:flex-end; margin-top:5px; gap: 10px;">
+                <button class="btn admin-only" style="background:#059669;" onclick="shareTeacherDashboardForManager()"><i class="fas fa-share-alt"></i> مشاركة اللوحة كاملة للمدير</button>
+                <button class="btn admin-only" style="background:#7c3aed;" onclick="shareSingleModelForManager()"><i class="fas fa-file-alt"></i> مشاركة نموذج محدد للمدير</button>
             </div>
         </div>
 
@@ -1152,7 +693,7 @@
         let currentUnsubscribe = null;
         let lastSubmittedDetails = null;
 
-        let registeredStudentsList = []; // لتخزين قائمة الطلاب والتحكم في تصفية الفصول
+        let registeredStudentsList = [];
 
         const urlParams = new URLSearchParams(window.location.search);
         const isViewOnly = urlParams.has('view');
@@ -1219,9 +760,24 @@
         function shareTeacherDashboardForManager() {
             const shareUrl = window.location.origin + window.location.pathname + "?teacher=" + encodeURIComponent(currentTeacherEmail) + "&view=true";
             navigator.clipboard.writeText(shareUrl).then(() => {
-                alert("تم نسخ رابط اللوحة للمدير بنجاح! 🔗");
+                alert("تم نسخ رابط اللوحة كاملة للمدير بنجاح! 🔗");
             }).catch(() => {
                 prompt("نسخ رابط مشاركة اللوحة:", shareUrl);
+            });
+        }
+
+        function shareSingleModelForManager() {
+            const dropdown = document.getElementById('model-dropdown');
+            const currentMod = dropdown ? dropdown.value : 'all';
+            if (currentMod === 'all') {
+                alert("الرجاء اختيار نموذج محدد من قائمة النماذج في الأعلى أولاً لمشاركته منفصلاً!");
+                return;
+            }
+            const shareUrl = window.location.origin + window.location.pathname + "?teacher=" + encodeURIComponent(currentTeacherEmail) + "&view=true&model=" + encodeURIComponent(currentMod);
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert(`تم نسخ رابط نموذج (${currentMod}) للمدير بنجاح! 🔗`);
+            }).catch(() => {
+                prompt("نسخ رابط نموذج محدد:", shareUrl);
             });
         }
 
@@ -1229,7 +785,13 @@
             document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
             document.querySelector('.container').style.display = 'none';
             document.getElementById('analytics-fullscreen-view').style.display = 'block';
-            initAnalyticsListenerAna('all');
+            
+            // التحقق إذا كان الرابط يفرض عرض نموذج محدد
+            const modelParam = urlParams.get('model');
+            if (modelParam) {
+                selectedModel = modelParam;
+            }
+            initAnalyticsListenerAna(selectedModel);
         }
 
         function closeAnalyticsPage() {
@@ -1561,7 +1123,6 @@
             } catch (e) { alert("حدث خطأ أثناء الحفظ."); }
         }
 
-        // دالة جلب وتوليد عرض الفصول كأيقونات مع تصفية الطلاب
         async function loadRegisteredStudents() {
             const tbody = document.getElementById('registered-students-table-body');
             const classesGrid = document.getElementById('classesGrid');
@@ -1583,12 +1144,10 @@
                 snap.forEach(doc => {
                     const st = { id: doc.id, ...doc.data() };
                     registeredStudentsList.push(st);
-                    
                     const className = st.class || 'غير محدد';
                     classCounts[className] = (classCounts[className] || 0) + 1;
                 });
 
-                // بناء أيقونات الفصول الدراسية
                 if (classesGrid) {
                     classesGrid.innerHTML = "";
                     Object.keys(classCounts).sort().forEach(cName => {
@@ -1602,7 +1161,6 @@
                     });
                 }
 
-                // عرض جميع الطلاب في البداية عند فتح نافذة الإدارة
                 renderStudentsTable(registeredStudentsList);
 
             } catch (e) { 
@@ -1610,7 +1168,6 @@
             }
         }
 
-        // عرض جدول الطلاب 
         function renderStudentsTable(studentsArray) {
             const tbody = document.getElementById('registered-students-table-body');
             if (!tbody) return;
@@ -1633,7 +1190,6 @@
             });
         }
 
-        // تصفية الطلاب بحسب الفصل المختار عند الضغط على أيقونة الفصل
         function filterStudentsByClass(className) {
             const filtered = registeredStudentsList.filter(st => (st.class || 'غير محدد') === className);
             renderStudentsTable(filtered);
@@ -1645,7 +1201,6 @@
             if (btnShowAll) btnShowAll.style.display = 'inline-flex';
         }
 
-        // زر العرض الشامل لجميع الفصول في الجدول
         function showAllStudentsInTable() {
             renderStudentsTable(registeredStudentsList);
             
@@ -1804,9 +1359,7 @@
                 <input type="hidden" class="hidden-q-text" value="${qTextVal}">
             `;
             container.appendChild(card);
-            
             bindOptionClickEvents(card, isStudent);
-
             card.querySelectorAll('textarea').forEach(ta => autoResizeTextarea(ta));
             updateNumbers();
             if(!isStudent) saveAll();
@@ -1856,35 +1409,23 @@
             const errorMsgEl = card.querySelector('.matching-error-msg');
             let val = inputEl.value.replace(/[^0-9]/g, '');
             
-            if (errorMsgEl) {
-                errorMsgEl.style.display = 'none';
-                errorMsgEl.innerText = '';
-            }
-
+            if (errorMsgEl) { errorMsgEl.style.display = 'none'; errorMsgEl.innerText = ''; }
             if (val.length > 1) val = val.slice(-1);
             
             if (val !== '') {
                 let num = parseInt(val, 10);
                 if (num < 1 || num > maxCount) {
                     inputEl.value = '';
-                    if (errorMsgEl) {
-                        errorMsgEl.innerText = `⚠️ عذراً، الرقم يجب أن يكون بين 1 و ${maxCount} فقط.`;
-                        errorMsgEl.style.display = 'block';
-                    }
+                    if (errorMsgEl) { errorMsgEl.innerText = `⚠️ عذراً، الرقم يجب أن يكون بين 1 و ${maxCount} فقط.`; errorMsgEl.style.display = 'block'; }
                     return;
                 }
-
                 let duplicated = false;
                 card.querySelectorAll('.matching-ans-input').forEach(inp => {
                     if (inp !== inputEl && inp.value.trim() === val) duplicated = true;
                 });
-
                 if (duplicated) {
                     inputEl.value = '';
-                    if (errorMsgEl) {
-                        errorMsgEl.innerText = `⚠️ عذراً، الرقم (${val}) مستخدم مسبقاً في فقرة أخرى.`;
-                        errorMsgEl.style.display = 'block';
-                    }
+                    if (errorMsgEl) { errorMsgEl.innerText = `⚠️ عذراً، الرقم (${val}) مستخدم مسبقاً في فقرة أخرى.`; errorMsgEl.style.display = 'block'; }
                     return;
                 }
             }
@@ -1904,7 +1445,6 @@
                     let keyVal = keys[idx] || (idx + 1);
                     let scoreVal = subScores[idx] !== undefined ? subScores[idx] : 1;
                     let sVal = studentAns[idx] || '';
-
                     let cleanItemText = item.replace(/^\s*\(?\d+[\)\.-]?\s*/, '');
 
                     leftRows += `
@@ -1925,11 +1465,7 @@
                     rightRows += `
                         <div class="matching-row-item">
                             <span class="matching-num-badge">${idx+1}.</span>
-                            ${!isStudent ? `
-                                <input type="text" class="matching-input-field opt-right" value="${item}" placeholder="إجابة ${idx+1}" oninput="saveAll()">
-                            ` : `
-                                <span style="flex:1;">${item}</span>
-                            `}
+                            ${!isStudent ? `<input type="text" class="matching-input-field opt-right" value="${item}" placeholder="إجابة ${idx+1}" oninput="saveAll()">` : `<span style="flex:1;">${item}</span>`}
                         </div>`;
                 });
 
@@ -2360,7 +1896,6 @@
             document.getElementById('editTeacherName').value = name;
             document.getElementById('editTeacherEmail').value = email;
             document.getElementById('editTeacherSubject').value = subject;
-            
             document.getElementById('edit-teacher-modal').style.display = 'block';
             document.getElementById('modal-overlay').style.display = 'block';
         }
@@ -2369,13 +1904,7 @@
             const key = document.getElementById('editTeacherKey').value;
             const name = document.getElementById('editTeacherName').value.trim();
             const subject = document.getElementById('editTeacherSubject').value.trim();
-            const email = document.getElementById('editTeacherEmail').value.trim();
-
-            if (!name || !subject) {
-                alert("الرجاء تعبئة جميع الحقول المطلوبة.");
-                return;
-            }
-
+            if (!name || !subject) { alert("الرجاء تعبئة جميع الحقول المطلوبة."); return; }
             try {
                 await rtdb.ref('teachers_registry/' + key).update({ name, subject });
                 alert("تم تعديل بيانات المعلم بنجاح! 🌟");
@@ -2401,13 +1930,12 @@
         function handleTeacherAction(selectEl, key, name, email, subject) {
             const action = selectEl.value;
             selectEl.value = "";
-
             if (action === "copy_link") {
                 navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=' + email)
                     .then(() => alert(`تم نسخ رابط المعلم (${name}) بنجاح! 🔗`));
             } else if (action === "copy_manager_link") {
                 navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=' + email + '&view=true')
-                    .then(() => alert(`تم نسخ رابط المدير للمعلم (${name}) بنجاح! 🔗`));
+                    .then(() => alert(`تم نسخ رابط المدير المعلم (${name}) بنجاح! 🔗`));
             } else if (action === "edit") {
                 openEditTeacherModal(key, name, email, subject);
             } else if (action === "delete") {
@@ -2423,10 +1951,7 @@
             rtdb.ref('teachers_registry').once('value', snapshot => {
                 tbody.innerHTML = "";
                 const data = snapshot.val();
-                if (!data) { 
-                    tbody.innerHTML = `<tr><td colspan="5" style="color:#64748b;">لا يوجد معلمون مسجلون حالياً.</td></tr>`; 
-                    return; 
-                }
+                if (!data) { tbody.innerHTML = `<tr><td colspan="5" style="color:#64748b;">لا يوجد معلمون مسجلون حالياً.</td></tr>`; return; }
                 let i = 1;
                 Object.keys(data).forEach(k => {
                     let t = data[k];
@@ -2448,8 +1973,6 @@
                         </tr>
                     `;
                 });
-            }).catch(error => {
-                tbody.innerHTML = `<tr><td colspan="5" style="color:var(--q-red);">تعذر تحميل قائمة المعلمين. تأكد من تفعيل Realtime Database.</td></tr>`;
             });
         }
 
@@ -2461,63 +1984,34 @@
 
         const countOptionsMap = {
             "عدم إحضار الواجبات": [
-                { value: "واجب 1", text: "واجب 1" },
-                { value: "واجب 2", text: "واجب 2" },
-                { value: "واجب 3", text: "واجب 3" },
-                { value: "واجب 4", text: "واجب 4" },
-                { value: "واجب 5", text: "واجب 5" }
+                { value: "واجب 1", text: "واجب 1" }, { value: "واجب 2", text: "واجب 2" },
+                { value: "واجب 3", text: "واجب 3" }, { value: "واجب 4", text: "واجب 4" }, { value: "واجب 5", text: "واجب 5" }
             ],
-            "عدم إحضار البحث": [
-                { value: "1. لم يقدم البحث", text: "1. لم يقدم البحث" },
-                { value: "2. البحث غير مكتمل", text: "2. البحث غير مكتمل" }
+            "عدm إحضار البحث": [
+                { value: "1. لم يقدم البحث", text: "1. لم يقدم البحث" }, { value: "2. البحث غير مكتمل", text: "2. البحث غير مكتمل" }
             ],
             "كثرة النوم": [
-                { value: "1. نوم خفيف", text: "1. نوم خفيف" },
-                { value: "2. نوم متكرر", text: "2. نوم متكرر" }
+                { value: "1. نوم خفيف", text: "1. نوم خفيف" }, { value: "2. نوم متكرر", text: "2. نوم متكرر" }
             ],
             "ضعف المشاركة": [
-                { value: "1. مشاركة ضعيفة", text: "1. مشاركة ضعيفة" },
-                { value: "2. عدم مشاركة مطلقاً", text: "2. عدم مشاركة مطلقاً" }
+                { value: "1. مشاركة ضعيفة", text: "1. مشاركة ضعيفة" }, { value: "2. عدم مشاركة مطلقاً", text: "2. عدم مشاركة مطلقاً" }
             ]
         };
 
         function formatTimestamp(timestamp) {
             if (!timestamp) return 'تاريخ غير مححدد';
-            let date;
-            if (timestamp.toDate) {
-                date = timestamp.toDate();
-            } else if (timestamp instanceof Date) {
-                date = timestamp;
-            } else {
-                date = new Date(timestamp);
-            }
-            
-            return date.toLocaleString('ar-SA', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true
-            });
+            let date = timestamp.toDate ? timestamp.toDate() : (timestamp instanceof Date ? timestamp : new Date(timestamp));
+            return date.toLocaleString('ar-SA', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true });
         }
 
         function generateFormattedViolationsHTML(violationsArray) {
-            if (!violationsArray || violationsArray.length === 0) {
-                return '<span style="color: #94a3b8; font-size: 0.8rem; font-style: italic;">لا توجد مخالفات مسجلة</span>';
-            }
-
+            if (!violationsArray || violationsArray.length === 0) return '<span style="color: #94a3b8; font-size: 0.8rem; font-style: italic;">لا توجد مخالفات مسجلة</span>';
             let html = '<div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start; margin-top: 4px;">';
             violationsArray.forEach(item => {
                 const parts = item.split(':');
                 const vName = parts[0] ? parts[0].trim() : item;
                 const vCount = parts[1] ? parts[1].trim() : '';
-                html += `
-                    <div class="violation-tag-inline">
-                        <span class="violation-name-text">• ${vName}</span>
-                        ${vCount ? `<span class="violation-count-text">${vCount}</span>` : ''}
-                    </div>
-                `;
+                html += `<div class="violation-tag-inline"><span class="violation-name-text">• ${vName}</span>${vCount ? `<span class="violation-count-text">${vCount}</span>` : ''}</div>`;
             });
             html += '</div>';
             return html;
@@ -2533,7 +2027,6 @@
         function executeMainAction(selectEl) {
             const val = selectEl.value;
             selectEl.value = "";
-
             if (val === "save_all") saveCurrentReports();
             else if (val === "open_saved") openSavedReportsModal();
             else if (val === "share_link") shareCounselorLink();
@@ -2545,14 +2038,9 @@
         function handleReportAction(selectEl, docId, studentName, createdTimeStr, violationsArray, notes, reply, replyTimeStr) {
             const action = selectEl.value;
             selectEl.value = "";
-
-            if (action === "view") {
-                openSingleReport(studentName, createdTimeStr, violationsArray, notes, reply, replyTimeStr);
-            } else if (action === "edit") {
-                openEditReportModal(docId, studentName, notes);
-            } else if (action === "delete") {
-                deleteSavedReport(docId);
-            }
+            if (action === "view") openSingleReport(studentName, createdTimeStr, violationsArray, notes, reply, replyTimeStr);
+            else if (action === "edit") openEditReportModal(docId, studentName, notes);
+            else if (action === "delete") deleteSavedReport(docId);
         }
 
         function loadStudentsList() {
@@ -2563,9 +2051,7 @@
                     if (data.name) allStudents.push(data.name);
                 });
             });
-            
             listenToCloudReferrals();
-
             if (isCounselorView) {
                 const ctrlSec = document.getElementById('controlSection');
                 if(ctrlSec) ctrlSec.style.display = 'none';
@@ -2579,7 +2065,6 @@
             const resultsContainer = document.getElementById("searchResults");
             resultsContainer.innerHTML = "";
             if (!query) { resultsContainer.style.display = "none"; return; }
-
             const filtered = allStudents.filter(name => name.toLowerCase().includes(query));
             if (filtered.length === 0) {
                 resultsContainer.innerHTML = '<div style="color: #888;">لا توجد نتائج مطابقة في طلابك</div>';
@@ -2609,16 +2094,11 @@
             historySection.style.display = "block";
 
             try {
-                const snapshot = await db.collection("referral_list")
-                    .where("teacher_email", "==", currentTeacherEmail)
-                    .where("name", "==", studentName)
-                    .get();
-                
+                const snapshot = await db.collection("referral_list").where("teacher_email", "==", currentTeacherEmail).where("name", "==", studentName).get();
                 if (snapshot.empty) {
                     historyContent.innerHTML = "<p style='color: #666; margin: 0;'>لا توجد تقارير سابقة مسجلة لهذا الطالب في السحابة.</p>";
                     return;
                 }
-
                 let html = "";
                 snapshot.forEach(doc => {
                     const data = doc.data();
@@ -2652,7 +2132,6 @@
                 });
                 historyContent.innerHTML = html;
             } catch (error) {
-                console.error(error);
                 historyContent.innerHTML = "<p style='color: red;'>حدث خطأ أثناء جلب الأرشيف.</p>";
             }
         }
@@ -2664,52 +2143,36 @@
             document.getElementById('editReportModal').style.display = 'flex';
         }
 
-        function closeEditReportModal() {
-            document.getElementById('editReportModal').style.display = 'none';
-        }
+        function closeEditReportModal() { document.getElementById('editReportModal').style.display = 'none'; }
 
         async function saveEditedReport() {
             const id = document.getElementById('editDocId').value;
             const name = document.getElementById('editStudentName').value.trim();
             const notes = document.getElementById('editNotes').value.trim();
-
             if (!name) return alert("اسم الطالب مطلوب");
-
             try {
-                await db.collection("referral_list").doc(id).update({
-                    name: name,
-                    notes: notes
-                });
+                await db.collection("referral_list").doc(id).update({ name: name, notes: notes });
                 showToast("تم حفظ التعديلات بنجاح!");
                 closeEditReportModal();
                 fetchStudentHistory(name);
-            } catch (error) {
-                alert("حدث خطأ أثناء حفظ التعديل.");
-            }
+            } catch (error) { alert("حدث خطأ أثناء حفظ التعديل."); }
         }
 
         async function saveSingleStudent(id, studentName) {
             try {
-                await db.collection("referral_list").doc(id).update({
-                    isArchived: true
-                });
+                await db.collection("referral_list").doc(id).update({ isArchived: true });
                 showToast(`تم أرشفة وحفظ تقرير الطالب (${studentName}) بنجاح!`);
-            } catch (error) {
-                alert("حدث خطأ أثناء الحفظ.");
-            }
+            } catch (error) { alert("حدث خطأ أثناء الحفظ."); }
         }
 
         async function saveCurrentReports() {
             const rows = document.querySelectorAll("#tableBody tr");
             if (rows.length === 0) return alert("لا توجد بيانات طلاب نشطة لحفظها وأرشفتها.");
-
             if (confirm("هل تريد أرشفة وحفظ جميع التقارير وإخفائها من هذه الشاشة؟")) {
                 const batch = db.batch();
                 const snapshot = await db.collection("referral_list").where("teacher_email", "==", currentTeacherEmail).get();
                 snapshot.forEach(doc => {
-                    if (doc.data().isArchived !== true) {
-                        batch.update(doc.ref, { isArchived: true });
-                    }
+                    if (doc.data().isArchived !== true) batch.update(doc.ref, { isArchived: true });
                 });
                 await batch.commit();
                 showToast("تم أرشفة وحفظ كافة التقارير بنجاح!");
@@ -2723,11 +2186,7 @@
 
             try {
                 const snapshot = await db.collection("referral_list").where("teacher_email", "==", currentTeacherEmail).get();
-                if (snapshot.empty) {
-                    container.innerHTML = "<p style='color: #666;'>لا توجد تقارير محفوظة حالياً.</p>";
-                    return;
-                }
-
+                if (snapshot.empty) { container.innerHTML = "<p style='color: #666;'>لا توجد تقارير محفوظة حالياً.</p>"; return; }
                 let html = "";
                 snapshot.forEach(doc => {
                     const data = doc.data();
@@ -2763,15 +2222,10 @@
                     `;
                 });
                 container.innerHTML = html;
-            } catch (error) {
-                console.error(error);
-                container.innerHTML = "<p style='color: red;'>حدث خطأ أثناء تحميل التقارير المحفوظة.</p>";
-            }
+            } catch (error) { container.innerHTML = "<p style='color: red;'>حدث خطأ أثناء تحميل التقارير المحفوظة.</p>"; }
         }
 
-        function closeSavedReportsModal() {
-            document.getElementById("savedReportsModal").style.display = "none";
-        }
+        function closeSavedReportsModal() { document.getElementById("savedReportsModal").style.display = "none"; }
 
         async function deleteSavedReport(docId) {
             if (confirm("حذف هذا التقرير المحفوظ من السحابة؟")) {
@@ -2779,9 +2233,7 @@
                     await db.collection("referral_list").doc(docId).delete();
                     showToast("تم الحذف بنجاح!");
                     openSavedReportsModal();
-                } catch (error) {
-                    alert("حدث خطأ أثناء الحذف.");
-                }
+                } catch (error) { alert("حدث خطأ أثناء الحذف."); }
             }
         }
 
@@ -2789,12 +2241,9 @@
             let violationsArr = [];
             if (typeof violationsInput === 'string') {
                 try { violationsArr = JSON.parse(violationsInput); } catch(e) { violationsArr = [violationsInput]; }
-            } else if (Array.isArray(violationsInput)) {
-                violationsArr = violationsInput;
-            }
+            } else if (Array.isArray(violationsInput)) { violationsArr = violationsInput; }
 
             const formattedViolations = generateFormattedViolationsHTML(violationsArr);
-
             const content = `
                 <p><strong>اسم الطالب:</strong> ${name}</p>
                 <p><strong>تاريخ ووقت الإحالة:</strong> <span class="time-badge-referral"><i class="fa-solid fa-calendar-check"></i> ${dateStr}</span></p>
@@ -2808,21 +2257,7 @@
             document.getElementById('singleReportModal').style.display = 'flex';
         }
 
-        function closeSingleReportModal() {
-            document.getElementById('singleReportModal').style.display = 'none';
-        }
-
-        async function deleteHistoryRecord(docId, studentName) {
-            if (confirm("هل أنت متأكد من حذف هذا السجل من الأرشيف؟")) {
-                try {
-                    await db.collection("referral_list").doc(docId).delete();
-                    showToast("تم حذف السجل بنجاح!");
-                    fetchStudentHistory(studentName);
-                } catch (error) {
-                    alert("حدث خطأ أثناء الحذف.");
-                }
-            }
-        }
+        function closeSingleReportModal() { document.getElementById('singleReportModal').style.display = 'none'; }
 
         document.addEventListener("click", function(e) {
             if (!e.target.closest(".search-box-wrapper")) {
@@ -2851,9 +2286,7 @@
                 selectedStudentName = "";
                 document.getElementById("studentHistorySection").style.display = "none";
                 showToast(`تم إدراج الطالب (${studentName}) للقائمة النشطة الخاصة بك!`);
-            } catch (e) {
-                console.error(e);
-            }
+            } catch (e) {}
         }
 
         function listenToCloudReferrals() {
@@ -2868,12 +2301,10 @@
                     const id = doc.id;
 
                     if (isCounselorView && targetStudentId && id !== targetStudentId) return;
-
                     if (!isCounselorView && data.isArchived === true) return;
                     if (isCounselorView && (data.reply && data.reply !== "لم يتم الرد بعد" && data.reply.trim() !== "")) return;
 
                     studentCount++;
-
                     const currentViolations = data.violations || [];
                     const createdTimeStr = formatTimestamp(data.createdAt);
                     const replyTimeStr = data.replyCreatedAt ? formatTimestamp(data.replyCreatedAt) : null;
@@ -2895,11 +2326,9 @@
                                 <option value="كثرة النوم">كثرة النوم</option>
                                 <option value="ضعف المشاركة">ضعف المشاركة</option>
                             </select>
-                            
                             <select id="count_select_${id}" class="count-select" ${isCounselorView ? 'disabled' : ''}>
                                 <option value="">-- اختر العدد --</option>
                             </select>
-                            
                             <button class="btn-add-violation" ${isCounselorView ? 'style="display:none;"' : ''} onclick="addViolationToStudent('${id}')"><i class="fa-solid fa-circle-plus"></i> إضافة المخالفة للقائمة</button>
                         </td>
                         <td>
@@ -2921,7 +2350,6 @@
                         </td>
                     `;
                     tbody.appendChild(row);
-
                     renderStudentViolationTags(id, currentViolations);
                 });
 
@@ -2937,8 +2365,6 @@
             const counselorUrl = `${currentUrl}?mode=counselor&studentId=${studentId}`;
             navigator.clipboard.writeText(counselorUrl).then(() => {
                 showToast(`تم نسخ رابط المرشد الخاص بالطالب (${studentName}) بنجاح!`);
-            }).catch(() => {
-                prompt("نسخ رابط المرشد الخاص بالطالب:", counselorUrl);
             });
         }
 
@@ -2946,9 +2372,7 @@
             const typeSelect = document.getElementById(`type_select_${id}`);
             const countSelect = document.getElementById(`count_select_${id}`);
             const selectedType = typeSelect.value;
-
             countSelect.innerHTML = '<option value="">-- اختر العدد --</option>';
-
             if (countOptionsMap[selectedType]) {
                 countOptionsMap[selectedType].forEach(opt => {
                     const optionEl = document.createElement("option");
@@ -2962,16 +2386,11 @@
         async function addViolationToStudent(id) {
             const typeSelect = document.getElementById(`type_select_${id}`);
             const countSelect = document.getElementById(`count_select_${id}`);
-
             const typeVal = typeSelect.value;
             const countVal = countSelect.value;
-
-            if (!typeVal || !countVal) {
-                return alert("يرجى اختيار نوع المخالفة والعدد قبل الضغط على إضافة!");
-            }
+            if (!typeVal || !countVal) return alert("يرجى اختيار نوع المخالفة والعدد قبل الضغط على إضافة!");
 
             const violationString = `${typeVal}: ${countVal}`;
-
             const docRef = db.collection("referral_list").doc(id);
             const doc = await docRef.get();
             if (doc.exists) {
@@ -2998,14 +2417,11 @@
         function renderStudentViolationTags(id, violationsArray) {
             const container = document.getElementById(`violation_tags_${id}`);
             if (!container) return;
-
             container.innerHTML = "";
-
             if (!violationsArray || violationsArray.length === 0) {
                 container.innerHTML = '<span style="color: #94a3b8; font-size: 0.8rem; font-style: italic;">لا توجد مخالفات مضافة</span>';
                 return;
             }
-
             violationsArray.forEach((vItem, index) => {
                 const parts = vItem.split(':');
                 const violationName = parts[0] ? parts[0].trim() : vItem;
@@ -3023,24 +2439,19 @@
         }
 
         async function updateCloudField(id, field, value) {
-            if (!isCounselorView) {
-                await db.collection("referral_list").doc(id).update({ [field]: value });
-            }
+            if (!isCounselorView) await db.collection("referral_list").doc(id).update({ [field]: value });
         }
 
         async function saveReply(id) {
             const replyText = document.getElementById(`reply_${id}`).value;
             if (!replyText.trim()) return alert("يرجى كتابة رد المرشد واتخاذه للإجراء قبل الحفظ!");
-
             try {
                 await db.collection("referral_list").doc(id).update({ 
                     reply: replyText,
                     replyCreatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 showToast("تم حفظ رد المرشد وإرساله للمعلم، واختفت الحالة من لوحتك بنجاح!");
-            } catch (error) {
-                alert("حدث خطأ أثناء حفظ الرد.");
-            }
+            } catch (error) { alert("حدث خطأ أثناء حفظ الرد."); }
         }
 
         async function deleteCloudStudent(id) {
@@ -3083,9 +2494,7 @@
             document.getElementById('previewModal').style.display = 'flex';
         }
 
-        function closePreview() {
-            document.getElementById('previewModal').style.display = 'none';
-        }
+        function closePreview() { document.getElementById('previewModal').style.display = 'none'; }
 
         function downloadPDF() {
             const element = document.getElementById('pdfContent').cloneNode(true);
@@ -3120,17 +2529,12 @@
             const teacherEmailParam = urlParams.get('teacher');
             const examId = urlParams.get('exam');
 
-            if (isViewOnly) {
-                document.body.classList.add('view-only-mode');
-            }
-
+            if (isViewOnly) document.body.classList.add('view-only-mode');
             document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
-
             updateTeacherUI();
 
             if (teacherEmailParam) {
                 document.getElementById('admin-management-card').style.display = 'none';
-
                 const safeKey = teacherEmailParam.trim().toLowerCase().replace(/\./g, '_');
                 rtdb.ref('teachers_registry/' + safeKey).once('value', snap => {
                     if (snap.exists()) {
@@ -3138,17 +2542,13 @@
                         currentTeacherEmail = tData.email;
                         currentTeacherName = tData.name;
                         currentTeacherSubject = tData.subject;
-                        
                         updateTeacherUI();
-                        
                         const managerTag = document.getElementById('manager-title-tag');
                         if (managerTag) managerTag.innerHTML = `د / عبدالله بن ظافر الشهري`;
                     }
-
                     if (!isViewOnly) {
                         document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'flex');
                     }
-
                     if (isViewOnly) {
                         openFullAnalyticsPage();
                         const btnReturn = document.getElementById('return-home-btn');
