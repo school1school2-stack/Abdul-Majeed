@@ -208,6 +208,25 @@
         .ans-wrong { background: var(--wrong-bg); color: var(--wrong-text); border-color: #fecaca; }
         .close-btn-ana { background: var(--text-color); color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; margin-top: 15px; }
 
+        /* تنسيق القائمة المنسدلة للإجراءات في جدول المشرف */
+        .table-action-select {
+            background-color: #f1f5f9;
+            color: var(--royal-blue);
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        .table-action-select:hover {
+            background-color: #e2e8f0;
+            border-color: var(--royal-blue);
+        }
+
         /* ==================== تنسيقات كود المرشد بالكامل ==================== */
         .counselor-container {
             max-width: 1200px;
@@ -2211,6 +2230,24 @@
             }
         }
 
+        // دالة التعامل مع خيارات القائمة المنسدلة لإجراءات المعلم
+        function handleTeacherAction(selectEl, key, name, email, subject) {
+            const action = selectEl.value;
+            selectEl.value = ""; // إعادة تعيين القائمة
+
+            if (action === "copy_link") {
+                navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=' + email)
+                    .then(() => alert(`تم نسخ رابط المعلم (${name}) بنجاح! 🔗`));
+            } else if (action === "copy_manager_link") {
+                navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=' + email + '&view=true')
+                    .then(() => alert(`تم نسخ رابط المدير للمعلم (${name}) بنجاح! 🔗`));
+            } else if (action === "edit") {
+                openEditTeacherModal(key, name, email, subject);
+            } else if (action === "delete") {
+                deleteTeacher(key, name);
+            }
+        }
+
         function loadTeachersRegistry() {
             const tbody = document.getElementById('teachers-table-body');
             if (!tbody) return;
@@ -2233,10 +2270,13 @@
                             <td>${t.email}</td>
                             <td>${t.subject}</td>
                             <td>
-                                <button class="btn" style="background:#10b981; padding:4px 8px; font-size:0.8rem;" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=${t.email}').then(()=>alert('تم النسخ'))">رابط المعلم</button> 
-                                <button class="btn" style="background:#0284c7; padding:4px 8px; font-size:0.8rem;" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=${t.email}&view=true').then(()=>alert('تم نسخ رابط المدير'))">رابط المدير</button>
-                                <button class="btn" style="background:#f59e0b; padding:4px 8px; font-size:0.8rem;" onclick="openEditTeacherModal('${k}', '${t.name}', '${t.email}', '${t.subject}')"><i class="fas fa-edit"></i> تعديل</button>
-                                <button class="btn" style="background:#ef4444; padding:4px 8px; font-size:0.8rem;" onclick="deleteTeacher('${k}', '${t.name}')"><i class="fas fa-trash"></i> حذف</button>
+                                <select class="table-action-select" onchange="handleTeacherAction(this, '${k}', '${t.name}', '${t.email}', '${t.subject}')">
+                                    <option value="">⚙️ اختر الإجراء...</option>
+                                    <option value="copy_link">🔗 نسخ رابط المعلم</option>
+                                    <option value="copy_manager_link">🔗 نسخ رابط المدير</option>
+                                    <option value="edit">✏️ تعديل البيانات</option>
+                                    <option value="delete">🗑️ حذف المعلم</option>
+                                </select>
                             </td>
                         </tr>
                     `;
