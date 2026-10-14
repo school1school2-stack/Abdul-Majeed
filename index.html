@@ -1768,7 +1768,7 @@
                 return `<div>
                     <label style="display:block; font-weight:bold; color:#0284c7; margin-bottom:5px; font-size:0.9rem;">إجابة الطالب التحريرية:</label>
                     <textarea class="student-answer-textarea" ${readonlyAttr}>${studentVal}</textarea>
-                </div>`;
+                `;
             } else if (type === 'صح وخطأ') {
                 let opts = ['صح', 'خطأ'];
                 if (isStudent) opts = shuffleArray(opts);
@@ -2822,14 +2822,11 @@
                 document.body.classList.add('view-only-mode');
             }
 
+            // إخفاء العناصر الرئيسية أولاً لمنع وميض اسم المعلم الافتراضي
+            document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
+
             if (teacherEmailParam) {
                 document.getElementById('admin-management-card').style.display = 'none';
-                
-                if (!isViewOnly) {
-                    document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'flex');
-                } else {
-                    document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
-                }
 
                 const safeKey = teacherEmailParam.trim().toLowerCase().replace(/\./g, '_');
                 rtdb.ref('teachers_registry/' + safeKey).once('value', snap => {
@@ -2849,6 +2846,11 @@
                         if (mainTitle) mainTitle.innerText = currentTeacherName;
                         if (subTitle) subTitle.innerText = currentTeacherSubject;
                         if (managerTag) managerTag.innerHTML = `د / عبدالله بن ظافر الشهري`;
+                    }
+
+                    // إظهار عناصر المعلم بعد تحميل بياناته الصحيحة تماماً
+                    if (!isViewOnly) {
+                        document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'flex');
                     }
 
                     if (isViewOnly) {
