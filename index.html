@@ -55,11 +55,11 @@
             margin-bottom: 20px; box-sizing: border-box; gap: 15px; flex-wrap: wrap;
         }
         .header-right { flex: 1; text-align: right; min-width: 140px; }
-        .header-center { flex: 1; text-align: center; min-width: 140px; }
+        .header-center { flex: 0 0 auto; display: flex; justify-content: center; }
         .header-left { flex: 1; text-align: left; min-width: 140px; }
         .user-name { margin: 0; color: var(--royal-blue); font-weight: bold; font-size: 1.3rem; }
         .school-name { margin: 0; color: #64748b; font-weight: bold; font-size: 0.95rem; }
-        .rights-text { margin: 0; color: #64748b; font-weight: bold; font-size: 0.9rem; }
+        .logo-box { background: var(--royal-blue); width: 55px; height: 55px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; }
 
         .teacher-icon-bar {
             width: 100%; max-width: 900px; background: #1e293b; border-radius: 18px; padding: 18px 25px;
@@ -419,8 +419,8 @@
                     </div>
                 </div>
                 <div class="header-badge">
-                    <div><i class="fa-solid fa-book-bookmark" style="color: var(--maroon);"></i> <strong>المادة:</strong> <span id="counselorSubjectName">أ / عبدالعزيز الفيفي</span></div>
-                    <div><i class="fa-solid fa-user-tie" style="color: var(--maroon);"></i> <strong>معلم المادة:</strong> <span id="counselorTeacherName">أ / عبدالعزيز الفيفي</span></div>
+                    <div><i class="fa-solid fa-book-bookmark" style="color: var(--maroon);"></i> <strong>المادة:</strong> <span id="counselorSubjectName">أ / خالد محمد علي</span></div>
+                    <div><i class="fa-solid fa-user-tie" style="color: var(--maroon);"></i> <strong>معلم المادة:</strong> <span id="counselorTeacherName">أ / خالد محمد علي</span></div>
                 </div>
             </div>
 
@@ -459,7 +459,7 @@
 
             <div style="margin-top: 45px; display: flex; justify-content: space-between; font-weight: 700; border-top: 1px dashed var(--border); padding-top: 20px;">
                 <div>توقيع المرشد الطلابي: ........................</div>
-                <div>توقيع معلم المادة: <span id="signatureTeacherName">أ / عبدالعزيز الفيفي</span></div>
+                <div>توقيع معلم المادة: <span id="signatureTeacherName">أ / خالد محمد علي</span></div>
             </div>
 
             <div class="actions-dropdown-container no-print">
@@ -531,11 +531,10 @@
         </div>
     </div>
 
-    <!-- الهيدر المحدث بناءً على طلبك -->
     <div class="user-header teacher-only" id="main-header" style="display: none;">
-        <div class="header-right"><h2 class="user-name" id="header-teacher-name">أ / عبدالعزيز الفيفي</h2></div>
-        <div class="header-center"><p class="rights-text">الحقوق محفوظة 2026</p></div>
-        <div class="header-left"><p class="school-name" id="header-teacher-school">ثانوية الأمير عبدالمجيد</p></div>
+        <div class="header-right"><h2 class="user-name" id="header-teacher-name">أ / خالد محمد علي</h2></div>
+        <div class="header-center"><div class="logo-box"><i class="fas fa-award"></i></div></div>
+        <div class="header-left"><p class="school-name" id="header-teacher-subject">الكفايات اللغوية</p></div>
     </div>
 
     <div class="teacher-icon-bar teacher-only admin-only" id="teacher-icon-bar" style="display: none;">
@@ -576,12 +575,12 @@
             <div class="manager-header-box">
                 <div class="manager-header-row">
                     <div class="teacher-info-group">
-                        <h1 id="main-title" style="margin:0; color:var(--royal-blue); font-size:1.45rem; font-weight:800;">أ / عبدالعزيز الفيفي</h1>
+                        <h1 id="main-title" style="margin:0; color:var(--royal-blue); font-size:1.45rem; font-weight:800;">أ / خالد محمد علي</h1>
                         <span style="background: #e0f2fe; color: #0369a1; padding: 4px 12px; border-radius: 8px; font-size: 0.95rem; font-weight: bold;" id="sub-title">الكفايات اللغوية</span>
                     </div>
                     <div class="manager-info-group">
                         <span>المدير:</span>
-                        <span style="color: #7c3aed; font-weight: 900; background: #f3e8ff; padding: 5px 12px; border-radius: 8px;" id="manager-title-tag">ثانوية الأمير عبدالمجيد</span>
+                        <span style="color: #7c3aed; font-weight: 900; background: #f3e8ff; padding: 5px 12px; border-radius: 8px;" id="manager-title-tag">د / عبدالله بن ظافر الشهري</span>
                     </div>
                 </div>
             </div>
@@ -684,8 +683,8 @@
         let currentExamEndTime = "";
         let examTimerInterval = null;
 
-        let currentTeacherEmail = "abdulaziz@moe.gov.sa";
-        let currentTeacherName = "أ / عبدالعزيز الفيفي";
+        let currentTeacherEmail = "khaled@moe.gov.sa";
+        let currentTeacherName = "أ / خالد محمد علي";
         let currentTeacherSubject = "الكفايات اللغوية";
 
         let chartA = null, chartB = null;
@@ -720,7 +719,7 @@
 
         function updateTeacherUI() {
             document.querySelectorAll('#header-teacher-name, #main-title').forEach(el => el.innerText = currentTeacherName);
-            document.querySelectorAll('#header-teacher-school').forEach(el => el.innerText = "ثانوية الأمير عبدالمجيد");
+            document.querySelectorAll('#header-teacher-subject, #sub-title').forEach(el => el.innerText = currentTeacherSubject);
             
             const cName = document.getElementById('counselorTeacherName');
             if (cName) cName.innerText = currentTeacherName;
@@ -758,6 +757,30 @@
         function getTeacherCloudPath() {
             const safeEmailKey = (currentTeacherEmail || "default").trim().toLowerCase().replace(/\./g, '_');
             return `teachers_data/${safeEmailKey}`;
+        }
+
+        function shareTeacherDashboardForManager() {
+            const shareUrl = window.location.origin + window.location.pathname + "?teacher=" + encodeURIComponent(currentTeacherEmail) + "&view=true";
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert("تم نسخ رابط اللوحة كاملة للمدير بنجاح! 🔗");
+            }).catch(() => {
+                prompt("نسخ رابط مشاركة اللوحة:", shareUrl);
+            });
+        }
+
+        function shareSingleModelForManager() {
+            const dropdown = document.getElementById('model-dropdown');
+            const currentMod = dropdown ? dropdown.value : 'all';
+            if (currentMod === 'all') {
+                alert("الرجاء اختيار نموذج محدد من قائمة النماذج في الأعلى أولاً لمشاركته منفصلاً!");
+                return;
+            }
+            const shareUrl = window.location.origin + window.location.pathname + "?teacher=" + encodeURIComponent(currentTeacherEmail) + "&view=true&model=" + encodeURIComponent(currentMod);
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert(`تم نسخ رابط نموذج (${currentMod}) للمدير بنجاح! 🔗`);
+            }).catch(() => {
+                prompt("نسخ رابط نموذج محدد:", shareUrl);
+            });
         }
 
         function openFullAnalyticsPage() {
@@ -1035,10 +1058,82 @@
             }
         }
 
+        async function uploadBulkStudents() {
+            const rawText = document.getElementById('bulkStudentsInput').value.trim();
+            if (!rawText) { alert("الرجاء لصق قائمة الطلاب أولاً!"); return; }
+            const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l);
+            let count = 0;
+            try {
+                for (let i = 0; i < lines.length; i++) {
+                    let line1 = lines[i], line2 = lines[i+1] || "";
+                    let name = "", email = "";
+                    if (line1.includes('@')) { email = line1; name = line2; i++; }
+                    else if (line2.includes('@')) { name = line1; email = line2; i++; }
+                    if (name && email && email.includes('@')) {
+                        await fsDb.collection("all_global_students").doc(email.toLowerCase()).set({ name: name, email: email.toLowerCase() });
+                        count++;
+                    }
+                }
+                alert(`تم رفع واعتماد (${count}) طالباً بنجاح في القائمة العامة! 🌟`);
+                document.getElementById('bulkStudentsInput').value = "";
+                loadGlobalStudentsCache();
+            } catch (e) { alert("حدث خطأ أثناء رفع القائمة."); }
+        }
+
+        let allGlobalStudentsCache = [];
+        async function loadGlobalStudentsCache() {
+            allGlobalStudentsCache = [];
+            try {
+                const snap = await fsDb.collection("all_global_students").get();
+                snap.forEach(doc => allGlobalStudentsCache.push(doc.data()));
+            } catch(e) {}
+        }
+
         function openStudentsManagementModal() {
             loadRegisteredStudents();
+            loadGlobalStudentsCache();
             document.getElementById('students-manage-modal').style.display = 'block';
             document.getElementById('modal-overlay').style.display = 'block';
+        }
+
+        function filterGlobalStudentsList(query) {
+            const sugBox = document.getElementById('global-students-suggestions');
+            if (!query.trim()) { sugBox.style.display = 'none'; return; }
+            const matched = allGlobalStudentsCache.filter(st => st.name.toLowerCase().includes(query.toLowerCase()) || st.email.toLowerCase().includes(query.toLowerCase()));
+            if (matched.length === 0) { sugBox.style.display = 'none'; return; }
+            let html = "";
+            matched.forEach(st => { html += `<div style="padding:8px 12px; cursor:pointer; border-bottom:1px solid #f1f5f9;" onclick="selectGlobalStudent('${st.name}', '${st.email}')"><b>${st.name}</b> (${st.email})</div>`; });
+            sugBox.innerHTML = html;
+            sugBox.style.display = 'block';
+        }
+
+        function selectGlobalStudent(name, email) {
+            document.getElementById('selectedStudentName').value = name;
+            document.getElementById('selectedStudentEmail').value = email;
+            document.getElementById('globalStudentSearch').value = name;
+            document.getElementById('global-students-suggestions').style.display = 'none';
+        }
+
+        async function addStudentToTeacherClass() {
+            const name = document.getElementById('selectedStudentName').value.trim();
+            const email = document.getElementById('selectedStudentEmail').value.trim().toLowerCase();
+            const className = document.getElementById('regStudentClass').value.trim();
+            if (!name || !email || !className) { alert("الرجاء اختيار الطالب وإدخال الفصل."); return; }
+            try {
+                const docId = `${currentTeacherEmail}_${email}`.replace(/[@\.]/g, '_');
+                await fsDb.collection("allowed_students").doc(docId).set({ 
+                    name: name, 
+                    email: email, 
+                    class: className, 
+                    teacher_email: currentTeacherEmail 
+                });
+                alert(`تم ربط الطالب (${name}) بفصلك الخاص (${className}) بنجاح! 🎓`);
+                document.getElementById('selectedStudentName').value = "";
+                document.getElementById('selectedStudentEmail').value = "";
+                document.getElementById('globalStudentSearch').value = "";
+                document.getElementById('regStudentClass').value = "";
+                loadRegisteredStudents();
+            } catch (e) { alert("حدث خطأ أثناء الحفظ."); }
         }
 
         async function loadRegisteredStudents() {
@@ -1792,6 +1887,108 @@
         function updateNumbers() { document.querySelectorAll('.q-number-badge').forEach((b, i) => b.innerText = `السؤال ${i+1}`); }
         function clearAll() { document.getElementById('quiz-content').innerHTML = ''; currentOpenModelName = null; document.getElementById('current-model-label').innerText = "📁 نموذج جديد"; addQuestion(); }
 
+        async function addNewTeacher() {
+            const name = document.getElementById('newTeacherName').value.trim();
+            const email = document.getElementById('newTeacherEmail').value.trim().toLowerCase();
+            const subject = document.getElementById('newTeacherSubject').value.trim();
+            if (!name || !email || !subject) { alert("الرجاء تعبئة جميع الحقول!"); return; }
+            try {
+                await rtdb.ref('teachers_registry/' + email.replace(/\./g, '_')).set({ name, email, subject });
+                alert("تمت إضافة المعلم بنجاح! 🌟");
+                document.getElementById('newTeacherName').value = "";
+                document.getElementById('newTeacherEmail').value = "";
+                document.getElementById('newTeacherSubject').value = "";
+                loadTeachersRegistry();
+            } catch (e) {
+                alert("حدث خطأ أثناء حفظ المعلم.");
+            }
+        }
+
+        function openEditTeacherModal(key, name, email, subject) {
+            document.getElementById('editTeacherKey').value = key;
+            document.getElementById('editTeacherName').value = name;
+            document.getElementById('editTeacherEmail').value = email;
+            document.getElementById('editTeacherSubject').value = subject;
+            document.getElementById('edit-teacher-modal').style.display = 'block';
+            document.getElementById('modal-overlay').style.display = 'block';
+        }
+
+        async function saveEditedTeacher() {
+            const key = document.getElementById('editTeacherKey').value;
+            const name = document.getElementById('editTeacherName').value.trim();
+            const subject = document.getElementById('editTeacherSubject').value.trim();
+            if (!name || !subject) { alert("الرجاء تعبئة جميع الحقول المطلوبة."); return; }
+            try {
+                await rtdb.ref('teachers_registry/' + key).update({ name, subject });
+                alert("تم تعديل بيانات المعلم بنجاح! 🌟");
+                closeModals();
+                loadTeachersRegistry();
+            } catch (e) {
+                alert("حدث خطأ أثناء تعديل بيانات المعلم.");
+            }
+        }
+
+        async function deleteTeacher(key, teacherName) {
+            if (confirm(`هل أنت متأكد من حذف المعلم (${teacherName}) من النظام؟`)) {
+                try {
+                    await rtdb.ref('teachers_registry/' + key).remove();
+                    alert("تم حذف المعلم بنجاح!");
+                    loadTeachersRegistry();
+                } catch (e) {
+                    alert("حدث خطأ أثناء حذف المعلم.");
+                }
+            }
+        }
+
+        function handleTeacherAction(selectEl, key, name, email, subject) {
+            const action = selectEl.value;
+            selectEl.value = "";
+            if (action === "copy_link") {
+                navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=' + email)
+                    .then(() => alert(`تم نسخ رابط المعلم (${name}) بنجاح! 🔗`));
+            } else if (action === "copy_manager_link") {
+                navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=' + email + '&view=true')
+                    .then(() => alert(`تم نسخ رابط المدير المعلم (${name}) بنجاح! 🔗`));
+            } else if (action === "edit") {
+                openEditTeacherModal(key, name, email, subject);
+            } else if (action === "delete") {
+                deleteTeacher(key, name);
+            }
+        }
+
+        function loadTeachersRegistry() {
+            const tbody = document.getElementById('teachers-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = `<tr><td colspan="5">جاري التحميل...</td></tr>`;
+            
+            rtdb.ref('teachers_registry').once('value', snapshot => {
+                tbody.innerHTML = "";
+                const data = snapshot.val();
+                if (!data) { tbody.innerHTML = `<tr><td colspan="5" style="color:#64748b;">لا يوجد معلمون مسجلون حالياً.</td></tr>`; return; }
+                let i = 1;
+                Object.keys(data).forEach(k => {
+                    let t = data[k];
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${i++}</td>
+                            <td><b>${t.name}</b></td>
+                            <td>${t.email}</td>
+                            <td>${t.subject}</td>
+                            <td>
+                                <select class="table-action-select" onchange="handleTeacherAction(this, '${k}', '${t.name}', '${t.email}', '${t.subject}')">
+                                    <option value="">⚙️ اختر الإجراء...</option>
+                                    <option value="copy_link">🔗 نسخ رابط المعلم</option>
+                                    <option value="copy_manager_link">🔗 نسخ رابط المدير</option>
+                                    <option value="edit">✏️ تعديل البيانات</option>
+                                    <option value="delete">🗑️ حذف المعلم</option>
+                                </select>
+                            </td>
+                        </tr>
+                    `;
+                });
+            });
+        }
+
         let allStudents = [];
         let studentCount = 0;
         let selectedStudentName = "";
@@ -1804,7 +2001,7 @@
                 { value: "واجب 3", text: "واجب 3" }, { value: "واجب 4", text: "واجب 4" },
                 { value: "واجب 5", text: "واجب 5" }
             ],
-            "عدم إحضار البحث": [
+            "عدm إحضار البحث": [
                 { value: "1. لم يقدم البحث", text: "1. لم يقدم البحث" }, { value: "2. البحث غير مكتمل", text: "2. البحث غير مكتمل" }
             ],
             "كثرة النوم": [
@@ -1860,6 +2057,7 @@
             else if (action === "delete") deleteSavedReport(docId);
         }
 
+        // تم تحديث الدالة لضمان جلب قائمة الطلاب وتخزينها محلياً للبحث بشكل صحيح
         function loadStudentsList() {
             db.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).get().then((snapshot) => {
                 allStudents = [];
@@ -1867,7 +2065,9 @@
                     const data = doc.data();
                     if (data.name) allStudents.push(data.name);
                 });
-            }).catch((error) => {});
+            }).catch((error) => {
+                console.error("خطأ في جلب الطلاب للمرشد:", error);
+            });
             
             listenToCloudReferrals();
             if (isCounselorView) {
@@ -2348,14 +2548,7 @@
             const examId = urlParams.get('exam');
 
             if (isViewOnly) document.body.classList.add('view-only-mode');
-            
-            // إظهار الهيدر دائماً للمعلم حصرياً
-            const mainHeader = document.getElementById('main-header');
-            if (mainHeader) mainHeader.style.display = 'flex';
-
-            document.querySelectorAll('.teacher-only').forEach(el => {
-                if(el.id !== 'main-header') el.style.display = 'none';
-            });
+            document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
             updateTeacherUI();
 
             if (teacherEmailParam) {
@@ -2368,6 +2561,8 @@
                         currentTeacherName = tData.name;
                         currentTeacherSubject = tData.subject;
                         updateTeacherUI();
+                        const managerTag = document.getElementById('manager-title-tag');
+                        if (managerTag) managerTag.innerHTML = `د / عبدالله بن ظافر الشهري`;
                     }
                     if (!isViewOnly) {
                         document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'flex');
@@ -2384,13 +2579,10 @@
                 if (isCounselorView) {
                     openCounselorModal();
                 } else {
-                    document.querySelectorAll('.teacher-only').forEach(el => {
-                        if(el.id !== 'main-header') el.style.display = 'none';
-                    });
-                    if(mainHeader) mainHeader.style.display = 'flex';
-                    document.getElementById('admin-management-card').style.display = 'none';
-                    document.querySelector('.container').style.display = 'block';
-                    addQuestion();
+                    document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
+                    document.getElementById('admin-management-card').style.display = 'block';
+                    loadTeachersRegistry();
+                    loadGlobalStudentsCache();
                 }
             } else {
                 document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
