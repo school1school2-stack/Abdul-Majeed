@@ -734,7 +734,7 @@
                     </div>
                 </div>
                 <div class="header-badge">
-                    <div><i class="fa-solid fa-book-bookmark" style="color: var(--maroon);"></i> <strong>المادة:</strong> الكفايات اللغوية</div>
+                    <div><i class="fa-solid fa-book-bookmark" style="color: var(--maroon);"></i> <strong>المادة:</strong> <span id="counselorSubjectName">الكفايات اللغوية</span></div>
                     <div><i class="fa-solid fa-user-tie" style="color: var(--maroon);"></i> <strong>معلم المادة:</strong> <span id="counselorTeacherName">أ/ عبدالعزيز الفيفي</span></div>
                 </div>
             </div>
@@ -1097,6 +1097,10 @@
         function openCounselorModal() {
             loadStudentsList();
             document.getElementById('counselorTeacherName').innerText = currentTeacherName;
+            const subjectEl = document.getElementById('counselorSubjectName');
+            if (subjectEl) {
+                subjectEl.innerText = currentTeacherSubject;
+            }
             document.getElementById('counselor-modal').style.display = 'block';
             document.getElementById('modal-overlay').style.display = 'block';
         }
@@ -1396,7 +1400,6 @@
             const className = document.getElementById('regStudentClass').value.trim();
             if (!name || !email || !className) { alert("الرجاء اختيار الطالب وإدخال الفصل."); return; }
             try {
-                // حفظ الطالب مستقلاً لكل معلم بناءً على إيميل المعلم وإيميل الطالب لكي لا يتداخلوا
                 const docId = `${currentTeacherEmail}_${email}`.replace(/[@\.]/g, '_');
                 await fsDb.collection("allowed_students").doc(docId).set({ 
                     name: name, 
@@ -1765,7 +1768,7 @@
                 return `<div>
                     <label style="display:block; font-weight:bold; color:#0284c7; margin-bottom:5px; font-size:0.9rem;">إجابة الطالب التحريرية:</label>
                     <textarea class="student-answer-textarea" ${readonlyAttr}>${studentVal}</textarea>
-                `;
+                </div>`;
             } else if (type === 'صح وخطأ') {
                 let opts = ['صح', 'خطأ'];
                 if (isStudent) opts = shuffleArray(opts);
@@ -1873,7 +1876,6 @@
             if (currentExamEndTime && new Date(currentExamEndTime) < now) { msgEl.style.color = "var(--q-red)"; msgEl.innerText = "⌛ انتهى وقت الاختبار."; return; }
 
             try {
-                // التحقق مما إذا كان الطالب مضافاً خصيصاً لفصل هذا المعلم فقط
                 const querySnap = await fsDb.collection("allowed_students")
                     .where("teacher_email", "==", currentTeacherEmail)
                     .where("email", "==", emailInput)
@@ -2252,7 +2254,6 @@
         }
 
         function loadStudentsList() {
-            // جلب الطلاب التابعين حصرياً لمعلم المادة الحالي فقط
             db.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).orderBy("name").get().then((snapshot) => {
                 allStudents = [];
                 snapshot.forEach((doc) => {
@@ -2554,7 +2555,6 @@
         }
 
         function listenToCloudReferrals() {
-            // جلب الإحالات والطلاب المرتبطين بمعلم المادة الحالي فقط منعاً للاختلاط
             db.collection("referral_list").where("teacher_email", "==", currentTeacherEmail).onSnapshot(snapshot => {
                 const tbody = document.getElementById("tableBody");
                 if (!tbody) return;
@@ -2565,7 +2565,6 @@
                     const data = doc.data();
                     const id = doc.id;
 
-                    // تصفية حسب الطالب المحدد برابط المشاركة المباشر للمرشد
                     if (isCounselorView && targetStudentId && id !== targetStudentId) return;
 
                     if (!isCounselorView && data.isArchived === true) return;
@@ -2635,7 +2634,7 @@
             const currentUrl = window.location.href.split('?')[0];
             const counselorUrl = `${currentUrl}?mode=counselor&studentId=${studentId}`;
             navigator.clipboard.writeText(counselorUrl).then(() => {
-                showToast(`تم نسخ رابط المرشد الخاص بالط الطالب (${studentName}) بنجاح!`);
+                showToast(`تم نسخ رابط المرشد الخاص بالطالب (${studentName}) بنجاح!`);
             }).catch(() => {
                 prompt("نسخ رابط المرشد الخاص بالطالب:", counselorUrl);
             });
