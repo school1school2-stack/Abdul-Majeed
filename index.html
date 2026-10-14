@@ -932,7 +932,7 @@
         <div class="rankings-grid-ana">
             <div class="rank-card-ana top">
                 <div class="rank-title-ana">🏆 أفضل ٥ طلاب <span>(الأعلى درجات)</span></div>
-                ol class="rank-list-ana" id="top5List"></ol>
+                <ol class="rank-list-ana" id="top5List"></ol>
             </div>
             <div class="rank-card-ana bottom">
                 <div class="rank-title-ana">⚠️ أقل ٥ طلاب درجات <span>(بحاجة لمتابعة)</span></div>
@@ -1350,7 +1350,7 @@
                         count++;
                     }
                 }
-                alert(`تم رفع واعتماد (${count}) طالباً بنجاح! 🌟`);
+                alert(`تم رفع واعتماد (${count}) طالباً بنجاح في القائمة العامة! 🌟`);
                 document.getElementById('bulkStudentsInput').value = "";
                 loadGlobalStudentsCache();
             } catch (e) { alert("حدث خطأ أثناء رفع القائمة."); }
@@ -1396,8 +1396,15 @@
             const className = document.getElementById('regStudentClass').value.trim();
             if (!name || !email || !className) { alert("الرجاء اختيار الطالب وإدخال الفصل."); return; }
             try {
-                await fsDb.collection("allowed_students").doc(email).set({ name: name, email: email, class: className, teacher_email: currentTeacherEmail });
-                alert(`تم ربط الطالب (${name}) بفصلك بنجاح! 🎓`);
+                // حفظ الطالب مستقلاً لكل معلم بناءً على إيميل المعلم وإيميل الطالب لكي لا يتداخلوا
+                const docId = `${currentTeacherEmail}_${email}`.replace(/[@\.]/g, '_');
+                await fsDb.collection("allowed_students").doc(docId).set({ 
+                    name: name, 
+                    email: email, 
+                    class: className, 
+                    teacher_email: currentTeacherEmail 
+                });
+                alert(`تم ربط الطالب (${name}) بفصلك الخاص (${className}) بنجاح! 🎓`);
                 document.getElementById('selectedStudentName').value = "";
                 document.getElementById('selectedStudentEmail').value = "";
                 document.getElementById('globalStudentSearch').value = "";
@@ -1412,7 +1419,7 @@
             tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">جاري التحميل...</td></tr>`;
             try {
                 const snap = await fsDb.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).get();
-                if (snap.empty) { tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا توجد سجلات.</td></tr>`; return; }
+                if (snap.empty) { tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا توجد طلاب مسجلين في فصلك حالياً.</td></tr>`; return; }
                 tbody.innerHTML = "";
                 snap.forEach(doc => {
                     const st = doc.data();
@@ -1421,8 +1428,11 @@
             } catch (e) { tbody.innerHTML = `<tr><td colspan="4">خطأ في الجلب.</td></tr>`; }
         }
 
-        async function deleteRegisteredStudent(emailId) {
-            if (confirm("هل أنت متأكد من الحذف؟")) { await fsDb.collection("allowed_students").doc(emailId).delete(); loadRegisteredStudents(); }
+        async function deleteRegisteredStudent(docId) {
+            if (confirm("هل أنت متأكد من الحذف من فصلك؟")) { 
+                await fsDb.collection("allowed_students").doc(docId).delete(); 
+                loadRegisteredStudents(); 
+            }
         }
 
         function openMatrixModal() {
@@ -1755,7 +1765,7 @@
                 return `<div>
                     <label style="display:block; font-weight:bold; color:#0284c7; margin-bottom:5px; font-size:0.9rem;">إجابة الطالب التحريرية:</label>
                     <textarea class="student-answer-textarea" ${readonlyAttr}>${studentVal}</textarea>
-                </div>`;
+                `;
             } else if (type === 'صح وخطأ') {
                 let opts = ['صح', 'خطأ'];
                 if (isStudent) opts = shuffleArray(opts);
@@ -1863,13 +1873,30 @@
             if (currentExamEndTime && new Date(currentExamEndTime) < now) { msgEl.style.color = "var(--q-red)"; msgEl.innerText = "⌛ انتهى وقت الاختبار."; return; }
 
             try {
-                const docRef = await fsDb.collection("allowed_students").doc(emailInput).get();
-                if (!docRef.exists) { msgEl.style.color = "var(--q-red)"; msgEl.innerText = "❌ هذا الإيميل غير مسجل في قائمة المعلم!"; return; }
+                // التحقق مما إذا كان الطالب مضافاً خصيصاً لفصل هذا المعلم فقط
+                const querySnap = await fsDb.collection("allowed_students")
+                    .where("teacher_email", "==", currentTeacherEmail)
+                    .where("email", "==", emailInput)
+                    .get();
+
+                if (querySnap.empty) { 
+                    msgEl.style.color = "var(--q-red)"; 
+                    msgEl.innerText = "❌ هذا الإيميل غير مسجل في فصول هذا المعلم!"; 
+                    return; 
+                }
+
+                let studentData = null;
+                querySnap.forEach(doc => { studentData = doc.data(); });
 
                 authenticatedStudentEmail = emailInput;
-                authenticatedStudentName = docRef.data().name || "طالب";
+                authenticatedStudentName = studentData.name || "طالب";
+                
                 const examId = new URLSearchParams(window.location.search).get('exam');
-                const prevResult = await fsDb.collection("alkfaeat_results").where("email", "==", authenticatedStudentEmail).where("model_id", "==", examId).get();
+                const prevResult = await fsDb.collection("alkfaeat_results")
+                    .where("email", "==", authenticatedStudentEmail)
+                    .where("teacher_email", "==", currentTeacherEmail)
+                    .where("model_id", "==", examId)
+                    .get();
 
                 if (!prevResult.empty) { msgEl.style.color = "var(--q-red)"; msgEl.innerText = `عذراً، لقد أديت هذا الاختبار مسبقاً.`; return; }
 
@@ -1890,7 +1917,11 @@
             document.getElementById('history-modal').style.display = 'block';
             document.getElementById('modal-overlay').style.display = 'block';
 
-            const querySnap = await fsDb.collection("alkfaeat_results").where("email", "==", emailToCheck).get();
+            const querySnap = await fsDb.collection("alkfaeat_results")
+                .where("email", "==", emailToCheck)
+                .where("teacher_email", "==", currentTeacherEmail)
+                .get();
+
             if (querySnap.empty) { listEl.innerHTML = "<p style='text-align:center;'>لا توجد اختبارات مسجلة.</p>"; return; }
             listEl.innerHTML = '<div></div>';
             const cDiv = listEl.querySelector('div');
@@ -2221,7 +2252,8 @@
         }
 
         function loadStudentsList() {
-            db.collection("allowed_students").orderBy("name").get().then((snapshot) => {
+            // جلب الطلاب التابعين حصرياً لمعلم المادة الحالي فقط
+            db.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).orderBy("name").get().then((snapshot) => {
                 allStudents = [];
                 snapshot.forEach((doc) => {
                     const data = doc.data();
@@ -2247,7 +2279,7 @@
 
             const filtered = allStudents.filter(name => name.toLowerCase().includes(query));
             if (filtered.length === 0) {
-                resultsContainer.innerHTML = '<div style="color: #888;">لا توجد نتائج مطابقة</div>';
+                resultsContainer.innerHTML = '<div style="color: #888;">لا توجد نتائج مطابقة في طلابك</div>';
             } else {
                 filtered.forEach(name => {
                     const div = document.createElement("div");
@@ -2274,7 +2306,10 @@
             historySection.style.display = "block";
 
             try {
-                const snapshot = await db.collection("referral_list").where("name", "==", studentName).get();
+                const snapshot = await db.collection("referral_list")
+                    .where("teacher_email", "==", currentTeacherEmail)
+                    .where("name", "==", studentName)
+                    .get();
                 
                 if (snapshot.empty) {
                     historyContent.innerHTML = "<p style='color: #666; margin: 0;'>لا توجد تقارير سابقة مسجلة لهذا الطالب في السحابة.</p>";
@@ -2367,7 +2402,7 @@
 
             if (confirm("هل تريد أرشفة وحفظ جميع التقارير وإخفائها من هذه الشاشة؟")) {
                 const batch = db.batch();
-                const snapshot = await db.collection("referral_list").get();
+                const snapshot = await db.collection("referral_list").where("teacher_email", "==", currentTeacherEmail).get();
                 snapshot.forEach(doc => {
                     if (doc.data().isArchived !== true) {
                         batch.update(doc.ref, { isArchived: true });
@@ -2384,7 +2419,7 @@
             document.getElementById("savedReportsModal").style.display = "flex";
 
             try {
-                const snapshot = await db.collection("referral_list").get();
+                const snapshot = await db.collection("referral_list").where("teacher_email", "==", currentTeacherEmail).get();
                 if (snapshot.empty) {
                     container.innerHTML = "<p style='color: #666;'>لا توجد تقارير محفوظة حالياً.</p>";
                     return;
@@ -2501,6 +2536,7 @@
             const studentId = "student_" + Date.now();
             try {
                 await db.collection("referral_list").doc(studentId).set({
+                    teacher_email: currentTeacherEmail,
                     name: studentName,
                     violations: [],
                     notes: "",
@@ -2511,14 +2547,15 @@
                 document.getElementById("searchInput").value = "";
                 selectedStudentName = "";
                 document.getElementById("studentHistorySection").style.display = "none";
-                showToast(`تم إدراج الطالب (${studentName}) للقائمة النشطة!`);
+                showToast(`تم إدراج الطالب (${studentName}) للقائمة النشطة الخاصة بك!`);
             } catch (e) {
                 console.error(e);
             }
         }
 
         function listenToCloudReferrals() {
-            db.collection("referral_list").onSnapshot(snapshot => {
+            // جلب الإحالات والطلاب المرتبطين بمعلم المادة الحالي فقط منعاً للاختلاط
+            db.collection("referral_list").where("teacher_email", "==", currentTeacherEmail).onSnapshot(snapshot => {
                 const tbody = document.getElementById("tableBody");
                 if (!tbody) return;
                 tbody.innerHTML = "";
@@ -2598,7 +2635,7 @@
             const currentUrl = window.location.href.split('?')[0];
             const counselorUrl = `${currentUrl}?mode=counselor&studentId=${studentId}`;
             navigator.clipboard.writeText(counselorUrl).then(() => {
-                showToast(`تم نسخ رابط المرشد الخاص بالطالب (${studentName}) بنجاح!`);
+                showToast(`تم نسخ رابط المرشد الخاص بالط الطالب (${studentName}) بنجاح!`);
             }).catch(() => {
                 prompt("نسخ رابط المرشد الخاص بالطالب:", counselorUrl);
             });
