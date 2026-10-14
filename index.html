@@ -216,10 +216,14 @@
         .header-badge { background: #f1f5f9; padding: 10px 18px; border-radius: var(--radius-md); border-right: 4px solid var(--gold); font-size: 0.9rem; }
         .select-section { margin-bottom: 25px; background: linear-gradient(135deg, #fffcf0 0%, #fff8e1 100%); padding: 20px; border: 1px solid #fef08a; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }
         .select-section label { font-weight: 700; color: var(--maroon); display: block; margin-bottom: 10px; font-size: 1rem; }
-        .search-container { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-        .search-box-wrapper { position: relative; flex-grow: 1; min-width: 280px; }
-        input[type="text"].student-search { width: 100%; padding: 12px 16px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); font-size: 0.95rem; font-family: inherit; outline: none; background: white; }
+        
+        /* التعديل المحدث لمنع التداخل بين حقل البحث وزر الإضافة */
+        .search-container { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; width: 100%; }
+        .search-box-wrapper { position: relative; flex: 1 1 280px; min-width: 250px; }
+        input[type="text"].student-search { width: 100%; padding: 12px 16px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); font-size: 0.95rem; font-family: inherit; outline: none; background: white; box-sizing: border-box; }
         input[type="text"].student-search:focus { border-color: var(--maroon); box-shadow: 0 0 0 4px rgba(107, 12, 34, 0.1); }
+        .search-container .btn-add { white-space: nowrap; flex-shrink: 0; height: 46px; display: inline-flex; align-items: center; justify-content: center; }
+
         .search-results { position: absolute; top: 105%; right: 0; left: 0; background: white; border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 220px; overflow-y: auto; z-index: 1000; box-shadow: var(--shadow-md); display: none; }
         .search-results div { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-weight: 500; }
         .search-results div:hover { background-color: #fdf2f8; color: var(--maroon); font-weight: 700; padding-right: 22px; }
