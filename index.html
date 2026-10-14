@@ -152,6 +152,65 @@
         .teachers-table th, .teachers-table td { padding: 10px; border: 1px solid #e2e8f0; text-align: center; font-size: 0.9rem; }
         .teachers-table th { background: #f1f5f9; color: var(--royal-blue); }
 
+        /* تنسيقات كروت الفصول الدراسية */
+        .classes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+            margin-bottom: 25px;
+        }
+
+        .class-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            border: 2px solid #cbd5e1;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .class-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--royal-blue);
+            box-shadow: 0 10px 20px rgba(30, 58, 138, 0.12);
+            background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
+        }
+
+        .class-card .class-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--royal-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .class-card .class-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--royal-blue);
+        }
+
+        .class-card .class-count {
+            background: #dbeafe;
+            color: #1e40af;
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
         .analytics-fullscreen-page { display: none; width: 100%; max-width: 1400px; margin: auto; box-sizing: border-box; }
         .model-nav { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 25px; padding: 15px 20px; background: #ffffff; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); flex-wrap: wrap; border-top: 3px solid var(--accent); }
         .model-select-wrapper { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 300px; }
@@ -704,18 +763,50 @@
         </div>
     </div>
 
+    <!-- نافذة إدارة الطلاب والفصول المحدثة بدعم أيقونات الفصول -->
     <div id="students-manage-modal">
-        <h2 style="text-align: center; color: var(--royal-blue); margin-top:0; font-size:1.3rem;"><i class="fas fa-user-graduate"></i> إدارة الطلاب والفصول</h2>
+        <h2 style="text-align: center; color: var(--royal-blue); margin-top:0; font-size:1.3rem;"><i class="fas fa-school"></i> إدارة الفصول والطلاب</h2>
+        
+        <!-- قسم تصفح الفصول كأيقونات -->
+        <div id="classes-icons-view">
+            <h3 style="color: var(--royal-blue); font-size: 1.05rem; margin-bottom: 10px;"><i class="fas fa-chalkboard"></i> الفصول الدراسية:</h3>
+            <div id="classesGrid" class="classes-grid">
+                <!-- يتم توليد أيقونات الفصول ديناميكياً هنا -->
+            </div>
+        </div>
+
         <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
+            <h3 style="margin-top: 0; color: #0284c7; font-size: 1.05rem;"><i class="fas fa-user-plus"></i> إضافة طالب جديد لفصل:</h3>
             <input type="text" id="globalStudentSearch" class="auth-input" placeholder="🔍 ابحث بالاسم أو الإيميل..." style="max-width:100%; margin-bottom:10px;" oninput="filterGlobalStudentsList(this.value)">
             <div id="global-students-suggestions" style="max-height: 150px; overflow-y: auto; background: white; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 10px; display: none;"></div>
             <input type="text" id="selectedStudentName" class="auth-input" placeholder="اسم الطالب المختار" style="max-width:100%; margin-bottom:10px;" readonly>
             <input type="email" id="selectedStudentEmail" class="auth-input" placeholder="إيميل الطالب" style="max-width:100%; margin-bottom:10px; direction:ltr; text-align:right;" readonly>
-            <input type="text" id="regStudentClass" class="auth-input" placeholder="الفصل (مثال: أول ثانوي / 1)" style="max-width:100%; margin-bottom:10px;">
-            <button class="btn" style="background: var(--success-green); width: 100%; justify-content: center;" onclick="addStudentToTeacherClass()"><i class="fas fa-user-plus"></i> إضافة الطالب إلى فصولي</button>
+            <input type="text" id="regStudentClass" class="auth-input" placeholder="الفصل (مثال: أول أول / أول ثاني)" style="max-width:100%; margin-bottom:10px;">
+            <button class="btn" style="background: var(--success-green); width: 100%; justify-content: center;" onclick="addStudentToTeacherClass()"><i class="fas fa-user-plus"></i> إضافة الطالب للفصل</button>
         </div>
-        <h3 style="color: var(--royal-blue); font-size: 1.05rem;"><i class="fas fa-users"></i> طلابك المسجلين حالياً:</h3>
-        <div style="overflow-x: auto; max-height: 250px;"><table class="teachers-table"><thead><tr><th>اسم الطالب</th><th>الإيميل</th><th>الفصل</th><th>حذف</th></tr></thead><tbody id="registered-students-table-body"><tr><td colspan="4">جاري التحميل...</td></tr></tbody></table></div>
+
+        <!-- جدول تعرض فيه قائمة الطلاب مع إمكانية الفلترة باسم الفصل المختار -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 10px;">
+            <h3 style="color: var(--royal-blue); font-size: 1.05rem; margin:0;" id="students-list-title"><i class="fas fa-users"></i> الطلاب المسجلون:</h3>
+            <button id="show-all-classes-btn" class="btn" style="background: #3b82f6; padding: 5px 12px; font-size: 0.8rem; display: none;" onclick="showAllStudentsInTable()"><i class="fas fa-globe"></i> عرض جميع الفصول</button>
+        </div>
+
+        <div style="overflow-x: auto; max-height: 250px; margin-top: 10px;">
+            <table class="teachers-table">
+                <thead>
+                    <tr>
+                        <th>اسم الطالب</th>
+                        <th>الإيميل</th>
+                        <th>الفصل</th>
+                        <th>حذف</th>
+                    </tr>
+                </thead>
+                <tbody id="registered-students-table-body">
+                    <tr><td colspan="4">جاري التحميل...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
         <button class="btn" style="background:#64748b; width:100%; margin-top:20px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق</button>
     </div>
 
@@ -1061,6 +1152,8 @@
         let currentFilteredQuery = '';
         let currentUnsubscribe = null;
         let lastSubmittedDetails = null;
+
+        let registeredStudentsList = []; // تخزين قائمة الطلاب المسجلين بالكامل للفلترة
 
         const urlParams = new URLSearchParams(window.location.search);
         const isViewOnly = urlParams.has('view');
@@ -1470,19 +1563,98 @@
             } catch (e) { alert("حدث خطأ أثناء الحفظ."); }
         }
 
+        /* دالة جلب وتوليد عرض الطلاب والفصول كأيقونات */
         async function loadRegisteredStudents() {
             const tbody = document.getElementById('registered-students-table-body');
+            const classesGrid = document.getElementById('classesGrid');
             if (!tbody) return;
             tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">جاري التحميل...</td></tr>`;
+            if (classesGrid) classesGrid.innerHTML = `<p style="text-align:center; grid-column: 1/-1;">جاري جلب الفصول...</p>`;
+            
             try {
                 const snap = await fsDb.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).get();
-                if (snap.empty) { tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا توجد طلاب مسجلين في فصلك حالياً.</td></tr>`; return; }
-                tbody.innerHTML = "";
+                registeredStudentsList = [];
+                const classCounts = {};
+
+                if (snap.empty) { 
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا يوجد طلاب مسجلون في فصلك حالياً.</td></tr>`; 
+                    if (classesGrid) classesGrid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color:#64748b;">لا توجد فصول دراسية مضافة بعد.</p>`;
+                    return; 
+                }
+
                 snap.forEach(doc => {
-                    const st = doc.data();
-                    tbody.innerHTML += `<tr><td><b>${st.name}</b></td><td style="direction:ltr;">${st.email}</td><td>${st.class || '-'}</td><td><button class="btn" style="background:#ef4444; padding:4px 8px; font-size:0.8rem;" onclick="deleteRegisteredStudent('${doc.id}')">حذف</button></td></tr>`;
+                    const st = { id: doc.id, ...doc.data() };
+                    registeredStudentsList.push(st);
+                    
+                    const className = st.class || 'غير محدد';
+                    classCounts[className] = (classCounts[className] || 0) + 1;
                 });
-            } catch (e) { tbody.innerHTML = `<tr><td colspan="4">خطأ في الجلب.</td></tr>`; }
+
+                // بناء أيقونات الفصول الدراسية
+                if (classesGrid) {
+                    classesGrid.innerHTML = "";
+                    Object.keys(classCounts).sort().forEach(cName => {
+                        classesGrid.innerHTML += `
+                            <div class="class-card" onclick="filterStudentsByClass('${cName}')">
+                                <div class="class-icon"><i class="fas fa-users"></i></div>
+                                <div class="class-name">فصل ${cName}</div>
+                                <div class="class-count">${classCounts[cName]} طالب</div>
+                            </div>
+                        `;
+                    });
+                }
+
+                renderStudentsTable(registeredStudentsList);
+
+            } catch (e) { 
+                tbody.innerHTML = `<tr><td colspan="4">خطأ في الجلب.</td></tr>`; 
+            }
+        }
+
+        // عرض جدول الطلاب المفلترة
+        function renderStudentsTable(studentsArray) {
+            const tbody = document.getElementById('registered-students-table-body');
+            if (!tbody) return;
+            
+            if (studentsArray.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا يوجد طلاب في هذا الفصل.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = "";
+            studentsArray.forEach(st => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${st.name}</b></td>
+                        <td style="direction:ltr;">${st.email}</td>
+                        <td>${st.class || '-'}</td>
+                        <td><button class="btn" style="background:#ef4444; padding:4px 8px; font-size:0.8rem;" onclick="deleteRegisteredStudent('${st.id}')">حذف</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // تصفية الطلاب بحسب الفصل المختار عند الضغط على أيقونة الفصل
+        function filterStudentsByClass(className) {
+            const filtered = registeredStudentsList.filter(st => (st.class || 'غير محدد') === className);
+            renderStudentsTable(filtered);
+            
+            const titleEl = document.getElementById('students-list-title');
+            if (titleEl) titleEl.innerHTML = `<i class="fas fa-users"></i> طلاب فصل: <span style="color:var(--accent);">${className}</span> (${filtered.length} طالب)`;
+            
+            const btnShowAll = document.getElementById('show-all-classes-btn');
+            if (btnShowAll) btnShowAll.style.display = 'inline-flex';
+        }
+
+        // إعادة عرض كل الفصول في الجدول
+        function showAllStudentsInTable() {
+            renderStudentsTable(registeredStudentsList);
+            
+            const titleEl = document.getElementById('students-list-title');
+            if (titleEl) titleEl.innerHTML = `<i class="fas fa-users"></i> الطلاب المسجلون:`;
+            
+            const btnShowAll = document.getElementById('show-all-classes-btn');
+            if (btnShowAll) btnShowAll.style.display = 'none';
         }
 
         async function deleteRegisteredStudent(docId) {
