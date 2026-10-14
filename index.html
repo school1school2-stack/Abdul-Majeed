@@ -734,8 +734,8 @@
                     </div>
                 </div>
                 <div class="header-badge">
-                    <div><i class="fa-solid fa-book-bookmark" style="color: var(--maroon);"></i> <strong>المادة:</strong> <span id="counselorSubjectName">جار التحميل...</span></div>
-                    <div><i class="fa-solid fa-user-tie" style="color: var(--maroon);"></i> <strong>معلم المادة:</strong> <span id="counselorTeacherName">جار التحميل...</span></div>
+                    <div><i class="fa-solid fa-book-bookmark" style="color: var(--maroon);"></i> <strong>المادة:</strong> <span id="counselorSubjectName">أ / خالد محمد علي</span></div>
+                    <div><i class="fa-solid fa-user-tie" style="color: var(--maroon);"></i> <strong>معلم المادة:</strong> <span id="counselorTeacherName">أ / خالد محمد علي</span></div>
                 </div>
             </div>
 
@@ -779,7 +779,7 @@
 
             <div style="margin-top: 45px; display: flex; justify-content: space-between; font-weight: 700; border-top: 1px dashed var(--border); padding-top: 20px;">
                 <div>توقيع المرشد الطلابي: ........................</div>
-                <div>توقيع معلم المادة: ........................</div>
+                <div>توقيع معلم المادة: <span id="signatureTeacherName">أ / خالد محمد علي</span></div>
             </div>
 
             <!-- قائمة الخيارات المنفذة للتحكم الموحد -->
@@ -836,7 +836,7 @@
 
     <div class="modal-overlay" id="editReportModal">
         <div class="modal-content-counselor" style="max-width: 500px;">
-            <h3 style="color: var(--maroon); margin-top: 0; border-bottom: 2px solid var(--gold); padding-bottom: 10px;"><i class="fa-solid fa-pen-to-square"></i> تعديل بيانات التقرير</h3>
+            <h3 style="color: var(--maroon); margin-top: 0; border-bottom: 2px solid var(--gold); padding-bottom: 10px;"><i class="fas fa-pen-to-square"></i> تعديل بيانات التقرير</h3>
             <input type="hidden" id="editDocId">
             
             <div style="margin-bottom: 12px;">
@@ -858,9 +858,9 @@
 
     <!-- عناصر واجهة المعلم الخاصة -->
     <div class="user-header teacher-only" id="main-header" style="display: none;">
-        <div class="header-right"><h2 class="user-name" id="header-teacher-name">جاري التحميل...</h2></div>
+        <div class="header-right"><h2 class="user-name" id="header-teacher-name">أ / خالد محمد علي</h2></div>
         <div class="header-center"><div class="logo-box"><i class="fas fa-award"></i></div></div>
-        <div class="header-left"><p class="school-name" id="header-teacher-subject">جاري التحميل...</p></div>
+        <div class="header-left"><p class="school-name" id="header-teacher-subject">الكفايات اللغوية</p></div>
     </div>
 
     <div class="teacher-icon-bar teacher-only admin-only" id="teacher-icon-bar" style="display: none;">
@@ -903,8 +903,8 @@
             <div class="manager-header-box">
                 <div class="manager-header-row">
                     <div class="teacher-info-group">
-                        <h1 id="main-title" style="margin:0; color:var(--royal-blue); font-size:1.45rem; font-weight:800;">جاري التحميل...</h1>
-                        <span style="background: #e0f2fe; color: #0369a1; padding: 4px 12px; border-radius: 8px; font-size: 0.95rem; font-weight: bold;" id="sub-title">جاري التحميل...</span>
+                        <h1 id="main-title" style="margin:0; color:var(--royal-blue); font-size:1.45rem; font-weight:800;">أ / خالد محمد علي</h1>
+                        <span style="background: #e0f2fe; color: #0369a1; padding: 4px 12px; border-radius: 8px; font-size: 0.95rem; font-weight: bold;" id="sub-title">الكفايات اللغوية</span>
                     </div>
                     <div class="manager-info-group">
                         <span>المدير:</span>
@@ -1010,10 +1010,10 @@
         let currentExamEndTime = "";
         let examTimerInterval = null;
 
-        // متغيرات المعلم الحالي (افتراضية فارغة لحين جلبها من الرابط أو قاعدة البيانات)
-        let currentTeacherEmail = "";
-        let currentTeacherName = "جاري التحميل...";
-        let currentTeacherSubject = "جاري التحميل...";
+        // تعيين المعلم الافتراضي باسمك (أو جلبها من الرابط/قاعدة البيانات تلقائياً)
+        let currentTeacherEmail = "khaled@moe.gov.sa";
+        let currentTeacherName = "أ / خالد محمد علي";
+        let currentTeacherSubject = "الكفايات اللغوية";
 
         let chartA = null, chartB = null;
         let globalResultsSnapshotAna = [];
@@ -1041,6 +1041,21 @@
         const fsDb = firebase.firestore();
         const rtdb = firebase.database();
         const db = fsDb;
+
+        // دالة مركزية لتحديث اسم المعلم والمادة في كل مكان بالصفحة
+        function updateTeacherUI() {
+            document.querySelectorAll('#header-teacher-name, #main-title').forEach(el => el.innerText = currentTeacherName);
+            document.querySelectorAll('#header-teacher-subject, #sub-title').forEach(el => el.innerText = currentTeacherSubject);
+            
+            const cName = document.getElementById('counselorTeacherName');
+            if (cName) cName.innerText = currentTeacherName;
+            
+            const cSub = document.getElementById('counselorSubjectName');
+            if (cSub) cSub.innerText = currentTeacherSubject;
+
+            const sigName = document.getElementById('signatureTeacherName');
+            if (sigName) sigName.innerText = currentTeacherName;
+        }
 
         function updateLiveClock() {
             const now = new Date();
@@ -1097,11 +1112,7 @@
 
         function openCounselorModal() {
             loadStudentsList();
-            document.getElementById('counselorTeacherName').innerText = currentTeacherName;
-            const subjectEl = document.getElementById('counselorSubjectName');
-            if (subjectEl) {
-                subjectEl.innerText = currentTeacherSubject;
-            }
+            updateTeacherUI();
             document.getElementById('counselor-modal').style.display = 'block';
             document.getElementById('modal-overlay').style.display = 'block';
         }
@@ -2827,8 +2838,10 @@
                 document.body.classList.add('view-only-mode');
             }
 
-            // إخفاء عناصر المعلم بالكامل مؤقتاً لتجنب أي ظهور خاطئ لاسم معلم آخر
             document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
+
+            // تحديث الواجهة فوراً بالاسم الافتراضي المخصص لك
+            updateTeacherUI();
 
             if (teacherEmailParam) {
                 document.getElementById('admin-management-card').style.display = 'none';
@@ -2841,23 +2854,15 @@
                         currentTeacherName = tData.name;
                         currentTeacherSubject = tData.subject;
                         
-                        document.getElementById('header-teacher-name').innerText = currentTeacherName;
-                        document.getElementById('header-teacher-subject').innerText = currentTeacherSubject;
+                        // تحديث الاسم في كل أجزاء الكود بدقة
+                        updateTeacherUI();
                         
-                        const mainTitle = document.getElementById('main-title');
-                        const subTitle = document.getElementById('sub-title');
                         const managerTag = document.getElementById('manager-title-tag');
-
-                        if (mainTitle) mainTitle.innerText = currentTeacherName;
-                        if (subTitle) subTitle.innerText = currentTeacherSubject;
                         if (managerTag) managerTag.innerHTML = `د / عبدالله بن ظافر الشهري`;
+                    }
 
-                        // إظهار عناصر المعلم الصحيح فور اكتمال الجلب
-                        if (!isViewOnly) {
-                            document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'flex');
-                        }
-                    } else {
-                        alert("عذراً، بيانات هذا المعلم غير مسجلة في النظام.");
+                    if (!isViewOnly) {
+                        document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'flex');
                     }
 
                     if (isViewOnly) {
