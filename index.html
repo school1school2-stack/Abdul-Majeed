@@ -534,7 +534,6 @@
         <div class="header-left"><p class="school-name" id="header-teacher-subject">الكفايات اللغوية</p></div>
     </div>
 
-    <!-- تم حذف أيقونة مشاركة المدير هنا بناءً على طلبك -->
     <div class="teacher-icon-bar teacher-only admin-only" id="teacher-icon-bar" style="display: none;">
         <button class="icon-action-btn btn-students" onclick="openStudentsManagementModal()"><i class="fas fa-users-cog"></i><span>إدارة الطلاب والفصول</span></button>
         <button class="icon-action-btn btn-analytics" onclick="openFullAnalyticsPage()"><i class="fas fa-chart-line"></i><span>لوحة التحليل الذكي</span></button>
@@ -559,7 +558,7 @@
 
     <div class="analytics-fullscreen-page" id="analytics-fullscreen-view">
         <div class="model-nav no-print" id="nav-bar">
-            <div class="model-select-wrapper">
+            <div class="model-select-wrapper" id="model-select-container-wrapper">
                 <label for="model-dropdown">📁 اختر النموذج:</label>
                 <select id="model-dropdown" class="model-dropdown" onchange="setMod(this.value)">
                     <option value="all">🌍 عرض الكل</option>
@@ -582,7 +581,6 @@
                     </div>
                 </div>
             </div>
-            <!-- زر المشاركة المحدث داخل لوحة التحليل ليتيح الخيارين: اللوحة كاملة أو نموذج واحد -->
             <div class="action-buttons no-print" id="action-area" style="width:100%; display:flex; justify-content:flex-end; margin-top:5px; gap: 10px;">
                 <button class="btn admin-only" style="background:#059669;" onclick="shareTeacherDashboardForManager()"><i class="fas fa-share-alt"></i> مشاركة اللوحة كاملة للمدير</button>
                 <button class="btn admin-only" style="background:#7c3aed;" onclick="shareSingleModelForManager()"><i class="fas fa-file-alt"></i> مشاركة نموذج محدد للمدير</button>
@@ -697,6 +695,7 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const isViewOnly = urlParams.has('view');
+        const restrictedModelParam = urlParams.get('model');
 
         const firebaseConfig = {
             apiKey: "AIzaSyDhd5CSkNMoppGby6uKxHsQCBPmi6xxO58",
@@ -786,10 +785,15 @@
             document.querySelector('.container').style.display = 'none';
             document.getElementById('analytics-fullscreen-view').style.display = 'block';
             
-            // التحقق إذا كان الرابط يفرض عرض نموذج محدد
-            const modelParam = urlParams.get('model');
-            if (modelParam) {
-                selectedModel = modelParam;
+            if (restrictedModelParam) {
+                selectedModel = restrictedModelParam;
+                const wrapper = document.getElementById('model-select-container-wrapper');
+                if (wrapper) wrapper.style.display = 'none';
+            } else {
+                const modelParam = urlParams.get('model');
+                if (modelParam) {
+                    selectedModel = modelParam;
+                }
             }
             initAnalyticsListenerAna(selectedModel);
         }
@@ -863,6 +867,11 @@
 
             displayList.forEach(d => {
                 let actualModel = d.model_id || 'الجملة الاسمية';
+                
+                if (restrictedModelParam && actualModel !== restrictedModelParam) {
+                    return;
+                }
+
                 if (selectedModel === 'all' || actualModel == selectedModel) {
                     if (currentFilteredQuery && !d.name.toLowerCase().includes(currentFilteredQuery)) return;
                     const p = Math.round((d.score / d.total) * 100);
@@ -911,6 +920,7 @@
         }
 
         function setMod(m) {
+            if (restrictedModelParam) return;
             selectedModel = m;
             const dropdown = document.getElementById('model-dropdown');
             if (dropdown && dropdown.value !== m) dropdown.value = m;
@@ -1985,7 +1995,8 @@
         const countOptionsMap = {
             "عدم إحضار الواجبات": [
                 { value: "واجب 1", text: "واجب 1" }, { value: "واجب 2", text: "واجب 2" },
-                { value: "واجب 3", text: "واجب 3" }, { value: "واجب 4", text: "واجب 4" }, { value: "واجب 5", text: "واجب 5" }
+                { value: "واجب 3", text: "واجب 3" }, { value: "واجب 4", text: "واجب 4" },
+                { value: "واجب 5", text: "واجب 5" }
             ],
             "عدm إحضار البحث": [
                 { value: "1. لم يقدم البحث", text: "1. لم يقدم البحث" }, { value: "2. البحث غير مكتمل", text: "2. البحث غير مكتمل" }
