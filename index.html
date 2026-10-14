@@ -217,7 +217,6 @@
         .select-section { margin-bottom: 25px; background: linear-gradient(135deg, #fffcf0 0%, #fff8e1 100%); padding: 20px; border: 1px solid #fef08a; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }
         .select-section label { font-weight: 700; color: var(--maroon); display: block; margin-bottom: 10px; font-size: 1rem; }
         
-        /* التعديل المحدث لمنع التداخل بين حقل البحث وزر الإضافة */
         .search-container { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; width: 100%; }
         .search-box-wrapper { position: relative; flex: 1 1 280px; min-width: 250px; }
         input[type="text"].student-search { width: 100%; padding: 12px 16px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); font-size: 0.95rem; font-family: inherit; outline: none; background: white; box-sizing: border-box; }
@@ -2058,14 +2057,18 @@
             else if (action === "delete") deleteSavedReport(docId);
         }
 
+        // تم تحديث الدالة لضمان جلب قائمة الطلاب وتخزينها محلياً للبحث بشكل صحيح
         function loadStudentsList() {
-            db.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).orderBy("name").get().then((snapshot) => {
+            db.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).get().then((snapshot) => {
                 allStudents = [];
                 snapshot.forEach((doc) => {
                     const data = doc.data();
                     if (data.name) allStudents.push(data.name);
                 });
+            }).catch((error) => {
+                console.error("خطأ في جلب الطلاب للمرشد:", error);
             });
+            
             listenToCloudReferrals();
             if (isCounselorView) {
                 const ctrlSec = document.getElementById('controlSection');
