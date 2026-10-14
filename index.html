@@ -144,7 +144,7 @@
         .btn { border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; font-size: 0.9rem; white-space: nowrap; }
         .btn:hover { opacity: 0.9; }
 
-        #report-modal, #cloud-modal, #history-modal, #time-modal, #qr-modal, #student-report-modal, #students-manage-modal, #matrix-modal, #counselor-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 1000px; max-height: 90vh; background: #ffffff; color: #1e293b; z-index: 2000; border-radius: 20px; padding: 25px; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,0.4); box-sizing: border-box; }
+        #report-modal, #cloud-modal, #history-modal, #time-modal, #qr-modal, #student-report-modal, #students-manage-modal, #matrix-modal, #counselor-modal, #edit-teacher-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 1000px; max-height: 90vh; background: #ffffff; color: #1e293b; z-index: 2000; border-radius: 20px; padding: 25px; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,0.4); box-sizing: border-box; }
         .report-table { width: 100%; border-collapse: collapse; margin-top: 15px; display: block; overflow-x: auto; }
         .report-table th, .report-table td { padding: 10px; border: 1px solid #e2e8f0; text-align: center; font-size: 0.9rem; }
         .cloud-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid #e2e8f0; gap: 10px; flex-wrap: wrap; }
@@ -662,6 +662,27 @@
         </div>
         <h3 style="color: var(--royal-blue); font-size: 1.05rem;"><i class="fas fa-list"></i> قائمة المعلمين المعتمدين:</h3>
         <div style="overflow-x: auto;"><table class="teachers-table"><thead><tr><th>#</th><th>اسم المعلم</th><th>الإيميل</th><th>المادة</th><th>الإجراءات</th></tr></thead><tbody id="teachers-table-body"><tr><td colspan="5">جاري التحميل...</td></tr></tbody></table></div>
+    </div>
+
+    <!-- نافذة تعديل بيانات المعلم المنبثقة -->
+    <div id="edit-teacher-modal">
+        <h2 style="color: var(--royal-blue); margin-top: 0; text-align: center;"><i class="fas fa-user-edit"></i> تعديل بيانات المعلم</h2>
+        <input type="hidden" id="editTeacherKey">
+        <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
+            <label style="display:block; font-weight:bold; margin-bottom:5px;">اسم المعلم:</label>
+            <input type="text" id="editTeacherName" class="auth-input" placeholder="اسم المعلم" style="max-width:100%;">
+            
+            <label style="display:block; font-weight:bold; margin-bottom:5px;">إيميل المعلم:</label>
+            <input type="email" id="editTeacherEmail" class="auth-input" placeholder="إيميل المعلم" style="max-width:100%;" disabled>
+            
+            <label style="display:block; font-weight:bold; margin-bottom:5px;">المادة الدراسية:</label>
+            <input type="text" id="editTeacherSubject" class="auth-input" placeholder="المادة الدراسية" style="max-width:100%;">
+            
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn" style="background: var(--success-green); flex: 1; justify-content: center;" onclick="saveEditedTeacher()"><i class="fas fa-save"></i> حفظ التعديلات</button>
+                <button class="btn" style="background: #64748b; justify-content: center;" onclick="closeModals()"><i class="fas fa-times"></i> إلغاء</button>
+            </div>
+        </div>
     </div>
 
     <div id="students-manage-modal">
@@ -2120,7 +2141,7 @@
         }
 
         function closeModals() { 
-            document.querySelectorAll('#report-modal, #cloud-modal, #history-modal, #time-modal, #qr-modal, #student-report-modal, #students-manage-modal, #analytics-modal, #matrix-modal, #review-modal-ana, #counselor-modal').forEach(m => m.style.display = 'none');
+            document.querySelectorAll('#report-modal, #cloud-modal, #history-modal, #time-modal, #qr-modal, #student-report-modal, #students-manage-modal, #analytics-modal, #matrix-modal, #review-modal-ana, #counselor-modal, #edit-teacher-modal').forEach(m => m.style.display = 'none');
             document.getElementById('modal-overlay').style.display = 'none'; 
         }
 
@@ -2144,6 +2165,52 @@
             }
         }
 
+        // فتح نافذة تعديل بيانات المعلم
+        function openEditTeacherModal(key, name, email, subject) {
+            document.getElementById('editTeacherKey').value = key;
+            document.getElementById('editTeacherName').value = name;
+            document.getElementById('editTeacherEmail').value = email;
+            document.getElementById('editTeacherSubject').value = subject;
+            
+            document.getElementById('edit-teacher-modal').style.display = 'block';
+            document.getElementById('modal-overlay').style.display = 'block';
+        }
+
+        // حفظ التعديلات الخاصة بالمعلم
+        async function saveEditedTeacher() {
+            const key = document.getElementById('editTeacherKey').value;
+            const name = document.getElementById('editTeacherName').value.trim();
+            const subject = document.getElementById('editTeacherSubject').value.trim();
+            const email = document.getElementById('editTeacherEmail').value.trim();
+
+            if (!name || !subject) {
+                alert("الرجاء تعبئة جميع الحقول المطلوبة.");
+                return;
+            }
+
+            try {
+                await rtdb.ref('teachers_registry/' + key).update({ name, subject });
+                alert("تم تعديل بيانات المعلم بنجاح! 🌟");
+                closeModals();
+                loadTeachersRegistry();
+            } catch (e) {
+                alert("حدث خطأ أثناء تعديل بيانات المعلم.");
+            }
+        }
+
+        // حذف المعلم من النظام
+        async function deleteTeacher(key, teacherName) {
+            if (confirm(`هل أنت متأكد من حذف المعلم (${teacherName}) من النظام؟`)) {
+                try {
+                    await rtdb.ref('teachers_registry/' + key).remove();
+                    alert("تم حذف المعلم بنجاح!");
+                    loadTeachersRegistry();
+                } catch (e) {
+                    alert("حدث خطأ أثناء حذف المعلم.");
+                }
+            }
+        }
+
         function loadTeachersRegistry() {
             const tbody = document.getElementById('teachers-table-body');
             if (!tbody) return;
@@ -2159,7 +2226,20 @@
                 let i = 1;
                 Object.keys(data).forEach(k => {
                     let t = data[k];
-                    tbody.innerHTML += `<tr><td>${i++}</td><td><b>${t.name}</b></td><td>${t.email}</td><td>${t.subject}</td><td><button class="btn" style="background:#10b981; padding:4px 8px;" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=${t.email}').then(()=>alert('تم النسخ'))">رابط المعلم</button> <button class="btn" style="background:#0284c7; padding:4px 8px;" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=${t.email}&view=true').then(()=>alert('تم نسخ رابط المدير'))">رابط المدير</button></td></tr>`;
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${i++}</td>
+                            <td><b>${t.name}</b></td>
+                            <td>${t.email}</td>
+                            <td>${t.subject}</td>
+                            <td>
+                                <button class="btn" style="background:#10b981; padding:4px 8px; font-size:0.8rem;" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=${t.email}').then(()=>alert('تم النسخ'))">رابط المعلم</button> 
+                                <button class="btn" style="background:#0284c7; padding:4px 8px; font-size:0.8rem;" onclick="navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=${t.email}&view=true').then(()=>alert('تم نسخ رابط المدير'))">رابط المدير</button>
+                                <button class="btn" style="background:#f59e0b; padding:4px 8px; font-size:0.8rem;" onclick="openEditTeacherModal('${k}', '${t.name}', '${t.email}', '${t.subject}')"><i class="fas fa-edit"></i> تعديل</button>
+                                <button class="btn" style="background:#ef4444; padding:4px 8px; font-size:0.8rem;" onclick="deleteTeacher('${k}', '${t.name}')"><i class="fas fa-trash"></i> حذف</button>
+                            </td>
+                        </tr>
+                    `;
                 });
             }).catch(error => {
                 tbody.innerHTML = `<tr><td colspan="5" style="color:var(--q-red);">تعذر تحميل قائمة المعلمين. تأكد من تفعيل Realtime Database.</td></tr>`;
