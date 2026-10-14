@@ -763,13 +763,13 @@
         </div>
     </div>
 
-    <!-- نافذة إدارة الطلاب والفصول المحدثة بدعم أيقونات الفصول -->
+    <!-- نافذة إدارة الطلاب والفصول المحدثة بدعم أيقونات الفصول التفاعلية -->
     <div id="students-manage-modal">
         <h2 style="text-align: center; color: var(--royal-blue); margin-top:0; font-size:1.3rem;"><i class="fas fa-school"></i> إدارة الفصول والطلاب</h2>
         
         <!-- قسم تصفح الفصول كأيقونات -->
         <div id="classes-icons-view">
-            <h3 style="color: var(--royal-blue); font-size: 1.05rem; margin-bottom: 10px;"><i class="fas fa-chalkboard"></i> الفصول الدراسية:</h3>
+            <h3 style="color: var(--royal-blue); font-size: 1.05rem; margin-bottom: 10px;"><i class="fas fa-chalkboard"></i> الفصول الدراسية (اضغط على أي فصل لاستعراض طلابه):</h3>
             <div id="classesGrid" class="classes-grid">
                 <!-- يتم توليد أيقونات الفصول ديناميكياً هنا -->
             </div>
@@ -785,7 +785,7 @@
             <button class="btn" style="background: var(--success-green); width: 100%; justify-content: center;" onclick="addStudentToTeacherClass()"><i class="fas fa-user-plus"></i> إضافة الطالب للفصل</button>
         </div>
 
-        <!-- جدول تعرض فيه قائمة الطلاب مع إمكانية الفلترة باسم الفصل المختار -->
+        <!-- جدول يعرض طلاب الفصل المختار مع زر العودة -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 10px;">
             <h3 style="color: var(--royal-blue); font-size: 1.05rem; margin:0;" id="students-list-title"><i class="fas fa-users"></i> الطلاب المسجلون:</h3>
             <button id="show-all-classes-btn" class="btn" style="background: #3b82f6; padding: 5px 12px; font-size: 0.8rem; display: none;" onclick="showAllStudentsInTable()"><i class="fas fa-globe"></i> عرض جميع الفصول</button>
@@ -1141,7 +1141,6 @@
         let currentExamEndTime = "";
         let examTimerInterval = null;
 
-        // تعيين المعلم الافتراضي باسمك (أو جلبها من الرابط/قاعدة البيانات تلقائياً)
         let currentTeacherEmail = "khaled@moe.gov.sa";
         let currentTeacherName = "أ / خالد محمد علي";
         let currentTeacherSubject = "الكفايات اللغوية";
@@ -1153,7 +1152,7 @@
         let currentUnsubscribe = null;
         let lastSubmittedDetails = null;
 
-        let registeredStudentsList = []; // تخزين قائمة الطلاب المسجلين بالكامل للفلترة
+        let registeredStudentsList = []; // لتخزين قائمة الطلاب والتحكم في تصفية الفصول
 
         const urlParams = new URLSearchParams(window.location.search);
         const isViewOnly = urlParams.has('view');
@@ -1175,7 +1174,6 @@
         const rtdb = firebase.database();
         const db = fsDb;
 
-        // دالة مركزية لتحديث اسم المعلم والمادة في كل مكان بالصفحة
         function updateTeacherUI() {
             document.querySelectorAll('#header-teacher-name, #main-title').forEach(el => el.innerText = currentTeacherName);
             document.querySelectorAll('#header-teacher-subject, #sub-title').forEach(el => el.innerText = currentTeacherSubject);
@@ -1563,7 +1561,7 @@
             } catch (e) { alert("حدث خطأ أثناء الحفظ."); }
         }
 
-        /* دالة جلب وتوليد عرض الطلاب والفصول كأيقونات */
+        // دالة جلب وتوليد عرض الفصول كأيقونات مع تصفية الطلاب
         async function loadRegisteredStudents() {
             const tbody = document.getElementById('registered-students-table-body');
             const classesGrid = document.getElementById('classesGrid');
@@ -1604,6 +1602,7 @@
                     });
                 }
 
+                // عرض جميع الطلاب في البداية عند فتح نافذة الإدارة
                 renderStudentsTable(registeredStudentsList);
 
             } catch (e) { 
@@ -1611,7 +1610,7 @@
             }
         }
 
-        // عرض جدول الطلاب المفلترة
+        // عرض جدول الطلاب 
         function renderStudentsTable(studentsArray) {
             const tbody = document.getElementById('registered-students-table-body');
             if (!tbody) return;
@@ -1646,7 +1645,7 @@
             if (btnShowAll) btnShowAll.style.display = 'inline-flex';
         }
 
-        // إعادة عرض كل الفصول في الجدول
+        // زر العرض الشامل لجميع الفصول في الجدول
         function showAllStudentsInTable() {
             renderStudentsTable(registeredStudentsList);
             
@@ -2356,7 +2355,6 @@
             }
         }
 
-        // فتح نافذة تعديل بيانات المعلم
         function openEditTeacherModal(key, name, email, subject) {
             document.getElementById('editTeacherKey').value = key;
             document.getElementById('editTeacherName').value = name;
@@ -2367,7 +2365,6 @@
             document.getElementById('modal-overlay').style.display = 'block';
         }
 
-        // حفظ التعديلات الخاصة بالمعلم
         async function saveEditedTeacher() {
             const key = document.getElementById('editTeacherKey').value;
             const name = document.getElementById('editTeacherName').value.trim();
@@ -2389,7 +2386,6 @@
             }
         }
 
-        // حذف المعلم من النظام
         async function deleteTeacher(key, teacherName) {
             if (confirm(`هل أنت متأكد من حذف المعلم (${teacherName}) من النظام؟`)) {
                 try {
@@ -2402,10 +2398,9 @@
             }
         }
 
-        // دالة التعامل مع خيارات القائمة المنسدلة لإجراءات المعلم
         function handleTeacherAction(selectEl, key, name, email, subject) {
             const action = selectEl.value;
-            selectEl.value = ""; // إعادة تعيين القائمة
+            selectEl.value = "";
 
             if (action === "copy_link") {
                 navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?teacher=' + email)
@@ -2458,7 +2453,6 @@
             });
         }
 
-        /* ==================== دوال كود المرشد الطلابي المحدثة ==================== */
         let allStudents = [];
         let studentCount = 0;
         let selectedStudentName = "";
@@ -3132,7 +3126,6 @@
 
             document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
 
-            // تحديث الواجهة فوراً بالاسم الافتراضي المخصص لك
             updateTeacherUI();
 
             if (teacherEmailParam) {
@@ -3146,7 +3139,6 @@
                         currentTeacherName = tData.name;
                         currentTeacherSubject = tData.subject;
                         
-                        // تحديث الاسم في كل أجزاء الكود بدقة
                         updateTeacherUI();
                         
                         const managerTag = document.getElementById('manager-title-tag');
