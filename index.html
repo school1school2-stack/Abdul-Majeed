@@ -262,23 +262,23 @@
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
         .modal-content-counselor { background: white; border-radius: var(--radius-lg); max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 30px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
 
-        /* تذييل الصفحة الخاص بالمشرف والمعلم */
+        /* تذييل الصفحة باللون الرمادي الخفيف جداً */
         .footer-bar {
             width: 100%;
             max-width: 900px;
-            background: var(--card-bg);
+            background: #fafafa;
             border-radius: 12px;
             padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            border-top: 3px solid var(--royal-blue);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            border: 1px solid #f1f5f9;
             margin-top: 30px;
             box-sizing: border-box;
             font-size: 0.95rem;
             font-weight: bold;
-            color: var(--text-color);
+            color: #64748b;
         }
 
         body.student-mode .footer-bar {
@@ -698,10 +698,10 @@
         <button class="btn" style="background:var(--royal-blue); padding:15px 25px;" onclick="openStudentHistory()"><i class="fas fa-history"></i> سجل اختباراتي السابقة 📊</button>
     </div>
 
-    <!-- تذييل الصفحة للمشرف والمعلم فقط -->
+    <!-- تذييل الصفحة للمشرف والمعلم (باللون الرمادي الخفيف جداً) -->
     <div class="footer-bar teacher-only admin-only">
         <div style="flex: 1; text-align: right;">أ/عبدالعزيز الفيفي</div>
-        <div style="flex: 1; text-align: center; color: var(--royal-blue);">الحقوق محفوظة 2026</div>
+        <div style="flex: 1; text-align: center; color: #475569;">الحقوق محفوظة 2026</div>
         <div style="flex: 1; text-align: left; color: #64748b;">ثانوية الأمير عبد المجيد</div>
     </div>
 
