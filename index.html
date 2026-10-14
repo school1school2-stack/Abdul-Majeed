@@ -77,6 +77,7 @@
         .icon-action-btn.btn-students { background: #047857; }
         .icon-action-btn.btn-analytics { background: #0284c7; }
         .icon-action-btn.btn-matrix { background: #7c3aed; }
+        .icon-action-btn.btn-share { background: #059669; }
         .icon-action-btn.btn-counselor { background: #6b0c22; }
 
         .sub-action-bar {
@@ -141,7 +142,7 @@
         .btn { border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; font-size: 0.9rem; white-space: nowrap; }
         .btn:hover { opacity: 0.9; }
 
-        #cloud-modal, #history-modal, #time-modal, #qr-modal, #student-report-modal, #matrix-modal, #edit-teacher-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 1000px; max-height: 90vh; background: #ffffff; color: #1e293b; z-index: 2000; border-radius: 20px; padding: 25px; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,0.4); box-sizing: border-box; }
+        #report-modal, #cloud-modal, #history-modal, #time-modal, #qr-modal, #student-report-modal, #students-manage-modal, #matrix-modal, #counselor-modal, #edit-teacher-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 1000px; max-height: 90vh; background: #ffffff; color: #1e293b; z-index: 2000; border-radius: 20px; padding: 25px; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,0.4); box-sizing: border-box; }
         .report-table { width: 100%; border-collapse: collapse; margin-top: 15px; display: block; overflow-x: auto; }
         .report-table th, .report-table td { padding: 10px; border: 1px solid #e2e8f0; text-align: center; font-size: 0.9rem; }
         .cloud-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid #e2e8f0; gap: 10px; flex-wrap: wrap; }
@@ -157,9 +158,6 @@
         .class-card .class-count { background: #dbeafe; color: #1e40af; font-size: 0.85rem; font-weight: bold; padding: 4px 12px; border-radius: 20px; }
 
         .analytics-fullscreen-page { display: none; width: 100%; max-width: 1400px; margin: auto; box-sizing: border-box; }
-        .counselor-fullscreen-page { display: none; width: 100%; max-width: 1200px; margin: auto; box-sizing: border-box; }
-        .students-fullscreen-page { display: none; width: 100%; max-width: 1000px; margin: auto; box-sizing: border-box; }
-
         .model-nav { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 25px; padding: 15px 20px; background: #ffffff; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); flex-wrap: wrap; border-top: 3px solid var(--accent); }
         .model-select-wrapper { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 300px; }
         .model-select-wrapper label { font-weight: bold; color: var(--accent); white-space: nowrap; font-size: 1.15rem; }
@@ -219,6 +217,7 @@
         .select-section { margin-bottom: 25px; background: linear-gradient(135deg, #fffcf0 0%, #fff8e1 100%); padding: 20px; border: 1px solid #fef08a; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }
         .select-section label { font-weight: 700; color: var(--maroon); display: block; margin-bottom: 10px; font-size: 1rem; }
         
+        /* التعديل المحدث لمنع التداخل بين حقل البحث وزر الإضافة */
         .search-container { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; width: 100%; }
         .search-box-wrapper { position: relative; flex: 1 1 280px; min-width: 250px; }
         input[type="text"].student-search { width: 100%; padding: 12px 16px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); font-size: 0.95rem; font-family: inherit; outline: none; background: white; box-sizing: border-box; }
@@ -326,6 +325,49 @@
         </div>
     </div>
 
+    <!-- نافذة إدارة الطلاب والفصول -->
+    <div id="students-manage-modal">
+        <h2 style="text-align: center; color: var(--royal-blue); margin-top:0; font-size:1.3rem;"><i class="fas fa-school"></i> إدارة الفصول والطلاب</h2>
+        
+        <div id="classes-icons-view">
+            <h3 style="color: var(--royal-blue); font-size: 1.05rem; margin-bottom: 10px;"><i class="fas fa-chalkboard"></i> الفصول الدراسية (اضغط على أي فصل لاستعراض طلابه):</h3>
+            <div id="classesGrid" class="classes-grid"></div>
+        </div>
+
+        <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
+            <h3 style="margin-top: 0; color: #0284c7; font-size: 1.05rem;"><i class="fas fa-user-plus"></i> إضافة طالب جديد لفصل:</h3>
+            <input type="text" id="globalStudentSearch" class="auth-input" placeholder="🔍 ابحث بالاسم أو الإيميل..." style="max-width:100%; margin-bottom:10px;" oninput="filterGlobalStudentsList(this.value)">
+            <div id="global-students-suggestions" style="max-height: 150px; overflow-y: auto; background: white; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 10px; display: none;"></div>
+            <input type="text" id="selectedStudentName" class="auth-input" placeholder="اسم الطالب المختار" style="max-width:100%; margin-bottom:10px;" readonly>
+            <input type="email" id="selectedStudentEmail" class="auth-input" placeholder="إيميل الطالب" style="max-width:100%; margin-bottom:10px; direction:ltr; text-align:right;" readonly>
+            <input type="text" id="regStudentClass" class="auth-input" placeholder="الفصل (مثال: أول أول / أول ثاني)" style="max-width:100%; margin-bottom:10px;">
+            <button class="btn" style="background: var(--success-green); width: 100%; justify-content: center;" onclick="addStudentToTeacherClass()"><i class="fas fa-user-plus"></i> إضافة الطالب للفصل</button>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 10px;">
+            <h3 style="color: var(--royal-blue); font-size: 1.05rem; margin:0;" id="students-list-title"><i class="fas fa-users"></i> الطلاب المسجلون:</h3>
+            <button id="show-all-classes-btn" class="btn" style="background: #3b82f6; padding: 5px 12px; font-size: 0.8rem; display: none;" onclick="showAllStudentsInTable()"><i class="fas fa-globe"></i> عرض جميع الفصول</button>
+        </div>
+
+        <div style="overflow-x: auto; max-height: 250px; margin-top: 10px;">
+            <table class="teachers-table">
+                <thead>
+                    <tr>
+                        <th>اسم الطالب</th>
+                        <th>الإيميل</th>
+                        <th>الفصل</th>
+                        <th>حذف</th>
+                    </tr>
+                </thead>
+                <tbody id="registered-students-table-body">
+                    <tr><td colspan="4">جاري التحميل...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <button class="btn" style="background:#64748b; width:100%; margin-top:20px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق</button>
+    </div>
+
     <div id="matrix-modal">
         <h2 style="color:var(--royal-blue); margin-top:0;"><i class="fas fa-file-code"></i> مصفوفة الأسئلة البرمجية</h2>
         <textarea id="arrayInputText" class="auth-input" style="width:100%; height:220px; font-family:monospace; font-size:0.85rem; direction:ltr; text-align:left; resize:none; max-width:100%;"></textarea>
@@ -365,6 +407,75 @@
             <tbody id="report-body"></tbody>
         </table>
         <button class="btn" style="background:#64748b; width:100%; margin-top:10px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق التقرير</button>
+    </div>
+
+    <div id="counselor-modal">
+        <div class="counselor-container" id="pdfContent">
+            <div class="header-info">
+                <div class="header-title-box">
+                    <div class="header-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                    <div>
+                        <h2>إشعار تحويل طلاب للمرشد الطلابي</h2>
+                        <small style="color: var(--text-muted); font-weight: 600;">المملكة العربية السعودية - وزارة التعليم</small>
+                    </div>
+                </div>
+                <div class="header-badge">
+                    <div><i class="fa-solid fa-book-bookmark" style="color: var(--maroon);"></i> <strong>المادة:</strong> <span id="counselorSubjectName">أ / خالد محمد علي</span></div>
+                    <div><i class="fa-solid fa-user-tie" style="color: var(--maroon);"></i> <strong>معلم المادة:</strong> <span id="counselorTeacherName">أ / خالد محمد علي</span></div>
+                </div>
+            </div>
+
+            <div class="select-section no-print" id="controlSection">
+                <label for="searchInput"><i class="fa-solid fa-magnifying-glass"></i> ابحث عن اسم الطالب واختاره لإضافته للقائمة:</label>
+                <div class="search-container">
+                    <div class="search-box-wrapper">
+                        <input type="text" id="searchInput" class="student-search" placeholder="اكتب اسم الطالب هنا..." oninput="filterStudents()" onfocus="filterStudents()">
+                        <div id="searchResults" class="search-results"></div>
+                    </div>
+                    <button class="btn btn-add" style="background: var(--maroon);" onclick="addSelectedStudent()"><i class="fa-solid fa-plus"></i> إضافة للقائمة</button>
+                </div>
+            </div>
+
+            <div class="history-section no-print" id="studentHistorySection">
+                <h3 id="historyTitle">
+                    <span><i class="fa-solid fa-folder-open"></i> سجل تقارير الطالب السابقة</span>
+                    <button class="btn btn-close" style="padding: 4px 10px; font-size: 0.8rem;" onclick="document.getElementById('studentHistorySection').style.display='none'">إخفاء الأرشيف</button>
+                </h3>
+                <div id="historyContent">جاري البحث...</div>
+            </div>
+
+            <table id="referralTable" class="referral-table-styled">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">#</th>
+                        <th style="width: 20%;">اسم الطالب وتاريخ التحويل</th>
+                        <th style="width: 22%;" class="no-print">اختيار مخالفة وإضافتها</th>
+                        <th style="width: 22%;">قائمة المخالفات المسجلة للطالب</th>
+                        <th style="width: 18%;">ملاحظات وسلوكيات المعلم</th>
+                        <th class="no-print" style="width: 13%;">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+
+            <div style="margin-top: 45px; display: flex; justify-content: space-between; font-weight: 700; border-top: 1px dashed var(--border); padding-top: 20px;">
+                <div>توقيع المرشد الطلابي: ........................</div>
+                <div>توقيع معلم المادة: <span id="signatureTeacherName">أ / خالد محمد علي</span></div>
+            </div>
+
+            <div class="actions-dropdown-container no-print">
+                <select class="main-actions-select" onchange="executeMainAction(this)">
+                    <option value="">⚙️ قائمة الإجراءات والتحكم الرئيسية...</option>
+                    <option value="save_all">💾 حفظ وأرشفة جميع التقارير الحالية</option>
+                    <option value="open_saved">📂 التقارير المحفوظة والأرشيف السحابي</option>
+                    <option value="share_link">🔗 مشاركة رابط المرشد الطلابي العام</option>
+                    <option value="preview">👁️ معاينة الاستمارة قبل الطباعة</option>
+                    <option value="pdf">📄 تحميل الاستمارة ملف PDF</option>
+                    <option value="print">🖨️ طباعة الاستمارة</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn" style="background:#64748b; width:100%; margin-top:20px; justify-content:center;" onclick="closeModals()"><i class="fas fa-times"></i> إغلاق النافذة</button>
     </div>
 
     <div class="toast-notification" id="toast">
@@ -421,83 +532,34 @@
         </div>
     </div>
 
-    <!-- الهيدر الترحيبي ولوحة الأيقونات الأربع -->
-    <div id="main-dashboard-wrapper" class="teacher-only" style="display:none; width:100%; max-width:900px; flex-direction:column; align-items:center;">
-        <div class="user-header" id="main-header" style="display: flex; width: 100%;">
-            <div class="header-right"><h2 class="user-name" id="header-teacher-name">أ / خالد محمد علي</h2></div>
-            <div class="header-center"><div class="logo-box"><i class="fas fa-award"></i></div></div>
-            <div class="header-left"><p class="school-name" id="header-teacher-subject">الكفايات اللغوية</p></div>
-        </div>
+    <div class="user-header teacher-only" id="main-header" style="display: none;">
+        <div class="header-right"><h2 class="user-name" id="header-teacher-name">أ / خالد محمد علي</h2></div>
+        <div class="header-center"><div class="logo-box"><i class="fas fa-award"></i></div></div>
+        <div class="header-left"><p class="school-name" id="header-teacher-subject">الكفايات اللغوية</p></div>
+    </div>
 
-        <div class="teacher-icon-bar admin-only" id="teacher-icon-bar" style="display: flex; width: 100%;">
-            <button class="icon-action-btn btn-students" onclick="openStudentsPage()"><i class="fas fa-users-cog"></i><span>إدارة الطلاب والفصول</span></button>
-            <button class="icon-action-btn btn-analytics" onclick="openAnalyticsPage()"><i class="fas fa-chart-line"></i><span>لوحة التحليل الذكي</span></button>
-            <button class="icon-action-btn btn-matrix" onclick="openMatrixModal()"><i class="fas fa-file-code"></i><span>مصفوفة الاختبارات</span></button>
-            <button class="icon-action-btn btn-counselor" onclick="openCounselorPage()"><i class="fas fa-user-shield"></i><span>تحويل للمرشد</span></button>
-        </div>
+    <div class="teacher-icon-bar teacher-only admin-only" id="teacher-icon-bar" style="display: none;">
+        <button class="icon-action-btn btn-students" onclick="openStudentsManagementModal()"><i class="fas fa-users-cog"></i><span>إدارة الطلاب والفصول</span></button>
+        <button class="icon-action-btn btn-analytics" onclick="openFullAnalyticsPage()"><i class="fas fa-chart-line"></i><span>لوحة التحليل الذكي</span></button>
+        <button class="icon-action-btn btn-matrix" onclick="openMatrixModal()"><i class="fas fa-file-code"></i><span>مصفوفة الاختبارات</span></button>
+        <button class="icon-action-btn btn-counselor" onclick="openCounselorModal()"><i class="fas fa-user-shield"></i><span>تحويل للمرشد</span></button>
+    </div>
 
-        <div class="sub-action-bar admin-only" style="display: flex; width: 100%;">
-            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                <span id="current-model-label" style="font-weight: bold; color: var(--royal-blue);">📁 نموذج جديد</span>
-                <button class="btn" style="background:#1e293b; padding:6px 12px; font-size:0.85rem;" onclick="startNewModel()"><i class="fas fa-plus-circle"></i> جديد</button>
-                <button class="btn" style="background:#0284c7; padding:6px 12px; font-size:0.85rem;" onclick="saveToCloud()"><i class="fas fa-save"></i> حفظ</button>
-                <button class="btn" style="background:#4f46e5; padding:6px 12px; font-size:0.85rem;" onclick="loadFromCloud()"><i class="fas fa-folder-open"></i> فتح</button>
-                <button class="btn" style="background:#d97706; padding:6px 12px; font-size:0.85rem;" onclick="openTimeModal()"><i class="fas fa-clock"></i> التوقيت</button>
-                <button class="btn" style="background:#0d9488; padding:6px 12px; font-size:0.85rem;" onclick="copyCurrentModelLink()"><i class="fas fa-link"></i> الرابط</button>
-            </div>
-            <div style="display:flex; gap:8px; align-items:center;">
-                <button class="btn" style="background:#059669; padding:6px 12px; font-size:0.85rem;" onclick="addQuestion()"><i class="fas fa-plus"></i> سؤال</button>
-                <button class="btn" style="background:#dc2626; padding:6px 12px; font-size:0.85rem;" onclick="clearAll()"><i class="fas fa-eraser"></i> مسح</button>
-            </div>
+    <div class="sub-action-bar teacher-only admin-only" style="display: none;">
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <span id="current-model-label" style="font-weight: bold; color: var(--royal-blue);">📁 نموذج جديد</span>
+            <button class="btn" style="background:#1e293b; padding:6px 12px; font-size:0.85rem;" onclick="startNewModel()"><i class="fas fa-plus-circle"></i> جديد</button>
+            <button class="btn" style="background:#0284c7; padding:6px 12px; font-size:0.85rem;" onclick="saveToCloud()"><i class="fas fa-save"></i> حفظ</button>
+            <button class="btn" style="background:#4f46e5; padding:6px 12px; font-size:0.85rem;" onclick="loadFromCloud()"><i class="fas fa-folder-open"></i> فتح</button>
+            <button class="btn" style="background:#d97706; padding:6px 12px; font-size:0.85rem;" onclick="openTimeModal()"><i class="fas fa-clock"></i> التوقيت</button>
+            <button class="btn" style="background:#0d9488; padding:6px 12px; font-size:0.85rem;" onclick="copyCurrentModelLink()"><i class="fas fa-link"></i> الرابط</button>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+            <button class="btn" style="background:#059669; padding:6px 12px; font-size:0.85rem;" onclick="addQuestion()"><i class="fas fa-plus"></i> سؤال</button>
+            <button class="btn" style="background:#dc2626; padding:6px 12px; font-size:0.85rem;" onclick="clearAll()"><i class="fas fa-eraser"></i> مسح</button>
         </div>
     </div>
 
-    <!-- 1. صفحة إدارة الطلاب والفصول -->
-    <div class="students-fullscreen-page" id="students-fullscreen-view">
-        <div class="model-nav no-print">
-            <h2 style="color:var(--royal-blue); margin:0; font-size:1.2rem;"><i class="fas fa-users-cog"></i> صفحة إدارة الطلاب والفصول</h2>
-            <button class="btn" style="background:#64748b;" onclick="returnToMainDashboard()"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button>
-        </div>
-        <div style="background:var(--card-bg); padding:25px; border-radius:20px; box-shadow:var(--shadow-md); border:1px solid var(--card-border);">
-            <div id="classes-icons-view">
-                <h3 style="color: var(--royal-blue); font-size: 1.05rem; margin-bottom: 10px;"><i class="fas fa-chalkboard"></i> الفصول الدراسية (اضغط على أي فصل لاستعراض طلابه):</h3>
-                <div id="classesGrid" class="classes-grid"></div>
-            </div>
-
-            <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
-                <h3 style="margin-top: 0; color: #0284c7; font-size: 1.05rem;"><i class="fas fa-user-plus"></i> إضافة طالب جديد لفصل:</h3>
-                <input type="text" id="globalStudentSearch" class="auth-input" placeholder="🔍 ابحث بالاسم أو الإيميل..." style="max-width:100%; margin-bottom:10px;" oninput="filterGlobalStudentsList(this.value)">
-                <div id="global-students-suggestions" style="max-height: 150px; overflow-y: auto; background: white; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 10px; display: none;"></div>
-                <input type="text" id="selectedStudentName" class="auth-input" placeholder="اسم الطالب المختار" style="max-width:100%; margin-bottom:10px;" readonly>
-                <input type="email" id="selectedStudentEmail" class="auth-input" placeholder="إيميل الطالب" style="max-width:100%; margin-bottom:10px; direction:ltr; text-align:right;" readonly>
-                <input type="text" id="regStudentClass" class="auth-input" placeholder="الفصل (مثال: أول أول / أول ثاني)" style="max-width:100%; margin-bottom:10px;">
-                <button class="btn" style="background: var(--success-green); width: 100%; justify-content: center;" onclick="addStudentToTeacherClass()"><i class="fas fa-user-plus"></i> إضافة الطالب للفصل</button>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 10px;">
-                <h3 style="color: var(--royal-blue); font-size: 1.05rem; margin:0;" id="students-list-title"><i class="fas fa-users"></i> الطلاب المسجلون:</h3>
-                <button id="show-all-classes-btn" class="btn" style="background: #3b82f6; padding: 5px 12px; font-size: 0.8rem; display: none;" onclick="showAllStudentsInTable()"><i class="fas fa-globe"></i> عرض جميع الفصول</button>
-            </div>
-
-            <div style="overflow-x: auto; max-height: 250px; margin-top: 10px;">
-                <table class="teachers-table">
-                    <thead>
-                        <tr>
-                            <th>اسم الطالب</th>
-                            <th>الإيميل</th>
-                            <th>الفصل</th>
-                            <th>حذف</th>
-                        </tr>
-                    </thead>
-                    <tbody id="registered-students-table-body">
-                        <tr><td colspan="4">جاري التحميل...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- 2. صفحة لوحة التحليل الذكي -->
     <div class="analytics-fullscreen-page" id="analytics-fullscreen-view">
         <div class="model-nav no-print" id="nav-bar">
             <div class="model-select-wrapper" id="model-select-container-wrapper">
@@ -507,7 +569,7 @@
                 </select>
             </div>
             <div class="live-clock-badge" id="live-clock-display">🕒 جاري تحميل الوقت...</div>
-            <button class="btn" style="background:#64748b;" id="return-home-btn" onclick="returnToMainDashboard()"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button>
+            <button class="btn" style="background:#64748b;" id="return-home-btn" onclick="closeAnalyticsPage()"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button>
         </div>
 
         <div class="header-analytics">
@@ -575,79 +637,6 @@
                 </thead>
                 <tbody id="data-rows"></tbody>
             </table>
-        </div>
-    </div>
-
-    <!-- 3. صفحة تحويل للمرشد الطلابي -->
-    <div class="counselor-fullscreen-page" id="counselor-fullscreen-view">
-        <div class="model-nav no-print">
-            <h2 style="color:var(--maroon); margin:0; font-size:1.2rem;"><i class="fas fa-user-shield"></i> صفحة التحويل للمرشد الطلابي</h2>
-            <button class="btn" style="background:#64748b;" onclick="returnToMainDashboard()"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button>
-        </div>
-        <div class="counselor-container" id="pdfContent">
-            <div class="header-info">
-                <div class="header-title-box">
-                    <div class="header-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-                    <div>
-                        <h2>إشعار تحويل طلاب للمرشد الطلابي</h2>
-                        <small style="color: var(--text-muted); font-weight: 600;">المملكة العربية السعودية - وزارة التعليم</small>
-                    </div>
-                </div>
-                <div class="header-badge">
-                    <div><i class="fa-solid fa-book-bookmark" style="color: var(--maroon);"></i> <strong>المادة:</strong> <span id="counselorSubjectName">أ / خالد محمد علي</span></div>
-                    <div><i class="fa-solid fa-user-tie" style="color: var(--maroon);"></i> <strong>معلم المادة:</strong> <span id="counselorTeacherName">أ / خالد محمد علي</span></div>
-                </div>
-            </div>
-
-            <div class="select-section no-print" id="controlSection">
-                <label for="searchInput"><i class="fa-solid fa-magnifying-glass"></i> ابحث عن اسم الطالب واختاره لإضافته للقائمة:</label>
-                <div class="search-container">
-                    <div class="search-box-wrapper">
-                        <input type="text" id="searchInput" class="student-search" placeholder="اكتب اسم الطالب هنا..." oninput="filterStudents()" onfocus="filterStudents()">
-                        <div id="searchResults" class="search-results"></div>
-                    </div>
-                    <button class="btn btn-add" style="background: var(--maroon);" onclick="addSelectedStudent()"><i class="fa-solid fa-plus"></i> إضافة للقائمة</button>
-                </div>
-            </div>
-
-            <div class="history-section no-print" id="studentHistorySection">
-                <h3 id="historyTitle">
-                    <span><i class="fa-solid fa-folder-open"></i> سجل تقارير الطالب السابقة</span>
-                    <button class="btn btn-close" style="padding: 4px 10px; font-size: 0.8rem;" onclick="document.getElementById('studentHistorySection').style.display='none'">إخفاء الأرشيف</button>
-                </h3>
-                <div id="historyContent">جاري البحث...</div>
-            </div>
-
-            <table id="referralTable" class="referral-table-styled">
-                <thead>
-                    <tr>
-                        <th style="width: 5%;">#</th>
-                        <th style="width: 20%;">اسم الطالب وتاريخ التحويل</th>
-                        <th style="width: 22%;" class="no-print">اختيار مخالفة وإضافتها</th>
-                        <th style="width: 22%;">قائمة المخالفات المسجلة للطالب</th>
-                        <th style="width: 18%;">ملاحظات وسلوكيات المعلم</th>
-                        <th class="no-print" style="width: 13%;">الإجراءات</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-            </table>
-
-            <div style="margin-top: 45px; display: flex; justify-content: space-between; font-weight: 700; border-top: 1px dashed var(--border); padding-top: 20px;">
-                <div>توقيع المرشد الطلابي: ........................</div>
-                <div>توقيع معلم المادة: <span id="signatureTeacherName">أ / خالد محمد علي</span></div>
-            </div>
-
-            <div class="actions-dropdown-container no-print">
-                <select class="main-actions-select" onchange="executeMainAction(this)">
-                    <option value="">⚙️ قائمة الإجراءات والتحكم الرئيسية...</option>
-                    <option value="save_all">💾 حفظ وأرشفة جميع التقارير الحالية</option>
-                    <option value="open_saved">📂 التقارير المحفوظة والأرشيف السحابي</option>
-                    <option value="share_link">🔗 مشاركة رابط المرشد الطلابي العام</option>
-                    <option value="preview">👁️ معاينة الاستمارة قبل الطباعة</option>
-                    <option value="pdf">📄 تحميل الاستمارة ملف PDF</option>
-                    <option value="print">🖨️ طباعة الاستمارة</option>
-                </select>
-            </div>
         </div>
     </div>
 
@@ -795,35 +784,11 @@
             });
         }
 
-        function hideAllViews() {
-            const mainDash = document.getElementById('main-dashboard-wrapper');
-            if(mainDash) mainDash.style.display = 'none';
-            document.getElementById('students-fullscreen-view').style.display = 'none';
-            document.getElementById('analytics-fullscreen-view').style.display = 'none';
-            document.getElementById('counselor-fullscreen-view').style.display = 'none';
-            const container = document.querySelector('.container');
-            if(container) container.style.display = 'none';
-        }
-
-        function returnToMainDashboard() {
-            if (isViewOnly) return;
-            hideAllViews();
-            const mainDash = document.getElementById('main-dashboard-wrapper');
-            if(mainDash) mainDash.style.display = 'flex';
-            const container = document.querySelector('.container');
-            if(container) container.style.display = 'block';
-        }
-
-        function openStudentsPage() {
-            hideAllViews();
-            document.getElementById('students-fullscreen-view').style.display = 'block';
-            loadRegisteredStudents();
-            loadGlobalStudentsCache();
-        }
-
-        function openAnalyticsPage() {
-            hideAllViews();
+        function openFullAnalyticsPage() {
+            document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
+            document.querySelector('.container').style.display = 'none';
             document.getElementById('analytics-fullscreen-view').style.display = 'block';
+            
             if (restrictedModelParam) {
                 selectedModel = restrictedModelParam;
                 const wrapper = document.getElementById('model-select-container-wrapper');
@@ -837,11 +802,20 @@
             initAnalyticsListenerAna(selectedModel);
         }
 
-        function openCounselorPage() {
-            hideAllViews();
-            document.getElementById('counselor-fullscreen-view').style.display = 'block';
+        function closeAnalyticsPage() {
+            if (isViewOnly) return;
+            document.getElementById('analytics-fullscreen-view').style.display = 'none';
+            document.getElementById('main-header').style.display = 'flex';
+            document.getElementById('teacher-icon-bar').style.display = 'flex';
+            document.querySelector('.sub-action-bar').style.display = 'flex';
+            document.querySelector('.container').style.display = 'block';
+        }
+
+        function openCounselorModal() {
             loadStudentsList();
             updateTeacherUI();
+            document.getElementById('counselor-modal').style.display = 'block';
+            document.getElementById('modal-overlay').style.display = 'block';
         }
 
         function calculateStudentSkillsAna(d, p) {
@@ -1114,6 +1088,13 @@
                 const snap = await fsDb.collection("all_global_students").get();
                 snap.forEach(doc => allGlobalStudentsCache.push(doc.data()));
             } catch(e) {}
+        }
+
+        function openStudentsManagementModal() {
+            loadRegisteredStudents();
+            loadGlobalStudentsCache();
+            document.getElementById('students-manage-modal').style.display = 'block';
+            document.getElementById('modal-overlay').style.display = 'block';
         }
 
         function filterGlobalStudentsList(query) {
@@ -1900,7 +1881,7 @@
         }
 
         function closeModals() { 
-            document.querySelectorAll('#cloud-modal, #history-modal, #time-modal, #qr-modal, #student-report-modal, #matrix-modal, #review-modal-ana, #edit-teacher-modal').forEach(m => m.style.display = 'none');
+            document.querySelectorAll('#report-modal, #cloud-modal, #history-modal, #time-modal, #qr-modal, #student-report-modal, #students-manage-modal, #analytics-modal, #matrix-modal, #review-modal-ana, #counselor-modal, #edit-teacher-modal').forEach(m => m.style.display = 'none');
             document.getElementById('modal-overlay').style.display = 'none'; 
         }
 
@@ -2564,7 +2545,7 @@
             const examId = urlParams.get('exam');
 
             if (isViewOnly) document.body.classList.add('view-only-mode');
-            hideAllViews();
+            document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
             updateTeacherUI();
 
             if (teacherEmailParam) {
@@ -2581,11 +2562,10 @@
                         if (managerTag) managerTag.innerHTML = `د / عبدالله بن ظافر الشهري`;
                     }
                     if (!isViewOnly) {
-                        const mainDash = document.getElementById('main-dashboard-wrapper');
-                        if(mainDash) mainDash.style.display = 'flex';
+                        document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'flex');
                     }
                     if (isViewOnly) {
-                        openAnalyticsPage();
+                        openFullAnalyticsPage();
                         const btnReturn = document.getElementById('return-home-btn');
                         if (btnReturn) btnReturn.style.display = 'none';
                     } else {
@@ -2594,15 +2574,15 @@
                 });
             } else if (!examId) {
                 if (isCounselorView) {
-                    openCounselorPage();
+                    openCounselorModal();
                 } else {
-                    hideAllViews();
+                    document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
                     document.getElementById('admin-management-card').style.display = 'block';
                     loadTeachersRegistry();
                     loadGlobalStudentsCache();
                 }
             } else {
-                hideAllViews();
+                document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
                 document.getElementById('admin-management-card').style.display = 'none';
                 proceedInit(examId);
             }
@@ -2626,8 +2606,6 @@
                 });
             } else {
                 if (currentTeacherEmail) {
-                    const mainDash = document.getElementById('main-dashboard-wrapper');
-                    if(mainDash) mainDash.style.display = 'flex';
                     document.querySelector('.container').style.display = 'block';
                     addQuestion();
                 }
