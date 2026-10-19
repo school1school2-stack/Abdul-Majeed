@@ -79,6 +79,7 @@
         .icon-action-btn.btn-matrix { background: #7c3aed; }
         .icon-action-btn.btn-share { background: #059669; }
         .icon-action-btn.btn-counselor { background: #6b0c22; }
+        .icon-action-btn.btn-follow { background: #b45309; }
 
         .sub-action-bar {
             width: 100%; max-width: 900px; background: #ffffff; border-radius: 15px; padding: 15px 20px;
@@ -537,11 +538,13 @@
         <div class="header-left"><p class="school-name" id="header-teacher-subject">الكفايات اللغوية</p></div>
     </div>
 
+    <!-- شريط الأيقونات الخاص بالمعلم (تمت إضافة زر كشف المتابعة هنا) -->
     <div class="teacher-icon-bar teacher-only admin-only" id="teacher-icon-bar" style="display: none;">
         <button class="icon-action-btn btn-students" onclick="openStudentsManagementModal()"><i class="fas fa-users-cog"></i><span>إدارة الطلاب والفصول</span></button>
         <button class="icon-action-btn btn-analytics" onclick="openFullAnalyticsPage()"><i class="fas fa-chart-line"></i><span>لوحة التحليل الذكي</span></button>
         <button class="icon-action-btn btn-matrix" onclick="openMatrixModal()"><i class="fas fa-file-code"></i><span>مصفوفة الاختبارات</span></button>
         <button class="icon-action-btn btn-counselor" onclick="openCounselorModal()"><i class="fas fa-user-shield"></i><span>تحويل للمرشد</span></button>
+        <button class="icon-action-btn btn-follow" onclick="openFollowUpSystem()"><i class="fas fa-clipboard-user"></i><span>كشف المتابعة</span></button>
     </div>
 
     <div class="sub-action-bar teacher-only admin-only" style="display: none;">
@@ -716,6 +719,11 @@
         const fsDb = firebase.firestore();
         const rtdb = firebase.database();
         const db = fsDb;
+
+        // دالة فتح موقع كشف المتابعة في تبويب جديد
+        function openFollowUpSystem() {
+            window.open("https://school1school2-stack.github.io/Abdul-majeed2/", "_blank");
+        }
 
         function updateTeacherUI() {
             document.querySelectorAll('#header-teacher-name, #main-title').forEach(el => el.innerText = currentTeacherName);
@@ -2057,7 +2065,6 @@
             else if (action === "delete") deleteSavedReport(docId);
         }
 
-        // تم تحديث الدالة لضمان جلب قائمة الطلاب وتخزينها محلياً للبحث بشكل صحيح
         function loadStudentsList() {
             db.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).get().then((snapshot) => {
                 allStudents = [];
