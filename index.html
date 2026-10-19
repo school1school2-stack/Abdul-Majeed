@@ -328,6 +328,9 @@
     <div id="students-manage-modal">
         <h2 style="text-align: center; color: var(--royal-blue); margin-top:0; font-size:1.3rem;"><i class="fas fa-school"></i> إدارة الفصول والطلاب</h2>
         
+        <!-- زر سحب وتحديث الطلاب من السحابة المضاف حديثاً -->
+        <button class="btn" style="background: var(--accent); width: 100%; justify-content: center; margin-bottom: 15px; font-size: 1rem; padding: 12px;" onclick="fetchStudentsFromCloudRegistry()"><i class="fas fa-sync-alt"></i> 🔄 سحب وتحديث الطلاب من السحابة</button>
+
         <div id="classes-icons-view">
             <h3 style="color: var(--royal-blue); font-size: 1.05rem; margin-bottom: 10px;"><i class="fas fa-chalkboard"></i> الفصول الدراسية (اضغط على أي فصل لاستعراض طلابه):</h3>
             <div id="classesGrid" class="classes-grid"></div>
@@ -1149,7 +1152,7 @@
                 const classCounts = {};
 
                 if (snap.empty) { 
-                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا يوجد طلاب مسجلون في فصلك حالياً.</td></tr>`; 
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا يوجد طلاب مسجلون في فصلك حالياً. يمكنك الضغط على زر سحب الطلاب من السحابة أدناه.</td></tr>`; 
                     if (classesGrid) classesGrid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color:#64748b;">لا توجد فصول دراسية مضافة بعد.</p>`;
                     return; 
                 }
@@ -1178,6 +1181,55 @@
 
             } catch (e) { 
                 tbody.innerHTML = `<tr><td colspan="4">خطأ في الجلب.</td></tr>`; 
+            }
+        }
+
+        // دالة سحب وتحديث الطلاب من السحابة المضافة بناءً على طلبك
+        async function fetchStudentsFromCloudRegistry() {
+            const tbody = document.getElementById('registered-students-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">جاري سحب البيانات وتحديثها من السحابة...</td></tr>`;
+            
+            try {
+                const snap = await fsDb.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).get();
+                
+                registeredStudentsList = [];
+                const classCounts = {};
+
+                if (snap.empty) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا توجد بيانات مسجلة في السحابة حالياً لهذا المعلم.</td></tr>`;
+                    alert("لا توجد بيانات طلاب جديدة للسحب من السحابة.");
+                    return;
+                }
+
+                snap.forEach(doc => {
+                    const st = { id: doc.id, ...doc.data() };
+                    registeredStudentsList.push(st);
+                    const className = st.class || 'غير محدد';
+                    classCounts[className] = (classCounts[className] || 0) + 1;
+                });
+
+                const classesGrid = document.getElementById('classesGrid');
+                if (classesGrid) {
+                    classesGrid.innerHTML = "";
+                    Object.keys(classCounts).sort().forEach(cName => {
+                        classesGrid.innerHTML += `
+                            <div class="class-card" onclick="filterStudentsByClass('${cName}')">
+                                <div class="class-icon"><i class="fas fa-users"></i></div>
+                                <div class="class-name">فصل ${cName}</div>
+                                <div class="class-count">${classCounts[cName]} طالب</div>
+                            </div>
+                        `;
+                    });
+                }
+
+                renderStudentsTable(registeredStudentsList);
+                alert(`تم سحب وتحديث بيانات (${registeredStudentsList.length}) طالباً من السحابة بنجاح! 🌟`);
+
+            } catch (e) {
+                console.error("خطأ في السحب:", e);
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">حدث خطأ أثناء سحب البيانات.</td></tr>`;
+                alert("حدث خطأ أثناء محاولة سحب البيانات من السحابة.");
             }
         }
 
@@ -2057,7 +2109,6 @@
             else if (action === "delete") deleteSavedReport(docId);
         }
 
-        // تم تحديث الدالة لضمان جلب قائمة الطلاب وتخزينها محلياً للبحث بشكل صحيح
         function loadStudentsList() {
             db.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).get().then((snapshot) => {
                 allStudents = [];
