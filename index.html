@@ -324,12 +324,12 @@
         </div>
     </div>
 
-    <!-- نافذة إدارة الطلاب والفصول -->
+    <!-- نافذة إدارة الطلاب والفصول (محدثة بسحب بيانات كشوف المتابعة) -->
     <div id="students-manage-modal">
         <h2 style="text-align: center; color: var(--royal-blue); margin-top:0; font-size:1.3rem;"><i class="fas fa-school"></i> إدارة الفصول والطلاب</h2>
         
-        <!-- زر سحب وتحديث الطلاب من السحابة المضاف حديثاً -->
-        <button class="btn" style="background: var(--accent); width: 100%; justify-content: center; margin-bottom: 15px; font-size: 1rem; padding: 12px;" onclick="fetchStudentsFromCloudRegistry()"><i class="fas fa-sync-alt"></i> 🔄 سحب وتحديث الطلاب من السحابة</button>
+        <!-- زر سحب وتحديث الطلاب والفصول من كشوف المتابعة (السحابة) -->
+        <button class="btn" style="background: var(--accent); width: 100%; justify-content: center; margin-bottom: 15px; font-size: 1rem; padding: 12px;" onclick="fetchStudentsFromCloudRegistry()"><i class="fas fa-sync-alt"></i> 🔄 سحب وتحديث الطلاب والفصول من كشوف المتابعة</button>
 
         <div id="classes-icons-view">
             <h3 style="color: var(--royal-blue); font-size: 1.05rem; margin-bottom: 10px;"><i class="fas fa-chalkboard"></i> الفصول الدراسية (اضغط على أي فصل لاستعراض طلابه):</h3>
@@ -706,6 +706,7 @@
         const firebaseConfig = {
             apiKey: "AIzaSyDhd5CSkNMoppGby6uKxHsQCBPmi6xxO58",
             authDomain: "aaaa-a2380.firebaseapp.com",
+            databaseURL: "https://aaaa-a2380-default-rtdb.firebaseio.com",
             projectId: "aaaa-a2380",
             storageBucket: "aaaa-a2380.firebasestorage.app",
             messagingSenderId: "593036424543",
@@ -1093,7 +1094,7 @@
         }
 
         function openStudentsManagementModal() {
-            loadRegisteredStudents();
+            fetchStudentsFromCloudRegistry();
             loadGlobalStudentsCache();
             document.getElementById('students-manage-modal').style.display = 'block';
             document.getElementById('modal-overlay').style.display = 'block';
@@ -1127,7 +1128,8 @@
                 await fsDb.collection("allowed_students").doc(docId).set({ 
                     name: name, 
                     email: email, 
-                    class: className, 
+                    className: className, 
+                    class: className,
                     teacher_email: currentTeacherEmail 
                 });
                 alert(`تم ربط الطالب (${name}) بفصلك الخاص (${className}) بنجاح! 🎓`);
@@ -1135,81 +1137,45 @@
                 document.getElementById('selectedStudentEmail').value = "";
                 document.getElementById('globalStudentSearch').value = "";
                 document.getElementById('regStudentClass').value = "";
-                loadRegisteredStudents();
+                fetchStudentsFromCloudRegistry();
             } catch (e) { alert("حدث خطأ أثناء الحفظ."); }
         }
 
-        async function loadRegisteredStudents() {
+        // 🔄 الدالة المحدثة لسحب وتحديث الطلاب والفصول مباشرة من كشوف المتابعة السحابية
+        async function fetchStudentsFromCloudRegistry() {
             const tbody = document.getElementById('registered-students-table-body');
             const classesGrid = document.getElementById('classesGrid');
             if (!tbody) return;
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">جاري التحميل...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">جاري سحب وتحديث الفصول والطلاب من كشوف المتابعة...</td></tr>`;
             if (classesGrid) classesGrid.innerHTML = `<p style="text-align:center; grid-column: 1/-1;">جاري جلب الفصول...</p>`;
             
             try {
-                const snap = await fsDb.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).get();
-                registeredStudentsList = [];
-                const classCounts = {};
-
-                if (snap.empty) { 
-                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا يوجد طلاب مسجلون في فصلك حالياً. يمكنك الضغط على زر سحب الطلاب من السحابة أدناه.</td></tr>`; 
-                    if (classesGrid) classesGrid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color:#64748b;">لا توجد فصول دراسية مضافة بعد.</p>`;
-                    return; 
-                }
-
-                snap.forEach(doc => {
-                    const st = { id: doc.id, ...doc.data() };
-                    registeredStudentsList.push(st);
-                    const className = st.class || 'غير محدد';
-                    classCounts[className] = (classCounts[className] || 0) + 1;
-                });
-
-                if (classesGrid) {
-                    classesGrid.innerHTML = "";
-                    Object.keys(classCounts).sort().forEach(cName => {
-                        classesGrid.innerHTML += `
-                            <div class="class-card" onclick="filterStudentsByClass('${cName}')">
-                                <div class="class-icon"><i class="fas fa-users"></i></div>
-                                <div class="class-name">فصل ${cName}</div>
-                                <div class="class-count">${classCounts[cName]} طالب</div>
-                            </div>
-                        `;
-                    });
-                }
-
-                renderStudentsTable(registeredStudentsList);
-
-            } catch (e) { 
-                tbody.innerHTML = `<tr><td colspan="4">خطأ في الجلب.</td></tr>`; 
-            }
-        }
-
-        // دالة سحب وتحديث الطلاب من السحابة المضافة بناءً على طلبك
-        async function fetchStudentsFromCloudRegistry() {
-            const tbody = document.getElementById('registered-students-table-body');
-            if (!tbody) return;
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">جاري سحب البيانات وتحديثها من السحابة...</td></tr>`;
-            
-            try {
-                const snap = await fsDb.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).get();
+                const snap = await fsDb.collection("allowed_students")
+                    .where("teacher_email", "==", currentTeacherEmail)
+                    .get();
                 
                 registeredStudentsList = [];
                 const classCounts = {};
 
                 if (snap.empty) {
-                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا توجد بيانات مسجلة في السحابة حالياً لهذا المعلم.</td></tr>`;
-                    alert("لا توجد بيانات طلاب جديدة للسحب من السحابة.");
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا توجد بيانات طلاب مسجلة في كشوف المتابعة لهذا المعلم حالياً.</td></tr>`;
+                    if (classesGrid) classesGrid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color:#64748b;">لا توجد فصول دراسية مضافة بعد.</p>`;
                     return;
                 }
 
                 snap.forEach(doc => {
-                    const st = { id: doc.id, ...doc.data() };
+                    const data = doc.data();
+                    const st = { 
+                        id: doc.id, 
+                        name: data.name || "بدون اسم", 
+                        email: data.email || doc.id, 
+                        class: data.className || data.class || 'غير موزع' 
+                    };
                     registeredStudentsList.push(st);
-                    const className = st.class || 'غير محدد';
+                    const className = st.class;
                     classCounts[className] = (classCounts[className] || 0) + 1;
                 });
 
-                const classesGrid = document.getElementById('classesGrid');
                 if (classesGrid) {
                     classesGrid.innerHTML = "";
                     Object.keys(classCounts).sort().forEach(cName => {
@@ -1224,12 +1190,10 @@
                 }
 
                 renderStudentsTable(registeredStudentsList);
-                alert(`تم سحب وتحديث بيانات (${registeredStudentsList.length}) طالباً من السحابة بنجاح! 🌟`);
 
             } catch (e) {
                 console.error("خطأ في السحب:", e);
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">حدث خطأ أثناء سحب البيانات.</td></tr>`;
-                alert("حدث خطأ أثناء محاولة سحب البيانات من السحابة.");
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">حدث خطأ أثناء سحب البيانات من السحابة.</td></tr>`;
             }
         }
 
@@ -1279,7 +1243,7 @@
         async function deleteRegisteredStudent(docId) {
             if (confirm("هل أنت متأكد من الحذف من فصلك؟")) { 
                 await fsDb.collection("allowed_students").doc(docId).delete(); 
-                loadRegisteredStudents(); 
+                fetchStudentsFromCloudRegistry(); 
             }
         }
 
@@ -2053,7 +2017,7 @@
                 { value: "واجب 3", text: "واجب 3" }, { value: "واجب 4", text: "واجب 4" },
                 { value: "واجب 5", text: "واجب 5" }
             ],
-            "عدm إحضار البحث": [
+            "عدم إحضار البحث": [
                 { value: "1. لم يقدم البحث", text: "1. لم يقدم البحث" }, { value: "2. البحث غير مكتمل", text: "2. البحث غير مكتمل" }
             ],
             "كثرة النوم": [
