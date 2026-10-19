@@ -324,13 +324,10 @@
         </div>
     </div>
 
-    <!-- نافذة إدارة الطلاب والفصول (محدثة بسحب بيانات كشوف المتابعة) -->
+    <!-- نافذة إدارة الطلاب والفصول -->
     <div id="students-manage-modal">
         <h2 style="text-align: center; color: var(--royal-blue); margin-top:0; font-size:1.3rem;"><i class="fas fa-school"></i> إدارة الفصول والطلاب</h2>
         
-        <!-- زر سحب وتحديث الطلاب والفصول من كشوف المتابعة (السحابة) -->
-        <button class="btn" style="background: var(--accent); width: 100%; justify-content: center; margin-bottom: 15px; font-size: 1rem; padding: 12px;" onclick="fetchStudentsFromCloudRegistry()"><i class="fas fa-sync-alt"></i> 🔄 سحب وتحديث الطلاب والفصول من كشوف المتابعة</button>
-
         <div id="classes-icons-view">
             <h3 style="color: var(--royal-blue); font-size: 1.05rem; margin-bottom: 10px;"><i class="fas fa-chalkboard"></i> الفصول الدراسية (اضغط على أي فصل لاستعراض طلابه):</h3>
             <div id="classesGrid" class="classes-grid"></div>
@@ -706,7 +703,6 @@
         const firebaseConfig = {
             apiKey: "AIzaSyDhd5CSkNMoppGby6uKxHsQCBPmi6xxO58",
             authDomain: "aaaa-a2380.firebaseapp.com",
-            databaseURL: "https://aaaa-a2380-default-rtdb.firebaseio.com",
             projectId: "aaaa-a2380",
             storageBucket: "aaaa-a2380.firebasestorage.app",
             messagingSenderId: "593036424543",
@@ -1094,7 +1090,7 @@
         }
 
         function openStudentsManagementModal() {
-            fetchStudentsFromCloudRegistry();
+            loadRegisteredStudents();
             loadGlobalStudentsCache();
             document.getElementById('students-manage-modal').style.display = 'block';
             document.getElementById('modal-overlay').style.display = 'block';
@@ -1128,8 +1124,7 @@
                 await fsDb.collection("allowed_students").doc(docId).set({ 
                     name: name, 
                     email: email, 
-                    className: className, 
-                    class: className,
+                    class: className, 
                     teacher_email: currentTeacherEmail 
                 });
                 alert(`تم ربط الطالب (${name}) بفصلك الخاص (${className}) بنجاح! 🎓`);
@@ -1137,42 +1132,32 @@
                 document.getElementById('selectedStudentEmail').value = "";
                 document.getElementById('globalStudentSearch').value = "";
                 document.getElementById('regStudentClass').value = "";
-                fetchStudentsFromCloudRegistry();
+                loadRegisteredStudents();
             } catch (e) { alert("حدث خطأ أثناء الحفظ."); }
         }
 
-        // 🔄 الدالة المحدثة لسحب وتحديث الطلاب والفصول مباشرة من كشوف المتابعة السحابية
-        async function fetchStudentsFromCloudRegistry() {
+        async function loadRegisteredStudents() {
             const tbody = document.getElementById('registered-students-table-body');
             const classesGrid = document.getElementById('classesGrid');
             if (!tbody) return;
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">جاري سحب وتحديث الفصول والطلاب من كشوف المتابعة...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">جاري التحميل...</td></tr>`;
             if (classesGrid) classesGrid.innerHTML = `<p style="text-align:center; grid-column: 1/-1;">جاري جلب الفصول...</p>`;
             
             try {
-                const snap = await fsDb.collection("allowed_students")
-                    .where("teacher_email", "==", currentTeacherEmail)
-                    .get();
-                
+                const snap = await fsDb.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).get();
                 registeredStudentsList = [];
                 const classCounts = {};
 
-                if (snap.empty) {
-                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا توجد بيانات طلاب مسجلة في كشوف المتابعة لهذا المعلم حالياً.</td></tr>`;
+                if (snap.empty) { 
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا يوجد طلاب مسجلون في فصلك حالياً.</td></tr>`; 
                     if (classesGrid) classesGrid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color:#64748b;">لا توجد فصول دراسية مضافة بعد.</p>`;
-                    return;
+                    return; 
                 }
 
                 snap.forEach(doc => {
-                    const data = doc.data();
-                    const st = { 
-                        id: doc.id, 
-                        name: data.name || "بدون اسم", 
-                        email: data.email || doc.id, 
-                        class: data.className || data.class || 'غير موزع' 
-                    };
+                    const st = { id: doc.id, ...doc.data() };
                     registeredStudentsList.push(st);
-                    const className = st.class;
+                    const className = st.class || 'غير محدد';
                     classCounts[className] = (classCounts[className] || 0) + 1;
                 });
 
@@ -1191,9 +1176,8 @@
 
                 renderStudentsTable(registeredStudentsList);
 
-            } catch (e) {
-                console.error("خطأ في السحب:", e);
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">حدث خطأ أثناء سحب البيانات من السحابة.</td></tr>`;
+            } catch (e) { 
+                tbody.innerHTML = `<tr><td colspan="4">خطأ في الجلب.</td></tr>`; 
             }
         }
 
@@ -1243,7 +1227,7 @@
         async function deleteRegisteredStudent(docId) {
             if (confirm("هل أنت متأكد من الحذف من فصلك؟")) { 
                 await fsDb.collection("allowed_students").doc(docId).delete(); 
-                fetchStudentsFromCloudRegistry(); 
+                loadRegisteredStudents(); 
             }
         }
 
@@ -2017,7 +2001,7 @@
                 { value: "واجب 3", text: "واجب 3" }, { value: "واجب 4", text: "واجب 4" },
                 { value: "واجب 5", text: "واجب 5" }
             ],
-            "عدم إحضار البحث": [
+            "عدm إحضار البحث": [
                 { value: "1. لم يقدم البحث", text: "1. لم يقدم البحث" }, { value: "2. البحث غير مكتمل", text: "2. البحث غير مكتمل" }
             ],
             "كثرة النوم": [
@@ -2073,6 +2057,7 @@
             else if (action === "delete") deleteSavedReport(docId);
         }
 
+        // تم تحديث الدالة لضمان جلب قائمة الطلاب وتخزينها محلياً للبحث بشكل صحيح
         function loadStudentsList() {
             db.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).get().then((snapshot) => {
                 allStudents = [];
