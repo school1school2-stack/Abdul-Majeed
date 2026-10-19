@@ -289,7 +289,8 @@
         <h2 style="color: var(--royal-blue); margin-top: 0; text-align: center;"><i class="fas fa-users-cog"></i> لوحة المشرف العامة</h2>
         <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 2px dashed #0284c7; margin-bottom: 25px;">
             <h3 style="margin-top: 0; color: #0284c7; font-size: 1.1rem;"><i class="fas fa-file-upload"></i> إضافة الطلاب دفعة واحدة لجميع المعلمين:</h3>
-            <textarea id="bulkStudentsInput" class="auth-input" style="width:100%; height:150px; font-family:inherit; resize:none; max-width:100%; direction:ltr; text-align:right;" placeholder="محمد أحمد&#10;s123456@rb.moe.gov.sa"></textarea>
+            <p style="font-size:0.85rem; color:#64748b; margin-bottom:8px;">(قم بلصق قائمة الطلاب بنمط: سطر لاسم الطالب يليه سطر لإيميل الطالب)</p>
+            <textarea id="bulkStudentsInput" class="auth-input" style="width:100%; height:150px; font-family:inherit; resize:none; max-width:100%; direction:rtl; text-align:right;" placeholder="محمد أحمد&#10;s123456@rb.moe.gov.sa&#10;خالد علي&#10;s654321@rb.moe.gov.sa"></textarea>
             <button class="btn" style="background: var(--success-green); width: 100%; justify-content: center;" onclick="uploadBulkStudents()"><i class="fas fa-cloud-upload-alt"></i> اعتماد وحفظ الطلاب</button>
         </div>
         <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
@@ -333,20 +334,54 @@
             <div id="classesGrid" class="classes-grid"></div>
         </div>
 
+        <!-- إضافة فردية أو لصق جماعي للفصل -->
         <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
-            <h3 style="margin-top: 0; color: #0284c7; font-size: 1.05rem;"><i class="fas fa-user-plus"></i> إضافة طالب جديد لفصل:</h3>
+            <h3 style="margin-top: 0; color: #0284c7; font-size: 1.05rem;"><i class="fas fa-user-plus"></i> إضافة طلاب للفصل:</h3>
+            
+            <label style="font-weight:bold; color:var(--royal-blue); display:block; margin-bottom:5px;">1. اختر الفصل الدراسي:</label>
+            <select id="regStudentClass" class="auth-input" style="max-width:100%; margin-bottom:15px;">
+                <option value="">-- اختر الفصل --</option>
+                <!-- أول ثانوي -->
+                <option value="أول ثانوي 1/1">أول ثانوي (1/1)</option>
+                <option value="أول ثانوي 1/2">أول ثانوي (1/2)</option>
+                <option value="أول ثانوي 1/3">أول ثانوي (1/3)</option>
+                <option value="أول ثانوي 1/4">أول ثانوي (1/4)</option>
+                <option value="أول ثانوي 1/5">أول ثانوي (1/5)</option>
+                <option value="أول ثانوي 1/6">أول ثانوي (1/6)</option>
+                <option value="أول ثانوي 1/7">أول ثانوي (1/7)</option>
+                <!-- ثاني ثانوي -->
+                <option value="ثاني ثانوي 2/1">ثاني ثانوي (2/1)</option>
+                <option value="ثاني ثانوي 2/2">ثاني ثانوي (2/2)</option>
+                <option value="ثاني ثانوي 2/3">ثاني ثانوي (2/3)</option>
+                <option value="ثاني ثانوي 2/4">ثاني ثانوي (2/4)</option>
+                <option value="ثاني ثانوي 2/5">ثاني ثانوي (2/5)</option>
+                <!-- ثالث ثانوي -->
+                <option value="ثالث ثانوي 3/1">ثالث ثانوي (3/1)</option>
+                <option value="ثالث ثانوي 3/2">ثالث ثانوي (3/2)</option>
+                <option value="ثالث ثانوي 3/3">ثالث ثانوي (3/3)</option>
+                <option value="ثالث ثانوي 3/4">ثالث ثانوي (3/4)</option>
+            </select>
+
+            <hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 15px 0;">
+
+            <label style="font-weight:bold; color:var(--royal-blue); display:block; margin-bottom:5px;">2. خيار أ: إضافة طالب فردي من السجل العام:</label>
             <input type="text" id="globalStudentSearch" class="auth-input" placeholder="🔍 ابحث بالاسم أو الإيميل..." style="max-width:100%; margin-bottom:10px;" oninput="filterGlobalStudentsList(this.value)">
             <div id="global-students-suggestions" style="max-height: 150px; overflow-y: auto; background: white; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 10px; display: none;"></div>
             <input type="text" id="selectedStudentName" class="auth-input" placeholder="اسم الطالب المختار" style="max-width:100%; margin-bottom:10px;" readonly>
             <input type="email" id="selectedStudentEmail" class="auth-input" placeholder="إيميل الطالب" style="max-width:100%; margin-bottom:10px; direction:ltr; text-align:right;" readonly>
-            <input type="text" id="regStudentClass" class="auth-input" placeholder="الفصل (مثال: أول أول / أول ثاني)" style="max-width:100%; margin-bottom:10px;">
-            <button class="btn" style="background: var(--success-green); width: 100%; justify-content: center;" onclick="addStudentToTeacherClass()"><i class="fas fa-user-plus"></i> إضافة الطالب للفصل</button>
+            <button class="btn" style="background: var(--success-green); width: 100%; justify-content: center; margin-bottom: 15px;" onclick="addStudentToTeacherClass()"><i class="fas fa-user-plus"></i> إضافة الطالب للفصل المختار</button>
+
+            <hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 15px 0;">
+
+            <label style="font-weight:bold; color:var(--royal-blue); display:block; margin-bottom:5px;">3. خيار ب: لصق قائمة طلاب الفصل دفعة واحدة (سطر اسم / سطر إيميل):</label>
+            <textarea id="bulkClassStudentsInput" class="auth-input" style="width:100%; height:120px; font-family:inherit; resize:none; max-width:100%; direction:rtl; text-align:right; font-size:0.9rem;" placeholder="اسم الطالب الأول&#10;s123456@rb.moe.gov.sa&#10;اسم الطالب الثاني&#10;s654321@rb.moe.gov.sa"></textarea>
+            <button class="btn" style="background: #0284c7; width: 100%; justify-content: center;" onclick="uploadClassBulkStudents()"><i class="fas fa-file-import"></i> استيراد وإضافة جميع طلاب القائمة للفصل المختار</button>
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 10px;">
             <h3 style="color: var(--royal-blue); font-size: 1.05rem; margin:0;" id="students-list-title"><i class="fas fa-users"></i> الطلاب المسجلون:</h3>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <button id="copy-class-students-btn" class="btn" style="background: #7c3aed; padding: 5px 12px; font-size: 0.8rem;" onclick="copyCurrentClassStudentsNames()"><i class="fas fa-copy"></i> نسخ كل أسماء طلاب الفصل</button>
+                <button id="copy-class-students-btn" class="btn" style="background: #7c3aed; padding: 5px 12px; font-size: 0.8rem;" onclick="copyCurrentClassStudentsFormatted()"><i class="fas fa-copy"></i> نسخ أسماء وإيميلات الفصل (اسم/إيميل)</button>
                 <button id="show-all-classes-btn" class="btn" style="background: #3b82f6; padding: 5px 12px; font-size: 0.8rem; display: none;" onclick="showAllStudentsInTable()"><i class="fas fa-globe"></i> عرض جميع الفصول</button>
             </div>
         </div>
@@ -1121,8 +1156,8 @@
         async function addStudentToTeacherClass() {
             const name = document.getElementById('selectedStudentName').value.trim();
             const email = document.getElementById('selectedStudentEmail').value.trim().toLowerCase();
-            const className = document.getElementById('regStudentClass').value.trim();
-            if (!name || !email || !className) { alert("الرجاء اختيار الطالب وإدخال الفصل."); return; }
+            const className = document.getElementById('regStudentClass').value;
+            if (!name || !email || !className) { alert("الرجاء اختيار الفصل من القائمة المنسدلة واختيار الطالب أولاً."); return; }
             try {
                 const docId = `${currentTeacherEmail}_${email}`.replace(/[@\.]/g, '_');
                 await fsDb.collection("allowed_students").doc(docId).set({ 
@@ -1131,13 +1166,83 @@
                     class: className, 
                     teacher_email: currentTeacherEmail 
                 });
-                alert(`تم ربط الطالب (${name}) بفصلك الخاص (${className}) بنجاح! 🎓`);
+                alert(`تم ربط الطالب (${name}) بفصلك (${className}) بنجاح! 🎓`);
                 document.getElementById('selectedStudentName').value = "";
                 document.getElementById('selectedStudentEmail').value = "";
                 document.getElementById('globalStudentSearch').value = "";
-                document.getElementById('regStudentClass').value = "";
                 loadRegisteredStudents();
             } catch (e) { alert("حدث خطأ أثناء الحفظ."); }
+        }
+
+        async function uploadClassBulkStudents() {
+            const selectedClass = document.getElementById('regStudentClass').value;
+            const rawText = document.getElementById('bulkClassStudentsInput').value.trim();
+
+            if (!selectedClass) {
+                alert("الرجاء اختيار الفصل من القائمة المنسدلة أولاً!");
+                return;
+            }
+            if (!rawText) {
+                alert("الرجاء لصق قائمة الطلاب (سطر اسم / سطر إيميل)!");
+                return;
+            }
+
+            const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l);
+            let count = 0;
+
+            try {
+                for (let i = 0; i < lines.length; i++) {
+                    let line1 = lines[i];
+                    let line2 = lines[i + 1] || "";
+                    let name = "", email = "";
+
+                    if (line1.includes('@')) {
+                        email = line1;
+                        name = line2;
+                        i++;
+                    } else if (line2.includes('@')) {
+                        name = line1;
+                        email = line2;
+                        i++;
+                    }
+
+                    if (name && email && email.includes('@')) {
+                        const cleanEmail = email.toLowerCase().trim();
+                        const docId = `${currentTeacherEmail}_${cleanEmail}`.replace(/[@\.]/g, '_');
+                        
+                        await fsDb.collection("allowed_students").doc(docId).set({
+                            name: name,
+                            email: cleanEmail,
+                            class: selectedClass,
+                            teacher_email: currentTeacherEmail
+                        });
+                        count++;
+                    }
+                }
+                alert(`تم إضافة (${count}) طالب بنجاح إلى فصل (${selectedClass})! 🎓`);
+                document.getElementById('bulkClassStudentsInput').value = "";
+                loadRegisteredStudents();
+            } catch (e) {
+                alert("حدث خطأ أثناء حفظ طلاب الفصل.");
+            }
+        }
+
+        function copyCurrentClassStudentsFormatted() {
+            if (!currentDisplayedStudentsList || currentDisplayedStudentsList.length === 0) {
+                alert("لا يوجد طلاب في الفصل المعروض حالياً لنسخهم!");
+                return;
+            }
+
+            let formattedText = "";
+            currentDisplayedStudentsList.forEach(st => {
+                formattedText += `${st.name}\n${st.email}\n`;
+            });
+
+            navigator.clipboard.writeText(formattedText.trim()).then(() => {
+                alert(`تم نسخ بيانات (${currentDisplayedStudentsList.length}) طالب بالتنسيق الموحد (اسم/إيميل) بنجاح! 📋`);
+            }).catch(() => {
+                prompt("نسخ قائمة الطلاب (اسم / إيميل):", formattedText.trim());
+            });
         }
 
         async function loadRegisteredStudents() {
@@ -1229,19 +1334,6 @@
             
             const btnShowAll = document.getElementById('show-all-classes-btn');
             if (btnShowAll) btnShowAll.style.display = 'none';
-        }
-
-        function copyCurrentClassStudentsNames() {
-            if (!currentDisplayedStudentsList || currentDisplayedStudentsList.length === 0) {
-                alert("لا يوجد طلاب في القائمة المعروضة حالياً لنسخهم!");
-                return;
-            }
-            const namesText = currentDisplayedStudentsList.map(st => st.name).join('\n');
-            navigator.clipboard.writeText(namesText).then(() => {
-                alert(`تم نسخ أسماء (${currentDisplayedStudentsList.length}) طالب بنجاح! 📋`);
-            }).catch(() => {
-                prompt("نسخ قائمة أسماء الطلاب:", namesText);
-            });
         }
 
         async function deleteRegisteredStudent(docId) {
