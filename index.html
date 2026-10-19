@@ -345,7 +345,10 @@
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 10px;">
             <h3 style="color: var(--royal-blue); font-size: 1.05rem; margin:0;" id="students-list-title"><i class="fas fa-users"></i> الطلاب المسجلون:</h3>
-            <button id="show-all-classes-btn" class="btn" style="background: #3b82f6; padding: 5px 12px; font-size: 0.8rem; display: none;" onclick="showAllStudentsInTable()"><i class="fas fa-globe"></i> عرض جميع الفصول</button>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button id="copy-class-students-btn" class="btn" style="background: #7c3aed; padding: 5px 12px; font-size: 0.8rem;" onclick="copyCurrentClassStudentsNames()"><i class="fas fa-copy"></i> نسخ كل أسماء طلاب الفصل</button>
+                <button id="show-all-classes-btn" class="btn" style="background: #3b82f6; padding: 5px 12px; font-size: 0.8rem; display: none;" onclick="showAllStudentsInTable()"><i class="fas fa-globe"></i> عرض جميع الفصول</button>
+            </div>
         </div>
 
         <div style="overflow-x: auto; max-height: 250px; margin-top: 10px;">
@@ -695,6 +698,7 @@
         let lastSubmittedDetails = null;
 
         let registeredStudentsList = [];
+        let currentDisplayedStudentsList = [];
 
         const urlParams = new URLSearchParams(window.location.search);
         const isViewOnly = urlParams.has('view');
@@ -1149,6 +1153,7 @@
                 const classCounts = {};
 
                 if (snap.empty) { 
+                    currentDisplayedStudentsList = [];
                     tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا يوجد طلاب مسجلون في فصلك حالياً.</td></tr>`; 
                     if (classesGrid) classesGrid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color:#64748b;">لا توجد فصول دراسية مضافة بعد.</p>`;
                     return; 
@@ -1185,6 +1190,8 @@
             const tbody = document.getElementById('registered-students-table-body');
             if (!tbody) return;
             
+            currentDisplayedStudentsList = studentsArray || [];
+
             if (studentsArray.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">لا يوجد طلاب في هذا الفصل.</td></tr>`;
                 return;
@@ -1222,6 +1229,19 @@
             
             const btnShowAll = document.getElementById('show-all-classes-btn');
             if (btnShowAll) btnShowAll.style.display = 'none';
+        }
+
+        function copyCurrentClassStudentsNames() {
+            if (!currentDisplayedStudentsList || currentDisplayedStudentsList.length === 0) {
+                alert("لا يوجد طلاب في القائمة المعروضة حالياً لنسخهم!");
+                return;
+            }
+            const namesText = currentDisplayedStudentsList.map(st => st.name).join('\n');
+            navigator.clipboard.writeText(namesText).then(() => {
+                alert(`تم نسخ أسماء (${currentDisplayedStudentsList.length}) طالب بنجاح! 📋`);
+            }).catch(() => {
+                prompt("نسخ قائمة أسماء الطلاب:", namesText);
+            });
         }
 
         async function deleteRegisteredStudent(docId) {
@@ -2001,7 +2021,7 @@
                 { value: "واجب 3", text: "واجب 3" }, { value: "واجب 4", text: "واجب 4" },
                 { value: "واجب 5", text: "واجب 5" }
             ],
-            "عدm إحضار البحث": [
+            "عدم إحضار البحث": [
                 { value: "1. لم يقدم البحث", text: "1. لم يقدم البحث" }, { value: "2. البحث غير مكتمل", text: "2. البحث غير مكتمل" }
             ],
             "كثرة النوم": [
@@ -2013,7 +2033,7 @@
         };
 
         function formatTimestamp(timestamp) {
-            if (!timestamp) return 'تاريخ غير مححدد';
+            if (!timestamp) return 'تاريخ غير محدد';
             let date = timestamp.toDate ? timestamp.toDate() : (timestamp instanceof Date ? timestamp : new Date(timestamp));
             return date.toLocaleString('ar-SA', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true });
         }
@@ -2057,7 +2077,6 @@
             else if (action === "delete") deleteSavedReport(docId);
         }
 
-        // تم تحديث الدالة لضمان جلب قائمة الطلاب وتخزينها محلياً للبحث بشكل صحيح
         function loadStudentsList() {
             db.collection("allowed_students").where("teacher_email", "==", currentTeacherEmail).get().then((snapshot) => {
                 allStudents = [];
