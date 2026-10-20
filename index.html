@@ -58,6 +58,18 @@
         .header-center { flex: 0 0 auto; display: flex; justify-content: center; }
         .header-left { flex: 1; text-align: left; min-width: 140px; }
         .user-name { margin: 0; color: var(--royal-blue); font-weight: bold; font-size: 1.3rem; }
+        
+        /* تنسيق بريد المعلم وزر النسخ */
+        .teacher-email-wrapper {
+            display: inline-flex; align-items: center; gap: 6px; background: #f1f5f9; border: 1px solid #cbd5e1;
+            padding: 3px 8px; border-radius: 8px; font-size: 0.85rem; color: #475569; margin-top: 4px; direction: ltr;
+        }
+        .copy-email-btn {
+            background: #e2e8f0; border: none; color: #1e293b; padding: 3px 6px; border-radius: 5px;
+            cursor: pointer; font-size: 0.75rem; transition: all 0.2s;
+        }
+        .copy-email-btn:hover { background: var(--accent); color: white; }
+
         .school-name { margin: 0; color: #64748b; font-weight: bold; font-size: 0.95rem; }
         .logo-box { background: var(--royal-blue); width: 55px; height: 55px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; }
 
@@ -452,8 +464,17 @@
         <span id="toastMsg">تمت العملية بنجاح</span>
     </div>
 
+    <!-- رأس الصفحة للهيدر الرئيسي -->
     <div class="user-header teacher-only" id="main-header" style="display: none;">
-        <div class="header-right"><h2 class="user-name" id="header-teacher-name">أ / خالد محمد علي</h2></div>
+        <div class="header-right">
+            <h2 class="user-name" id="header-teacher-name">أ / خالد محمد علي</h2>
+            <div class="teacher-email-wrapper">
+                <span id="header-teacher-email">khaled@moe.gov.sa</span>
+                <button class="copy-email-btn" onclick="copyTeacherEmail()" title="نسخ البريد">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+        </div>
         <div class="header-center"><div class="logo-box"><i class="fas fa-award"></i></div></div>
         <div class="header-left"><p class="school-name" id="header-teacher-subject">الكفايات اللغوية</p></div>
     </div>
@@ -500,7 +521,15 @@
             <div class="manager-header-box">
                 <div class="manager-header-row">
                     <div class="teacher-info-group">
-                        <h1 id="main-title" style="margin:0; color:var(--royal-blue); font-size:1.45rem; font-weight:800;">أ / خالد محمد علي</h1>
+                        <div>
+                            <h1 id="main-title" style="margin:0; color:var(--royal-blue); font-size:1.45rem; font-weight:800;">أ / خالد محمد علي</h1>
+                            <div class="teacher-email-wrapper">
+                                <span id="ana-teacher-email">khaled@moe.gov.sa</span>
+                                <button class="copy-email-btn" onclick="copyTeacherEmail()" title="نسخ البريد">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
                         <span style="background: #e0f2fe; color: #0369a1; padding: 4px 12px; border-radius: 8px; font-size: 0.95rem; font-weight: bold;" id="sub-title">الكفايات اللغوية</span>
                     </div>
                     <div class="manager-info-group">
@@ -646,6 +675,15 @@
         function updateTeacherUI() {
             document.querySelectorAll('#header-teacher-name, #main-title').forEach(el => el.innerText = currentTeacherName);
             document.querySelectorAll('#header-teacher-subject, #sub-title').forEach(el => el.innerText = currentTeacherSubject);
+            document.querySelectorAll('#header-teacher-email, #ana-teacher-email').forEach(el => el.innerText = currentTeacherEmail);
+        }
+
+        function copyTeacherEmail() {
+            navigator.clipboard.writeText(currentTeacherEmail).then(() => {
+                alert(`تم نسخ بريد المعلم (${currentTeacherEmail}) بنجاح! 📋`);
+            }).catch(() => {
+                prompt("نسخ البريد الإلكتروني:", currentTeacherEmail);
+            });
         }
 
         function updateLiveClock() {
